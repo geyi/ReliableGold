@@ -84,7 +84,7 @@ Non Uniform Memory Access
 
 # OS
 
-《Linux内核设计与实现》
+推荐书籍：《Linux内核设计与实现》
 
 ## 内核分类
 - 微内核 - 弹性部署、5G、IoT
