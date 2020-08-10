@@ -113,3 +113,6 @@ RR - Round Robin
 CFS - Completely Fari Scheduler
 
 ## 中断
+
+
+# 内存管理
