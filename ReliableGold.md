@@ -50,7 +50,7 @@ ImportBeanDefinitionRegistrar类只能通过其他类@Import的方式来加载�
 1. 设置启动时间
 2. 定义应用上下文变量，当前为null
 3. 定义异常报告集合变量，new ArrayList<>();
-4. 设置系统参数
+4. 设置java.awt.headless
 5. 创建监听器对象SpringApplicationRunListener，从配置文件中读取到EventPublishingRunListener，并实例化。在实例化的过程中，创建了SimpleApplicationEventMulticaster对象（事件发生器），然后把之前的11个监听器设置到对象中。
 使用事件发生器对监听器进行启动，找出监听了ApplicationStartingEvent事件的监听器，并进行启动。
 6. 装配命令行参数
