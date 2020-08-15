@@ -129,3 +129,30 @@ CFS - Completely Fari Scheduler
 ## 虚拟地址
 
 ## 缺页中断
+
+
+# 内核同步机制
+
+## 基本概念
+- 临界区（critical area）：访问或操作共享数据的代码段。简单理解：被synchronized修饰的代码段。
+- 竞争条件（race conditions）：两个线程同时拥有临界区的执行权。
+- 数据不一致（data unconsistency）：由竞争条件引起的数据破坏。
+- 同步（synchroinzation）：避免竞争条件。
+- 锁：完成同步的手段（门锁，门后是临界区，只允许一个线程存在）。上锁解锁必须具备原子性。
+- 原子性：象原子一样，不可分割的操作。
+- 有序性：禁止指令重排。
+- 可见性：一个线程内的修改，另一个线程可见。
+
+## 内核同步的常用方法
+
+### 原子性 有序性 可见性
+1. 原子操作 - 内核中类似于AtomicXXX，位于<linux/types.h>
+2. 自旋锁 - 内核中通过汇编支持cas，位于<asm/spinlock.h>
+3. 读写自旋锁 - ReadWriteLock
+4. 信号量 - Semaphore
+5. 分段锁 - JDK1.7的ConcurrentHashMap
+6. 互斥体 - synchronized
+7. 完成变量 - CountDownLatch
+8. 顺序锁 - 从0开始，写时+1，写完也+1
+9. 禁止抢占 - preempt_disable()
+10. 内存屏障 - volatile
