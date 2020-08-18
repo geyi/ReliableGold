@@ -243,3 +243,19 @@ head -8 test.txt | tail -1
 
 ### int 0x80 中断
 0x80对应中断描述符表中的数值：0 1 2 ... 128 ... 255
+
+# PageCache
+
+page cache是内核维护的中间层。
+
+vm.dirty_background_bytes = 0
+vm.dirty_background_ratio = 10
+vm.dirty_bytes = 0
+vm.dirty_expire_centisecs = 3000
+vm.dirty_ratio = 30
+vm.dirty_writeback_centisecs = 500
+vm.dirtytime_expire_seconds = 43200
+
+在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能
+
+page cache是优化IO性能的，但却带来了数据丢失的问题
