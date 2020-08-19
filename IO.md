@@ -248,13 +248,20 @@ head -8 test.txt | tail -1
 
 page cache是内核维护的中间层。
 
+```
+# 当脏页所占内存空间大小达到设定的值时，内核的pdflush线程开始回写脏页
 vm.dirty_background_bytes = 0
+# 当脏页所占可用内存的百分比达到设定的值时（这里是10%），内核的pdflush线程开始回写脏页
+# 增大该值会使更多的内存用于缓冲，可以提高系统的读写性能。当需要持续、恒定的写入场景时，应该减小该值
+# dirty_background_ratio参数与dirty_background_bytes参数只能指定其中一个
 vm.dirty_background_ratio = 10
+#
 vm.dirty_bytes = 0
-vm.dirty_expire_centisecs = 3000
 vm.dirty_ratio = 30
+vm.dirty_expire_centisecs = 3000
 vm.dirty_writeback_centisecs = 500
 vm.dirtytime_expire_seconds = 43200
+```
 
 在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能
 
