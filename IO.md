@@ -274,7 +274,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 
 ## 命令
 - 监听某端口的TCP情况：tcpdump -nn -i eth0 port 9090
-- strace -ff -o out `cmd`
+- 监控用户空间进程和内核的交互，比如系统调用、信号传递、进程状态变更等：strace -ff -o out `cmd`
 
 ## TCP
 面向连接的，可靠的传输协议
