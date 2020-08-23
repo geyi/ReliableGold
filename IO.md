@@ -275,8 +275,10 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 ## 命令
 - 监听某端口的TCP情况：tcpdump -nn -i eth0 port 9090
 - 监控用户空间进程和内核的交互，比如系统调用、信号传递、进程状态变更等：strace -ff -o out `cmd`
+- route -n
+- nc localhost 9090
 
-## TCP
+##  系统调用TCP
 面向连接的，可靠的传输协议
 
 三次握手 -> 内核开辟资源（握手的过程在内核完成，即便没有调用ServerSocket的accept方法）
@@ -302,8 +304,20 @@ MSS 数据内容的大小
 1. socket 创建一个server socket 返回sfd（服务端的文件描述符）
 2. bind sfd到一个地址 端口
 3. listen sfd
-4. accept sfd 返回接收的socket的cfd（客户端的文件描述符） 阻塞的
+4. accept sfd 返回接收的socket的cfd（客户端的文件描述符） **阻塞的** accept是一次系统调用
 
-5. clone 创建子线程处理客户端的socket
+5. clone 创建子线程处理客户端的socket（因为阻塞所以使用创建线程的方式处理客户端链接） clone是一次系统调用（导致连接建立慢的原因，优化方案：线程池化。但是要注意过多的线程会导致CPU时间浪费在线程的上下文切换上）
 
-6. recv cfd 阻塞的
+6. recv cfd **阻塞的**
+
+BIO的弊端：所有内核的调用都是阻塞
+
+### NIO
+1. socket 创建一个server socket 返回sfd（服务端的文件描述符）
+2. bind sfd到一个地址 端口
+3. listen sfd
+4. accept sfd 返回接收的socket的cfd（客户端的文件描述符）或者-1 **非阻塞的** accept是一次系统调用
+5. recv cfd **非阻塞**
+
+
+## C10K
