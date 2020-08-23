@@ -277,6 +277,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 - 监控用户空间进程和内核的交互，比如系统调用、信号传递、进程状态变更等：strace -ff -o out `cmd`
 - route -n
 - nc localhost 9090
+- ulimit -SHn 655360
 
 ##  系统调用TCP
 面向连接的，可靠的传输协议
@@ -318,6 +319,8 @@ BIO的弊端：所有内核的调用都是阻塞
 3. listen sfd
 4. accept sfd 返回接收的socket的cfd（客户端的文件描述符）或者-1 **非阻塞的** accept是一次系统调用
 5. recv cfd **非阻塞**
+
+### NIO多路复用器
 
 
 ## C10K
