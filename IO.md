@@ -104,12 +104,8 @@ drwx------. 2 root root 12288 8月  16 12:14 lost+found
 lsof：用于列出一个进程打开了哪些文件。如：`lsof -op $$`
 
 proc是系统内存的映射，这个目录的内容不在硬盘上而是在内存里。
-```
-/proc
-/proc/$$
-$$表示当前bash的pid（$BASHPID）
-/proc/$$/fd（lsof -op $$）
-```
+- /proc/$$（$$表示当前bash的pid（$BASHPID））
+- /proc/$$/fd（lsof -op $$）
 
 ## 输入/输出重定向
 任何程序都有
