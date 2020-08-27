@@ -4,7 +4,7 @@ VFS：虚拟文件系统
 
 把VFS当做暴露给用户空间程序的统一接口，用来访问不同的硬件设备（VFS挂载了不同的硬件设备）
 
-两个程序如果访问的是同一个文件，文件的inode id和pagecache是共享的
+两个程序如果访问的是同一个文件，文件的**inode id**和**pagecache**是共享的
 
 dirty：程序修改过的pagecache被标记为脏
 
@@ -43,7 +43,7 @@ Linux下一切皆文件，由此可以引导出不同的文件类型
 3. 将块设备格式化为ext2格式
 4. 挂载块设备
 5. 查看设备挂载情况
-6. 模拟文件系统
+6. 在模拟文件系统中进行操作
 ```
 dd if=/dev/zero of=mydisk.img bs=1048576 count=100
 losetup /dev/loop0 mydisk.img
@@ -299,9 +299,7 @@ MSS 数据内容的大小
 2. bind sfd到一个地址 端口
 3. listen sfd
 4. accept sfd 返回接收的socket的cfd（客户端的文件描述符） **阻塞的** accept是一次系统调用
-
 5. clone 创建子线程处理客户端的socket（因为阻塞所以使用创建线程的方式处理客户端链接） clone是一次系统调用（导致连接建立慢的原因，优化方案：线程池化。但是要注意过多的线程会导致CPU时间浪费在线程的上下文切换上）
-
 6. recv cfd **阻塞的**
 
 BIO的弊端：所有内核的调用都是阻塞
