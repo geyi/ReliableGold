@@ -317,3 +317,5 @@ BIO的弊端：所有内核的调用都是阻塞
 
 
 ## C10K
+
+http://www.kegel.com/c10k.html
