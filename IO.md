@@ -333,7 +333,30 @@ man 2 select
 > 在epoll之前的回调：只是完成了将网卡发来的数据走内核网络协议，最终关联到fd的buffer。所以，应用程序在某一时间如果询问内核某一个或某些fd是否读写时，会有状态返回。
 > 如果内核在回调处理中加入
 
+### TCP连接状态
+FIN_WAIT2：发起连接断开的一端，在收到对端的FIN之前，本端连接处于FIN_WAIT2状态。
+CLOSE_WAIT：在被动关闭连接的情况下，已经接收到FIN，但是还没有发送自己的FIN时，连接处于CLOSE_WAIT状态。
+TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并发送了ACK之后，连接处于TIME_WAIT状态。
 
+> 为什么要有TIME_WAIT状态
+> 假设最终的ACK丢失，主机2将重发FIN（假设先由主机1发起的连接断开请求），主机1必须维护TCP状态信息以便可以重发最终的ACK，否则会发送RST，结果主机2认为发生错误。TCP实现必须可靠地终止连接的两个方向，主机1必须进入TIME_WAIT状态，因为主机1可能面临重发最终ACK的情形。
+
+### Java中使用EPOLL时的系统调用
+1. socket(AF_INET6, SOCK_STREAM, IPPROTO_IP) = 8
+2. fcntl(8, F_SETFL, O_RDWR|O_NONBLOCK)    = 0
+3. bind(8, {sa_family=AF_INET6, sin6_port=htons(9000), inet_pton(AF_INET6, "::", &sin6_addr), sin6_flowinfo=htonl(0), sin6_scope_id=0}, 28) = 0
+4. listen(8, 50)
+5. epoll_create(256)
+6. epoll_ctl(11, EPOLL_CTL_ADD, 8, {EPOLLIN, {u32=8, u64=140681653780488}}) = 0
+7. epoll_wait(11, [{EPOLLIN, {u32=8, u64=140681653780488}}], 8192, -1) = 1
+8. accept(8, {sa_family=AF_INET6, sin6_port=htons(45812), inet_pton(AF_INET6, "::1", &sin6_addr), sin6_flowinfo=htonl(0), sin6_scope_id=0}, [28]) = 12
+9. fcntl(12, F_SETFL, O_RDWR|O_NONBLOCK)   = 0
+10. epoll_ctl(11, EPOLL_CTL_ADD, 12, {EPOLLIN, {u32=12, u64=140681653780492}}) = 0
+11. epoll_wait(11, [{EPOLLIN, {u32=12, u64=140681653780492}}], 8192, -1) = 1
+12. read(12, "123123123\n", 1024)           = 10
+13. write(12, "123123123\n", 10)            = 10
+
+当有N个fd有R/W处理的时候，将N个fd分组，每一组一个selector，将一个selector压到一个线程上。即，一个线程一个selector，处理一批fd，且处理过程是线性的。当有一组这样selector时，就实现了并行的处理fd。
 
 ## C10K
 
