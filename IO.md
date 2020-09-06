@@ -358,6 +358,8 @@ TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并发送了AC
 
 当有N个fd有R/W处理的时候，将N个fd分组，每一组一个selector，将一个selector压到一个线程上。即，一个线程一个selector，处理一批fd，且处理过程是线性的。当有一组这样selector时，就实现了并行的处理fd。
 
+![Netty架构图](https://github.com/geyi/ReliableGold/blob/master/image/Netty/Netty%E6%9E%B6%E6%9E%84%E5%9B%BE.png?raw=true)
+
 ## C10K
 
 http://www.kegel.com/c10k.html
