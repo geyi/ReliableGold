@@ -271,6 +271,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 - 监控用户空间进程和内核的交互，比如系统调用、信号传递、进程状态变更等：strace -ff -o out `cmd`
 - route -n
 - nc localhost 9090
+- nc -l localhost 9090
 - ulimit -SHn 655360
 
 ##  系统调用TCP
