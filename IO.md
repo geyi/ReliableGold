@@ -312,7 +312,7 @@ BIO的弊端：所有内核的调用都是阻塞
 4. accept sfd 返回接收的socket的cfd（客户端的文件描述符）或者-1 **非阻塞的** accept是一次系统调用
 5. recv cfd **非阻塞**
 
-NIO的弊端：虽然recv的系统调用是非阻塞的，但是很多次的调用是无意义的，浪费的
+NIO的弊端：虽然recv的系统调用是非阻塞的，但是很多次的调用是无意义的（没有数据到来），浪费的
 
 
 ### NIO多路复用器
@@ -324,11 +324,14 @@ synchronous I/O multiplexing
 ```
 yum install man man-pages
 man 2 select
+cd /proc/sys/fs/epoll
 ```
 
 其实无论是NIO，还是SELECT或者POLL，他们都要遍历所有的I/O询问状态。
 只不过在NIO中，由应用程序执行遍历操作，这个遍历过程的成本在用户态内核态的切换。
 而SELECT/POLL的遍历过程只触发了一次系统调用，此时由应用程序将fds传递给内核，由内核执行遍历操作。
+
+selec/poll的弊端：每次都要重新重复的传递fds，并进行全量遍历
 
 > 中断 -》 回调  
 > 在epoll之前的回调：只是完成了将网卡发来的数据走内核网络协议，最终关联到fd的buffer。所以，应用程序在某一时间如果询问内核某一个或某些fd是否读写时，会有状态返回。
@@ -364,3 +367,10 @@ TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并发送了AC
 ## C10K
 
 http://www.kegel.com/c10k.html
+
+
+## RPC
+- netty中，一个ServerBootstrap可以绑定多个端口，每个端口对应着相同的handler。也可以多个ServerBootstrap绑定多个端口，每个端口拥有不同的handler。
+- 将NioEventLoopGroup视为CPU资源。
+- 只有块设备才能做mmap映射
+- 操作系统通过关闭中断直接干预数据从网卡拷贝到内核空间的套接字缓存。同样在设计程序时，程序员也应该尽可能快的把数据从内核空间的套接字缓存拷贝到用户空间。
