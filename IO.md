@@ -370,10 +370,10 @@ http://www.kegel.com/c10k.html
 
 
 ## RPC
-- netty中，一个ServerBootstrap可以绑定多个端口，每个端口对应着相同的handler。也可以多个ServerBootstrap绑定多个端口，每个端口拥有不同的handler。
+- netty中，一个ServerBootstrap可以绑定多个端口，每个端口对应着相同的handler。也可以多个ServerBootstrap分别绑定到不同的端口，每个端口拥有不同的handler。
 - 将NioEventLoopGroup视为CPU资源。
 - 只有块设备才能做mmap映射
-- 操作系统通过关闭中断直接干预数据从网卡拷贝到内核空间的套接字缓存。同样在设计程序时，程序员也应该尽可能快的把数据从内核空间的套接字缓存拷贝到用户空间。
+- 操作系统通过关闭中断直接干预数据从网卡拷贝到内核空间的套接字缓存。同样在设计程序时，程序员也应该尽可能快的把数据从内核空间的套接字缓存区读到用户空间。
 - I/O读取是线性的（从内核到app）
 - 无状态：在连接池取连接，并在发送和返回的生命周期里锁定连接。
 - 有状态：consumer + provider端同步实现有状态协议（requestID）。发送和接受可以异步，连接可以共享使用。
