@@ -31,7 +31,7 @@ CPU为了提高指令的执行效率。
 
 ### Java中创建对象分为三步
 1. new #2 <T>
-2. invokespecial #3 <T.<init>>
+2. invokespecial #1 <T.<init>>
 3. astore_1
 
 ### 有序性保障
