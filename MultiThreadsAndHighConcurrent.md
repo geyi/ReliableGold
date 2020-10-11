@@ -58,14 +58,19 @@ CAS是CPU原语指令级的原子操作
 
 ABA问题，使用版本号解决，版本号是递增的。
 
+LongAdder使用了分段锁
+
+# ReentrantLock
 ReentrantLock与Synchronized
-公平非公平
-可以被打断
-可以实现选择性通知
+- 尝试获取锁（tryLock）
+- 可打断的加锁（lockInterruptibly）
+- 公平锁非公平锁（ReentrantLock带参数的构造方法）
+- 可以实现选择性通知（Condition）
 
-LockSupport：park与unpark（线程挂起唤醒，在AQS中使用）
+> LockSupport：park与unpark（线程挂起唤醒，在AQS中使用）
 
-CountDownLatch：倒数锁。等待一组线程执行完，再继续执行await后的操作。
+# CountDownLatch
+倒数锁。等待一组线程执行完，再继续执行await后的操作。
 
 CyclicBarrier：循环栅栏。让一组线程同时到达一个屏障（也可以叫同步点）前被阻塞，直到最后一个线程到达屏障时，屏障才会开门，所有被屏障拦截的线程才会继续干活。
 
