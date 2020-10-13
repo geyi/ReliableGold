@@ -72,8 +72,10 @@ ReentrantLock与Synchronized
 # CountDownLatch
 倒数锁。等待一组线程执行完，再继续执行await后的操作。
 
-CyclicBarrier：循环栅栏。让一组线程同时到达一个屏障（也可以叫同步点）前被阻塞，直到最后一个线程到达屏障时，屏障才会开门，所有被屏障拦截的线程才会继续干活。
+# CyclicBarrier
+CyclicBarrier：循环栅栏。直到指定数量的参与者都调用了await方法，栅栏才会被推倒，参与者继续执行。
 
+# Phaser
 Phaser [feɪz] ：阶段性栅栏。参加婚礼的例子。
 
 ReentrantReadWriteLock：读写锁。读读并行，读写互斥，写写互斥。
