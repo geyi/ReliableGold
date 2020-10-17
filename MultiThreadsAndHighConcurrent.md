@@ -78,11 +78,14 @@ CyclicBarrier：循环栅栏。直到指定数量的参与者都调用了await�
 # Phaser
 Phaser [feɪz] ：阶段性栅栏。参加婚礼的例子。
 
+# ReentrantReadWriteLock
 ReentrantReadWriteLock：读写锁。读读并行，读写互斥，写写互斥。
 
+# Semaphore
 Semaphore [ˈseməfɔːr] ：信号量。控制并行量。
 
-Exchange：两个线程间交换数据。线程间通信。
+# Exchanger
+Exchanger：两个线程间交换数据。线程间通信。
 
 两个题目
 
