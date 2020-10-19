@@ -67,7 +67,9 @@ ReentrantLock与Synchronized
 - 公平锁非公平锁（ReentrantLock带参数的构造方法）
 - 可以实现选择性通知（Condition）
 
-> LockSupport：park与unpark（线程挂起唤醒，在AQS中使用）
+# LockSupport
+- park与unpark（线程挂起与唤醒，在AQS中使用）。
+- unpark可以先于park调用。
 
 # CountDownLatch
 倒数锁。等待一组线程执行完，再继续执行await后的操作。
