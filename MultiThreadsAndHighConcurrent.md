@@ -117,16 +117,17 @@ ConcurrentHashMap：线程安全实现Synchronized CAS
 
 ArrayList
 Vector
-ConcurrentLinkedQueue：单向链表，add remove offer peek poll。线程安全实现CAS
+ConcurrentLinkedQueue：单向链表，add remove offer poll peek（不从队列中移除元素）。线程安全实现CAS
 
-ConcurrentHashMap
-ConcurrentSkipListMap：跳表，有序
+ConcurrentHashMap（HashMap）
+ConcurrentSkipListMap：跳表，有序（TreeMap）
 
-CopyOnWriteArrayList：底层数据结构数组，添加元素时加锁（ReentrantLock），写时复制，读取时不加锁。
+CopyOnWriteArrayList：底层数据结构数组，添加元素时加锁（ReentrantLock），写时复制，读取时不加锁。（用在读多写少，数据一致性要求不高的场景）
 CopyOnWriteArraySet：底层数据结构数组，先判断要加入的元素是不是已存在，然后加锁（ReentrantLock），复制数组，添加元素。
 
 LinkedBlockingQueue：单向链表，put take。阻塞实现 ReentrantLock Condition
 ArrayBlockingQueue：数组，put take。阻塞实现 ReentrantLock Condition
+阻塞指的是，队列满时put阻塞，队列为空时take阻塞。
 
 DelayQueue
 应用场景：1. 按时间进行任务调度
