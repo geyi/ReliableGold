@@ -130,9 +130,10 @@ ArrayBlockingQueue：数组，put take。阻塞实现 ReentrantLock Condition
 阻塞指的是，队列满时put阻塞，队列为空时take阻塞。
 
 DelayQueue
-应用场景：1. 按时间进行任务调度
+内部有一个PriorityQueue
+应用场景：1. 按时间进行任务调度（获取推送统计数据）
 
-SynchronousQueue：同步移交队列。线程间通信。
+SynchronousQueue：同步移交队列，put元素时会一直阻塞，直到有一个消费者（线程）来消费。线程间通信。
 
 TransferQueue：如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
 
