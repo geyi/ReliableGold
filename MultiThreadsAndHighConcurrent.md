@@ -165,12 +165,15 @@ Future：代表一个线程任务的运行结果
 FutureTask：既是一个可运行的线程任务，又是一个保存运行结果的对象
 
 Executors：线程池的工厂
-newFixed
-newCached
-newSingle
-newScheduled
+- newFixed - 任务量相对固定
+- newCached - 大量的执行时间短的任务
+- newSingle - 单线程，顺序执行任务
+- newScheduled - 定时任务
 
 线程池大小设置，N(threads) = N(cpu) * U(cpu) * (1 + W/C)
+- N(cpu) - 处理器的核心数目
+- U(cpu) - 期望的CPU的利用率
+- W/C - 等待时间与计算时间的比率
 
 并发是指任务提交，并行是指任务执行。
 并行是并发的子集。
