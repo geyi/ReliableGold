@@ -33,3 +33,36 @@ memcached的value没有类型的概念
 
 redis的server中对每种类型的数据都有自己的操作方法
 计算向数据移动
+
+
+yum -y install wget
+mkdir software
+cd software
+wget http://download.redis.io/releases/redis-6.0.6.tar.gz
+tar zxf redis-6.0.6.tar.gz
+cd redis-6.0.6
+make
+yum -y install gcc
+make distclean
+make install PREFIX=/opt/redis6
+vim /etc/profile
+export REDIS_HOME=/opt/redis6
+export PATH=$PAHT:$REDIS_HOME/bin
+source /etc/profile
+cd utils
+./install-server.sh
+
+JVM 一个线程的成本1MB
+线程多了调度成本高
+内存成本
+
+redis每连接内的命令是顺序处理的
+
+redis-cli
+help
+help @string
+
+
+key
+type属性表示value的类型
+encoding属性表示编码方式
