@@ -79,4 +79,7 @@ redis存储的数据是**进制安全的**
 ## List
 数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素
 
-同向命令（LPUSH LPOP）实现了栈，反向命令（LPSUH RPOP）实现了队列
+同向命令（LPUSH LPOP）实现了栈
+反向命令（LPSUH RPOP）实现了队列
+通过索引操作List（LINDEX LSET）实现了队列
+阻塞的单播队列（BLPOP LPUSH）
