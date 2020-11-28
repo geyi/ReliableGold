@@ -45,7 +45,7 @@ memcached的value没有类型的概念
 
 redis的server对每种类型的数据都有自己的操作方法（计算向数据移动)
 
-## 安装Redis
+# 安装Redis
 ```
 yum -y install wget
 mkdir software
@@ -72,23 +72,47 @@ cd utils
 redis每连接内的命令是顺序处理的
 
 
-## KEY
+# KEY
 type属性表示value的类型
 encoding属性表示value的编码方式
 
 redis存储的数据是**进制安全的**
 
-## VALUE的类型
+# VALUE的类型
 
-### String
+## String
 - 字符串
 - 数值
-- bitmap
+- bitmaps
 
-### List
+## List
 数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素
 
 - 同向命令（LPUSH LPOP）实现了栈
 - 反向命令（LPSUH RPOP）实现了队列
 - 通过索引操作List（LINDEX LSET）实现了队列
 - 阻塞的单播队列（BLPOP LPUSH）
+
+## Hash
+
+应用场景：
+保存用户信息
+对hash中的元素进行数值计算
+
+## Set
+
+集合操作
+
+SRANDMEMBER
+
+## sorted_set
+
+物理内存左小右大，不随命令发生变化
+
+具有集合操作指令，同时带有权重、聚合指令
+
+底层数据结构是**跳跃表**
+随机造层
+
+应用场景：
+排行榜
