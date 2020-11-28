@@ -116,3 +116,23 @@ SRANDMEMBER
 
 应用场景：
 排行榜
+
+# Redis 管道
+
+一次发送多个命令，节省往返时间，降低了通信成本，例：
+`echo -e 'set k1 99\n incr k1\n get k1' | nc localhost 6379`
+
+
+# Pub/Sub
+
+广播
+
+
+# Redis 事务
+
+谁的EXEC先到达，就先执行谁的事务
+
+
+# 布隆过滤器
+
+元素经过N个不同Hash函数
