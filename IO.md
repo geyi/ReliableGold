@@ -231,7 +231,14 @@ mydisk.img
 head -8 test.txt | tail -1
 
 ### 基本特征
-1. 前面的输出作为后面输入
+1. 前面的输出作为后面的输入
+2. 管道会触发创建**子进程**
+
+```
+echo $$ | more
+echo $BASHPID | more
+$$ 高于 |
+```
 
 > 父子进程：
 
