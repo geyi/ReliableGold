@@ -76,21 +76,21 @@ redis每连接内的命令是顺序处理的
 type属性表示value的类型
 encoding属性表示value的编码方式
 
-redis存储的数据是**进制安全的**
+redis存储的数据是**二进制安全的**
 
 # VALUE的类型
 
 ## String
 - 字符串
 - 数值
-- bitmaps
+- bitmap
 
 ## List
 数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素
 
 - 同向命令（LPUSH LPOP）实现了栈
 - 反向命令（LPSUH RPOP）实现了队列
-- 通过索引操作List（LINDEX LSET）实现了队列
+- 通过索引操作List（LINDEX LSET）实现了数组
 - 阻塞的单播队列（BLPOP LPUSH）
 
 ## Hash
@@ -197,7 +197,7 @@ NO
 ALWAYS
 everysec
 
-bgrewriteaof：从写AOF文件
+bgrewriteaof：重写AOF文件
 
 # Redis 集群
 
@@ -228,4 +228,4 @@ Z：优先级，逻辑再拆分
 1个写成功时，没有说服力。三个节点三种状态谁也无法说服谁。网络分区
 
 使用奇数台
-3台和4台能够承担风险的数量是一样的，都是一台机器。但是4台的成本高于3台，而且更容易出现故障。
+例如，3台和4台服务器的集群都只能容忍一台服务器宕机。但是4台的成本高于3台，而且出现故障的概率更高。
