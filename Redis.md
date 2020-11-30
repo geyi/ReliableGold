@@ -229,3 +229,35 @@ Z：优先级，逻辑再拆分
 
 使用奇数台
 例如，3台和4台服务器的集群都只能容忍一台服务器宕机。但是4台的成本高于3台，而且出现故障的概率更高。
+
+# Redis 复制
+Redis使用默认的异步复制，其特点是低延迟和高性能
+
+追随主：replicaof host port
+
+故障恢复重新启动追随主：redis-server ./6381.conf --replicaof 127.0.0.1 6379
+
+redis-server ./6381.conf --replicaof 127.0.0.1 6379 --appendonly yes
+带上--appendonly yes参数启动时，会触发RDB落盘
+
+在主上可以看到有哪些从追随
+
+切换成主：replicaof no one
+
+
+- replica-server-stale-data yes：从节点同步数据时，是否对外提供查旧数据
+- replica-read-only yes：从节点是否只读
+- repl-diskless-sync no：是否直接将数据通过网络传输到从节点
+- repl-backlog-size 1mb：增量复制的队列大小，更新操作很多时需要设置大些
+- min-replicas-to-write 3：最小几个从节点写成功
+
+主从复制的模式需要人工干预
+
+# Redis Sentinel
+
+port 26379
+sentinel monitor mymaster 127.0.0.1 6379 2
+
+启动哨兵：redis-server ./26379.conf --sentinel
+
+一哨兵是怎么知道其他哨兵的
