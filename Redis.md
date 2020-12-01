@@ -245,7 +245,7 @@ redis-server ./6381.conf --replicaof 127.0.0.1 6379 --appendonly yes
 从节点切换成主节点：replicaof no one
 
 主从复制相关配置参数
-- replica-server-stale-data yes：从节点同步数据时，是否对外提供查旧数据
+- replica-serve-stale-data yes：从节点同步数据时，是否继续响应客户端的查询请求
 - replica-read-only yes：从节点是否只读
 - repl-diskless-sync no：是否直接将数据通过网络传输到从节点
 - repl-backlog-size 1mb：增量复制的队列大小，更新操作很多时需要设置大些
