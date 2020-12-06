@@ -287,6 +287,8 @@ sentinel monitor mymaster 127.0.0.1 6379 2
 
 方案：在客户端与Redis Server之间增加一个反向代理层（twemproxy，predixy，cluster，codies）
 
+各个代理的对比：https://blog.csdn.net/rebaic/article/details/76384028
+
 > 将数据分片的算法放到代理层
 
 # 预分区
