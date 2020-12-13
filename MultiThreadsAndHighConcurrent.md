@@ -155,7 +155,7 @@ ConcurrentSkipListMap
 HashSet
 LinkedHashSet
 TreeSet
-CopyOnWriteArrarySet
+CopyOnWriteArraySet
 ConcurrentSkipListSet
 
 Executor：把定义与运行分开
