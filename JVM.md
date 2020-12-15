@@ -37,7 +37,7 @@ JAVA_OPTS="-Xms1280M -Xmx1280M -Dfile.encoding=UTF-8 -Duser.timezone=Asia/Kolkat
 
 通用法则之一：将Java堆的初始值-Xms和最大值-Xmx设置为老年代活跃数据大小的3-4倍。
 
-通用法则之二：永久代的初始值-XX:PermSize及最大-XX:MaxPermSize应该是永久代活跃数据的1.2-1.5倍。
+通用法则之二：永久代的初始值-XX:PermSize及最大值-XX:MaxPermSize应该是永久代活跃数据的1.2-1.5倍。
 
 补充法则：新生代空间应该为老年代空间活跃数据的1-1.5倍。
 
