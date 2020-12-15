@@ -290,9 +290,9 @@ sentinel monitor mymaster 127.0.0.1 6379 2
 
 # 预分区
 
-![预分区](https://github.com/geyi/ReliableGold/blob/master/image/Redis/pre-par.png?raw=true)
+![预分区](https://raw.githubusercontent.com/geyi/ReliableGold/master/image/Redis/pre-parition.png)
 
-![Redis Cluster](https://github.com/geyi/ReliableGold/blob/master/image/Redis/pre-parition.png?raw=true)
+![Redis Cluster](https://raw.githubusercontent.com/geyi/ReliableGold/master/image/Redis/cluster.png)
 
 数据分治带来的问题
 1. 事务一致性问题
