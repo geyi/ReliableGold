@@ -4,7 +4,7 @@ VFS：虚拟文件系统
 
 把VFS当做暴露给用户空间程序的统一接口，用来访问不同的硬件设备（VFS挂载了不同的硬件设备）
 
-两个程序如果访问的是同一个文件，文件的**inode id**和**pagecache**是共享的
+两个程序如果访问的是同一个文件，文件的**inode id**和**page cache**是共享的（使用stat命令显示文件状态）
 
 dirty：程序修改过的pagecache被标记为脏
 
@@ -25,11 +25,11 @@ mount：挂载
 
 # Linux
 Linux下一切皆文件，由此可以引导出不同的文件类型
-- -：普通文件（可执行，图片，文本）
-- d：目录
-- l：链接
-- b：块设备（硬盘）
-- c：字符设备（键盘）
+- -（regular file）：普通文件（可执行，图片，文本）
+- d（directory）：目录
+- l（symbolic link）：链接
+- b（block special file）：块设备（硬盘）
+- c（character special file）：字符设备（键盘）
 - s：socket
 - p：pipeline
 - [eventpoll]：
@@ -237,8 +237,8 @@ head -8 test.txt | tail -1
 ```
 echo $$ | more
 echo $BASHPID | more
-$$ 高于 |
 ```
+虽然`echo $$`与`echo $BASHPID`的执行结果相同，都是获取当前bash进程的ID，但以上两个命令的执行结果却不同，原因是$$的优先级高于|
 
 > 父子进程：
 
@@ -346,7 +346,7 @@ cd /proc/sys/fs/epoll
 selec/poll的弊端：每次都要重新重复的传递fds，并进行全量遍历
 
 > 中断 -》 回调  
-> 在epoll之前的回调：只是完成了将网卡发来的数据走内核网络协议，最终关联到fd的buffer。所以，应用程序在某一时间如果询问内核某一个或某些fd是否读写时，会有状态返回。
+> 在epoll之前的回调：只是完成了将网卡发来的数据走内核网络协议，最终关联到fd的buffer。所以，应用程序在某一时间如果询问内核某一个或某些fd是否可读写时，会有状态返回。
 > 如果内核在回调处理中加入
 
 ### TCP连接状态
