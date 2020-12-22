@@ -293,7 +293,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 
 ### SOCKET
 socket是一个四元组，即：客户端的IP地址、客户端的端口号 + 服务端的IP地址、服务端的端口号
-> XIP_APORT + YIP_APROT : FD3
+> XIP_XPORT + YIP_YPROT : FD3
 > 
 > 服务端是否需要为client的连接分配一个随机端口号，答：不需要
 
