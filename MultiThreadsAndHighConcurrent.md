@@ -110,10 +110,19 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 - 虚引用：虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。应用：回收堆外内存。
 
 
-HashTable
-HashMap
-Collections.synchronizedMap
-ConcurrentHashMap：线程安全实现Synchronized CAS
+# HashTable
+- 使用synchronized同步方法保证线程安全。
+- 数据结构是数组 + 链表。向链表中增加元素时使用头插法。
+# HashMap
+- 如果两个对象使用equals方法比较的结果是相等的，那么这两个对象分别调用hashCode方法应该得到相同的整型值。
+- 如果两个对象使用equals方法比较的结果是不相等的，那么这两个对象分别调用hashCode方法应该得到不同的整型值，但这不是必须的。然而，程序员应该知道，为不相等的两个对象生成不同的整型值可以提高哈希表的性能。
+- Object类中定义hashCode方法为不同的对象返回了不同的整型值。这通常是通过将对象的内部地址转换为整数来实现。
+- 调用resize方法进行扩容时，会将原来的链表拆分成两个相对更短的链表，然后放到扩容后的数组中。（树形结构的节点同样会拆分成更小的树）
+- 数组长度使用2的N次方是因为这样可以利用位运算（性能更好）得到元素在数组中的位置。
+# Collections.synchronizedMap
+- 使用synchronized同步代码块保证线程安全，锁是SynchronizedMap对象本身。
+# ConcurrentHashMap
+- 线程安全实现Synchronized + CAS
 
 ArrayList
 Vector
