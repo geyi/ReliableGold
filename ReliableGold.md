@@ -147,6 +147,7 @@ eureka client
 ### Kubernetes
 - kubectl get pods | grep commerce
 - kubectl exec -it test-e-commerce-56cfdf7f58-qqt5p /bin/bash
+- kubectl logs -f test-e-commerce-56cfdf7f58-qqt5p
 
 
 
