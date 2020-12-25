@@ -123,6 +123,7 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 - 使用synchronized同步代码块保证线程安全，锁是SynchronizedMap对象本身。
 # ConcurrentHashMap
 - 线程安全实现Synchronized + CAS
+- ForwardingNode是Node的子类，hash值为-1
 
 ArrayList
 Vector
