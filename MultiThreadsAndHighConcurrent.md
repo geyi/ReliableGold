@@ -110,34 +110,54 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 - 虚引用：虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。应用：回收堆外内存。
 
 
-# HashTable
-- 使用synchronized同步方法保证线程安全。
-- 数据结构是数组 + 链表。向链表中增加元素时使用头插法。
 # HashMap
 - 如果两个对象使用equals方法比较的结果是相等的，那么这两个对象分别调用hashCode方法应该得到相同的整型值。
 - 如果两个对象使用equals方法比较的结果是不相等的，那么这两个对象分别调用hashCode方法应该得到不同的整型值，但这不是必须的。然而，程序员应该知道，为不相等的两个对象生成不同的整型值可以提高哈希表的性能。
 - Object类中定义hashCode方法为不同的对象返回了不同的整型值。这通常是通过将对象的内部地址转换为整数来实现。
 - 调用resize方法进行扩容时，会将原来的链表拆分成两个相对更短的链表，然后放到扩容后的数组中。（树形结构的节点同样会拆分成更小的树）
 - 数组长度使用2的N次方是因为这样可以利用位运算（性能更好）得到元素在数组中的位置。
+- 首次put元素时，先要初始化一个长度为16的Node类型的数组，然后计算出key的hash值，使用hash值与数组长度进行按位与操作，得出元素在数组中位置。如果该位置没有被其它元素占用，则直接将新的元素放在该位置，否则会比较新元素与旧元素的key的hash值及内容是否相等，相等则用新元素value值替换旧元素的value值。否则，判断旧元素是不是TreeNode（红黑树），如果是，则将新元素放到红黑树中。如果不是数型结构，则为链表，通过向后遍历链表，如果链表是存在旧元素的key的hash值及内容于新元素相等，同上。否则，将新元素放到链表的末尾。
+# LinkedHashMap
+- 继承了HashMap，自己维护了一个双向链表，可以保证两种顺序，插入顺序和读顺序（读过往后放）
+# TreeMap
+- 底层是红黑树，可以根据key进行排序。比较的两种方式：实现Comparator接口或者实现Comparable接口。
+# HashTable
+- 使用synchronized同步方法保证线程安全。
+- 数据结构是数组 + 链表。向链表中增加元素时使用头插法。
 # Collections.synchronizedMap
 - 使用synchronized同步代码块保证线程安全，锁是SynchronizedMap对象本身。
 # ConcurrentHashMap
 - 线程安全实现Synchronized + CAS
 - ForwardingNode是Node的子类，hash值为-1
+# ConcurrentSkipListMap
+- 底层数据结构是跳表，实现了有序，空间换时间。
 
-ArrayList
-Vector
-ConcurrentLinkedQueue：单向链表，add remove offer poll peek（不从队列中移除元素）。线程安全实现CAS
+# ArrayList
+- 底层数据结构为数组，支持随机访问，读取指定元素的时间复杂度为O(1)，是一种读取很快的集合类型。初始容量10，从索引0开始添加元素，超过数组容量会创建一个新的数组，容量为 oldCapacity + (oldCapacity >> 1)，然后使用System.arraycopy方法将原数组的元素复制到新数组中。为了避免不必要的复制，在提前知道元素个数时应该使用带有初始容量参数的构造方法创建ArrayList。
+# LinkedList
+- 底层数据结构为双向链表，不支持随机访问。新元素直接添加到链表的尾部，是一种插入和删除都很快的集合类型。适用于需要频繁插入删除元素的场景。
+# Vector
+- 底层数据结构为数组，默认的扩容策略是扩容到原来容量的两倍。是线程安全的，因为所有对集合的操作都加了锁（方法被Synchronized关键字修饰）。
+# CopyOnWriteArrayList
+- 底层数据结构数组，添加元素时加锁（ReentrantLock），写时复制，读取时不加锁。（用在读多写少，数据一致性要求不高的场景）
+# ConcurrentLinkedQueue
+- 单向链表，add remove offer poll peek（不从队列中移除元素）。线程安全实现CAS。
+# ArrayBlockingQueue
+- 数组，put take。阻塞实现 ReentrantLock Condition。有界队列。（阻塞指的是，队列满时put阻塞，队列为空时take阻塞）
+# LinkedBlockingQueue
+- 单向链表，put take。阻塞实现 ReentrantLock Condition。无界队列。
 
-ConcurrentHashMap（HashMap）
-ConcurrentSkipListMap：跳表，有序（TreeMap）
-
-CopyOnWriteArrayList：底层数据结构数组，添加元素时加锁（ReentrantLock），写时复制，读取时不加锁。（用在读多写少，数据一致性要求不高的场景）
-CopyOnWriteArraySet：底层数据结构数组，先判断要加入的元素是不是已存在，然后加锁（ReentrantLock），复制数组，添加元素。
-
-LinkedBlockingQueue：单向链表，put take。阻塞实现 ReentrantLock Condition
-ArrayBlockingQueue：数组，put take。阻塞实现 ReentrantLock Condition
-阻塞指的是，队列满时put阻塞，队列为空时take阻塞。
+# Set
+- 元素无序，不可重复
+# HashSet
+- 基于HashMap实现的
+# LinkedHashSet
+- 基于HashSet实现，实际是一个LinkedHashMap
+# TreeSet
+- 基于TreeMap实现
+# CopyOnWriteArraySet
+- 底层数据结构数组，先判断要加入的元素是不是已存在，然后加锁（ReentrantLock），复制数组，添加元素。
+# ConcurrentSkipListSet
 
 DelayQueue
 内部有一个PriorityQueue
