@@ -285,11 +285,26 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 - nc localhost 9090
 - nc -l localhost 9090
 - ulimit -SHn 655360
+- 当前系统可打开文件描述符的最大数量：cat /proc/sys/fs/file-max
+- 当前用户可打开文件描述符的最大数量：cat vi /etc/security/limits.conf（ulimit -a）
+- 当前进程可打开文件描述符的最大数量：cat /proc/sys/fs/file-nr
 
 ##  系统调用TCP
 面向连接的，可靠的传输协议
 
-三次握手 -> 内核开辟资源（握手的过程在内核完成，即便没有调用ServerSocket的accept方法）
+三次握手 -> 内核开辟资源（握手的过程在内核完成，即便没有调用ServerSocket的accept方法）。一条TCP连接消耗3.3KB左右的内存。
+
+```
+[root@192 ~]# sysctl -a | grep tcp_rmem
+net.ipv4.tcp_rmem = 4096        87380   5739808
+```
+tcp_rmem表示接收缓冲区的大小配置，该参数的三个值分别表示，TCP套接字接收缓冲区的最小值，默认值和最大值。
+
+```
+[root@192 ~]# sysctl -a | grep tcp_wmem
+net.ipv4.tcp_wmem = 4096        16384   4194304
+```
+tcp_wmem表示发送缓冲区的大小配置，该参数的三个值分别表示，TCP套接字发送缓冲区的最小值，默认值和最大值。
 
 ### SOCKET
 socket是一个四元组，即：客户端的IP地址、客户端的端口号 + 服务端的IP地址、服务端的端口号
