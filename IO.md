@@ -279,7 +279,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 # 网络IO
 
 ## 命令
-- 监听某端口的TCP情况：tcpdump -nn -i eth0 port 9090
+- 网络数据采集：tcpdump -nN -i eth0 port 9090
 - 监控用户空间进程和内核的交互，比如系统调用、信号传递、进程状态变更等：strace -ff -o out `cmd`
 - route -n
 - nc localhost 9090
@@ -289,8 +289,11 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 - 当前用户可打开文件描述符的最大数量：cat vi /etc/security/limits.conf（ulimit -a）
 - 当前进程可打开文件描述符的最大数量：cat /proc/sys/fs/file-nr
 
-##  系统调用TCP
-面向连接的，可靠的传输协议
+##  TCP
+
+It provides a reliable, stream-oriented, full-duplex connection between two sockets on top of ip(7), for both v4 and v6 versions.  TCP guarantees[ˌɡærənˈtiːz] that the data arrives in order and retransmits lost packets.  It generates and checks a per-packet checksum to catch transmission errors.  TCP does  not  preserve record boundaries.
+
+对于v4和v6版本，它在ip（7）之上的两个套接字之间提供了可靠的、面向流的全双工连接。TCP保证数据按顺序到达并重新传输丢失的数据包。它生成并检查每个包的校验和，以捕获传输错误。TCP不保留记录边界。
 
 三次握手 -> 内核开辟资源（握手的过程在内核完成，即便没有调用ServerSocket的accept方法）。一条TCP连接消耗3.3KB左右的内存。
 
