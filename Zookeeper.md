@@ -82,6 +82,34 @@ get /hello
 netstat -natp | grep -E '(2888|3888)'
 
 # PAXOS
-提议：议员只会接收大于当前编号的提议（包括已生效的和未生效的），每个提议都需要过半的议员同意才能生效。
-提议编号：编号是一直增长的，不能倒退。
+提议：议员只会接收大于当前编号的提议（包括已生效的和未生效的），每个提议都需要过半的议员同意才能生效。  
+提议编号：编号是一直增长的，不能倒退。  
 2PC：议员发起提议并收到超过半数的议员回复，就立即向所有议员发送通知，提议生效。收到生效消息的议员会将记录改成正式的法令。
+
+
+# ZK Cluster
+
+## 创建请求
+假设在一个有三个节点的ZK集群中（1个leader，2个follower）
+1. client发起创建请求
+2. 如果client连接的是follower，follower会将创建请求转发给leader
+3. leader自己维护了两个队列（先进先出），分别对应两个follower。leader通过两个队列将创建请求分别发送给两个follower。
+4. follower接收到创建请求并记录日志，最后回复leader一个成功的状态。
+5. 在此集群中只要有一个follower返回成功的状态，leader便告诉两个follower创建请求生效。
+
+## Leader选举
+**ZXID大的优先为Leader，如果相同则比较myid，myid大的优先作为Leader**
+
+假设在一个有四个节点的ZK集群中（1个Leader，3个Follower）
+- node01 (8, 1) Follower
+- node02 (8, 2) Follower
+- node03 (7, 3) Follower
+- node04 (8, 4) Leader 宕机
+1. 首先发现leader宕机的follower会发起leader选举，假设node03先发现，它会将(7, 3)广播出去。
+2. node01接收到(7, 3)时与自己的(8, 1)比较，这时不需要修改自身的投票，仍然保持(8, 1)。
+3. node01紧接着将自己的投票(8, 1)广播出去，同样node02不需要修改自身的投票，node03则会将自身投票修改为(8, 1)，并广播出去，但此次广告不会引起任何投票变化。
+4. node02接收到(7, 3)时与自己的(8, 2)比较，这时不需要修改自身的投票，仍然保持(8, 2)。
+5. node02紧接着将自己的投票(8, 2)广播出去，node01会将自身的投票修改(8, 2)，并广播出去。此时三个节点中已经有两个节点（node01, node02）投票(8, 2)，最终node02被选举为Leader。
+
+
+Redis比Zookeeper更快，但Zookeeper比Redis更可靠。Zookeeper更适合读多写少的场景。
