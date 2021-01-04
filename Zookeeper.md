@@ -113,3 +113,17 @@ netstat -natp | grep -E '(2888|3888)'
 
 
 **Redis比Zookeeper更快，但Zookeeper比Redis更可靠。Zookeeper更适合读多写少的场景。**
+
+# 配置中心
+参考basic项目com.airing.zookeeper.conf包下的demo
+
+# 分布式锁
+参考basic项目com.airing.zookeeper.lock包下的demo
+
+1. 争抢锁，只有一个人能获得锁
+2. 获得锁的服务如果宕机无法释放锁怎么办？（临时节点）
+3. 获得锁的服务在任务完成后释放锁
+4. 锁被释放时其他服务怎么知道？
+   1. 主动轮询。弊端：延迟，压力。
+   2. watch。解决了延迟问题，压力大的问题依然存在（当锁释放时，zk服务器需要回调watch它的所有客户端）。
+   3. sequential + watch。每一个节点watch它的前一个节点，最小的节点获得锁。一旦最小的节点释放了锁，zk服务器只需要回调一个节点。
