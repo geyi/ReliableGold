@@ -112,4 +112,4 @@ netstat -natp | grep -E '(2888|3888)'
 5. node02紧接着将自己的投票(8, 2)广播出去，node01会将自身的投票修改(8, 2)，并广播出去。此时三个节点中已经有两个节点（node01, node02）投票(8, 2)，最终node02被选举为Leader。
 
 
-Redis比Zookeeper更快，但Zookeeper比Redis更可靠。Zookeeper更适合读多写少的场景。
+**Redis比Zookeeper更快，但Zookeeper比Redis更可靠。Zookeeper更适合读多写少的场景。**

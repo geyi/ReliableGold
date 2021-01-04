@@ -161,13 +161,15 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 - 底层数据结构数组，先判断要加入的元素是不是已存在，然后加锁（ReentrantLock），复制数组，添加元素。
 # ConcurrentSkipListSet
 
-DelayQueue
-内部有一个PriorityQueue
-应用场景：1. 按时间进行任务调度（获取推送统计数据）
+# DelayQueue
+- 内部有一个PriorityQueue
+- 应用场景：1. 按时间进行任务调度（获取推送统计数据）
 
-SynchronousQueue：同步移交队列，put元素时会一直阻塞，直到有一个消费者（线程）来消费。线程间通信。
+# SynchronousQueue
+- 同步移交队列，put元素时会一直阻塞，直到有一个消费者（线程）来消费。线程间通信。
 
-TransferQueue：如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
+# TransferQueue
+- 如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
 
 ArrayList
 LinkedList
