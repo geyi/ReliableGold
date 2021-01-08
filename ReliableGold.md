@@ -144,6 +144,8 @@ eureka client
 
 ## Linux
 
+- 查看进程占用内存大小：ps aux | grep demo-0.0.1-SNAPSHOT.jar | grep -v grep | awk '{print $11 "\t" $6/1024"MB" }'
+
 ### Kubernetes
 - kubectl get pods | grep commerce
 - kubectl exec -it test-e-commerce-56cfdf7f58-qqt5p /bin/bash
