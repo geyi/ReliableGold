@@ -148,3 +148,7 @@ show status like 'Handler_read%';
 - 锁等待时间
 - 生成统计信息
 
+## 优化特定类型的查询
+
+### 优化union查询
+除非确实需要MySQL服务器消除重复的行，否则一定要使用union all，因为没有all关键字，MySQL会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高（使用临时表去重）。
