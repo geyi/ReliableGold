@@ -96,12 +96,14 @@ show profile for query 2;
 - Hash表
 
 ## 索引匹配方式
-- 全值匹配
+- 全值匹配：与索引中的所有列进行匹配。
 - 最左前缀匹配
 - 列前缀匹配（'abc%'）
 - 范围匹配
-- 精准匹配某一列并范围匹配另一列
+- 精准匹配某一列并范围匹配另一列：建立组合索引(a, b, c)。查询条件where a = 1 and b > 2 and c = 3，只会使用a，b索引列。
 - 只访问索引的查询（索引覆盖）
+
+> source *.sql
 
 ## 哈希索引
 
@@ -115,7 +117,19 @@ show profile for query 2;
 - 当使用索引列进行查询的时候尽量不要使用表达式，把计算放到业务层而不是数据库层
 - 尽量使用主键查询，而不是其他索引，因为主键查询不会触发回表查询
 - 使用前缀索引（索引字段不宜太长）
-- 使用索引扫描来排序
+  ```sql
+  select
+      count(distinct left(city,7))/count(*) as sel7,
+      count(distinct left(city,8))/count(*) as sel8
+  from
+      city;
+  ```
+- 使用索引扫描来排序  
+  以下两种情况不会使用索引排序
+  ```sql
+  where a > 1 order by b, c
+  where a = 1 order by b asc, c desc
+  ```
 - union all, in, or都能够使用索引，但是推荐使用in
 - 范围列可以用到索引
 - 强制类型转换会导致全表扫描
