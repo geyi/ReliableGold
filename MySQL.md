@@ -175,5 +175,11 @@ show status like 'Handler_read%';
 
 ## 优化特定类型的查询
 
+### 优化limit分页
+- 优化前的SQL语句：select * from t_employeelog_logdetail tel limit 48000, 10;
+- 优化后的SQL语句：select * from t_employeelog_logdetail tel inner join (select FID from t_employeelog_logdetail tel2 limit 48000, 10) as t2 using(fid);
+
+优化此类查询的最简单的办法就是尽可能地使用覆盖索引，而不是查询所有的列。
+
 ### 优化union查询
 除非确实需要MySQL服务器消除重复的行，否则一定要使用union all，因为没有all关键字，MySQL会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高（使用临时表去重）。
