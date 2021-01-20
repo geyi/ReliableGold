@@ -220,3 +220,28 @@ Partitioning takes this notion a step further, by enabling you to distribute por
 - 键分区（KEY Partitioning）：类似于哈希分区，不同之处在于，仅提供一个或多个要评估的列，并且MySQL服务器提供了自己的哈希函数。这些列可以包含非整数值，因为MySQL提供的哈希函数可以保证整数结果，而与列数据类型无关。
 
 > https://dev.mysql.com/doc/refman/5.7/en/partitioning-types.html
+
+## 服务器参数设置
+
+### InnoDB
+```sql
+-- 数据和索引的缓存池大小
+show variables like 'innodb_buffer_pool_size';
+-- 0每次写log buffer，每秒写page cache并刷磁盘
+-- 1每次写log buffer并写page cache并刷磁盘
+-- 2每次写log buffer并写page cache，每秒刷磁盘
+show variables like 'innodb_flush_log_at_trx_commit';
+-- 并发线程数，0表示不限制
+show variables like 'innodb_thread_concurrency';
+-- 写日志文件的缓存区大小
+show variables like 'innodb_log_buffer_size';
+-- 日志文件的大小
+show variables like 'innodb_log_file_size';
+show variables like 'innodb_log_files_in_group';
+-- 读缓存区大小，对表进行顺序扫描的请求将分配到一个读入缓冲区
+show variables like 'read_buffer_size';
+-- 随机读缓冲区大小
+show variables like 'read_rnd_buffer_size';
+-- 为每张表分配一个新的文件
+show variables like 'innodb_file_per_table';
+```
