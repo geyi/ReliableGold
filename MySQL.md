@@ -183,3 +183,40 @@ show status like 'Handler_read%';
 
 ### 优化union查询
 除非确实需要MySQL服务器消除重复的行，否则一定要使用union all，因为没有all关键字，MySQL会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高（使用临时表去重）。
+
+
+# 分区表
+
+In MySQL, the InnoDB storage engine has long supported the notion of a tablespace, and the MySQL Server, even prior to the introduction of partitioning, could be configured to employ different physical directories for storing different databases (see Section 8.12.3, “Using Symbolic Links”, for an explanation of how this is done).  
+在MySQL中，InnoDB存储引擎长期以来一直支持表空间的概念，而且在引入分区之前，MySQL服务器就支持为不同的数据库配置不同的物理空间。
+
+> 为不同的数据库配置不同的物理空间类似于**分库**
+
+Partitioning takes this notion a step further, by enabling you to distribute portions of individual tables across a file system according to rules which you can set largely as needed. In effect, different portions of a table are stored as separate tables in different locations.   
+分区使您可以根据设置的规则在文件系统中分布各个表的各个部分，从而使这一概念更进一步。实际上，表的不同部分作为单独的表存储在不同的位置。
+
+> 分区使一个表的不同部分存储在不同的位置类似于**分表**
+
+## 优点
+- 分区使在一个表中存储的数据比在单个磁盘或文件系统分区中存储的数据更多。(因为不同的分区可以存储在不同的物理设备上，进而也避免了单个物理设备带来的性能瓶颈)
+
+- 通常，通过删除仅包含该数据的一个或多个分区，可以轻松地从分区表中删除失去其用途的数据。相反，在某些情况下，通过添加一个或多个用于专门存储该数据的新分区，可以大大简化添加新数据的过程。
+
+- 满足以下条件的某些查询可以大大优化：满足给定WHERE子句的数据只能存储在一个或多个分区上（即不是所有分区上），这会自动从搜索中排除任何剩余的分区。由于可以在创建分区表之后更改分区，因此您可以重新组织数据以增强（优化，适应）在首次设置分区方案时可能不经常使用的频繁查询。这种排除不匹配分区（以及因此包含的任何行）的能力通常称为**分区修剪**。有关更多信息，请参见第21.4节“分区修剪”。
+
+- 另外，MySQL支持显式的分区选择查询。例如，`SELECT * FROM t PARTITION (p0,p1) WHERE c < 5`仅选择那些在分区行p0和p1其匹配的WHERE条件。在这种情况下，MySQL不检查table的任何其他分区；当您已经知道要检查的分区时，这可以大大加快查询速度。选择分区还支持数据修改语句DELETE，INSERT，REPLACE，UPDATE和LOAD DATA，LOAD XML。有关更多信息和示例，请参见这些语句的描述。
+
+## 限制
+- 最大分区数：对于不使用NDB存储引擎的给定表，最大分区数为8192。此数目包括子分区。
+- 分区键的数据类型：分区键必须是整数列或可解析为整数的表达式。
+
+> https://dev.mysql.com/doc/refman/5.7/en/partitioning-limitations.html
+
+## 类型
+- 范围分区（RANGE Partitioning）：这种类型的分区根据列值在给定范围内将行分配给分区。
+- 列表分区（LIST Partitioning）：类似于范围分区，两种类型的分区的主要区别在于，在列表分区中，每个分区都是基于一组值列表中的一个而不是一组连续范围中的列值来定义和选择分区的。
+- 列分区（COLUMNS Partitioning）：
+- 哈希分区（HASH Partitioning）：根据用户定义的表达式返回的值来选择一个分区，该表达式对将要插入表中的行的列值进行操作。
+- 键分区（KEY Partitioning）：类似于哈希分区，不同之处在于，仅提供一个或多个要评估的列，并且MySQL服务器提供了自己的哈希函数。这些列可以包含非整数值，因为MySQL提供的哈希函数可以保证整数结果，而与列数据类型无关。
+
+> https://dev.mysql.com/doc/refman/5.7/en/partitioning-types.html
