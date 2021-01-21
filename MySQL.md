@@ -1,5 +1,7 @@
-# 查看sql语句的执行时间
-```
+# 性能监控
+
+## 查看sql语句的执行时间
+```sql
 set profiling=1;
 select * from test;
 show profiles;
@@ -8,9 +10,10 @@ show profile;
 show profile for query 2;
 ```
 
-# performance_schema
+## performance_schema
 
-# show processlist;
+## show processlist;
+
 
 # Schema与数据类型优化
 
@@ -26,7 +29,7 @@ show profile for query 2;
 
 ## 尽量避免null
 - 负向比较（!=）会引发全表扫描。
-- 如果查询中包含可为null的列，对MySQL来说很难优化，因为可为null的列使得索引、索引统计和值比较都更加复杂。
+- 如果允许空值，不等于（!=）的查询，不会将空值行（row）包含进来，此时的结果集往往是不符合预期的，此时往往要加上一个or条件，把空值（is null）结果包含进来。
 
 ## 数据类型
 
@@ -34,10 +37,10 @@ show profile for query 2;
 可以使用的几种整型类型：TINYINT，SMALLINT，MEDIUMINT，INT，BIGINT分别使用8，16，24，32，64位存储空间。应尽量使用满足需求的最小数据类型。
 
 ### 字符类型
-1. char长度固定，即每条数据占用等长字节空间；最大长度是255个字符，适用于身份证号、手机号等定长字符串的存储。
-2. varchar可变长度，可以设置最大长度；最大空间是65535个字节，适用于长度差异较大的字符串的存储。
-3. text不设置长度，当不知道属性的最大长度时，适合用text。
-4. blob采用二进制的存储方式。
+1. CHAR长度固定，即每条数据占用等长字节空间；最大长度是255个字符，适用于存储身份证号、手机号等定长的字符串。
+2. VARCHAR可变长度，长度可以指定为0到65535之间的值，适用于存储长度差异较大的字符串。与CHAR相比，VARCHAR值存储为1字节或2字节长的前缀 + 数据。如果数据长度不超过255个字节，则前缀使用一个长度字节；否则使用两个长度字节。
+3. TEXT不设置长度，当不知道属性的最大长度时，适合用TEXT。
+4. BLOB采用二进制的存储方式。
 
 ### 时间类型
 1. datetime，占用8个字节，与时区无关，可保存到毫秒，可保存的时间范围大（1000-01-01 00:00:00 ~ 9999-12-31 23:59:59）
@@ -57,7 +60,7 @@ show profile for query 2;
 蚂蚁笔记 - MySQL查询优化器
 
 
-# 索引优化
+# 索引
 
 ## 数据结构
 1. 二叉树
@@ -197,6 +200,15 @@ Partitioning takes this notion a step further, by enabling you to distribute por
 
 > 分区使一个表的不同部分存储在不同的位置类似于**分表**
 
+## 类型
+- 范围分区（RANGE Partitioning）：这种类型的分区根据列值在给定范围内将行分配给分区。
+- 列表分区（LIST Partitioning）：类似于范围分区，两种类型的分区的主要区别在于，在列表分区中，每个分区都是基于一组值列表中的一个而不是一组连续范围中的列值来定义和选择分区的。
+- 列分区（COLUMNS Partitioning）：
+- 哈希分区（HASH Partitioning）：根据用户定义的表达式返回的值来选择一个分区，该表达式对将要插入表中的行的列值进行操作。
+- 键分区（KEY Partitioning）：类似于哈希分区，不同之处在于，仅提供一个或多个要评估的列，并且MySQL服务器提供了自己的哈希函数。这些列可以包含非整数值，因为MySQL提供的哈希函数可以保证整数结果，而与列数据类型无关。
+
+> https://dev.mysql.com/doc/refman/5.7/en/partitioning-types.html
+
 ## 优点
 - 分区使在一个表中存储的数据比在单个磁盘或文件系统分区中存储的数据更多。(因为不同的分区可以存储在不同的物理设备上，进而也避免了单个物理设备带来的性能瓶颈)
 
@@ -212,18 +224,10 @@ Partitioning takes this notion a step further, by enabling you to distribute por
 
 > https://dev.mysql.com/doc/refman/5.7/en/partitioning-limitations.html
 
-## 类型
-- 范围分区（RANGE Partitioning）：这种类型的分区根据列值在给定范围内将行分配给分区。
-- 列表分区（LIST Partitioning）：类似于范围分区，两种类型的分区的主要区别在于，在列表分区中，每个分区都是基于一组值列表中的一个而不是一组连续范围中的列值来定义和选择分区的。
-- 列分区（COLUMNS Partitioning）：
-- 哈希分区（HASH Partitioning）：根据用户定义的表达式返回的值来选择一个分区，该表达式对将要插入表中的行的列值进行操作。
-- 键分区（KEY Partitioning）：类似于哈希分区，不同之处在于，仅提供一个或多个要评估的列，并且MySQL服务器提供了自己的哈希函数。这些列可以包含非整数值，因为MySQL提供的哈希函数可以保证整数结果，而与列数据类型无关。
 
-> https://dev.mysql.com/doc/refman/5.7/en/partitioning-types.html
+# MySQL服务器参数设置
 
-## MySQL服务器参数设置
-
-### general
+## general
 ```sql
 show variables like 'datadir';
 -- 服务器与本地客户端进行通信的套接字文件的位置
@@ -233,7 +237,7 @@ show variables like 'port';
 show variables like 'default_storage_engine';
 ```
 
-### character
+## character
 ```sql
 show variables like 'character_set_client';
 show variables like 'character_set_connection';
@@ -242,7 +246,7 @@ show variables like 'character_set_database';
 show variables like 'character_set_server';
 ```
 
-### connection
+## connection
 ```sql
 -- 最大连接数
 show variables like 'max_connections';
@@ -256,7 +260,7 @@ show variables like 'wait_timeout';
 show variables like 'interactive_timeout';
 ```
 
-### log
+## log
 ```sql
 -- 系统变量
 -- 指定错误日志文件名称，用于记录当MySQL启动和停止时，以及服务器在运行中发生任何严重错误时的相关信息
@@ -302,7 +306,7 @@ show variables like 'long_query_time';
 show variables like 'log_slow_admin_statements';
 ```
 
-### cache
+## cache
 ```sql
 -- https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html
 -- 索引缓存区的大小（只对myisam表起作用）
@@ -328,7 +332,7 @@ show variables like 'join_buffer_size';
 show variables like 'thread_cache_size';
 ```
 
-### InnoDB
+## InnoDB
 ```sql
 -- 数据和索引的缓存池大小
 show variables like 'innodb_buffer_pool_size';
