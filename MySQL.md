@@ -221,7 +221,112 @@ Partitioning takes this notion a step further, by enabling you to distribute por
 
 > https://dev.mysql.com/doc/refman/5.7/en/partitioning-types.html
 
-## 服务器参数设置
+## MySQL服务器参数设置
+
+### general
+```sql
+show variables like 'datadir';
+-- 服务器与本地客户端进行通信的套接字文件的位置
+show variables like 'socket';
+show variables like 'pid_file';
+show variables like 'port';
+show variables like 'default_storage_engine';
+```
+
+### character
+```sql
+show variables like 'character_set_client';
+show variables like 'character_set_connection';
+show variables like 'character_set_results';
+show variables like 'character_set_database';
+show variables like 'character_set_server';
+```
+
+### connection
+```sql
+-- 最大连接数
+show variables like 'max_connections';
+-- 每个用户的最大连接数
+show variables like 'max_user_connections';
+-- 可缓存等待连接的最大数
+show variables like 'back_log';
+-- MySQL关闭一个非交互式连接前需要等待的时间
+show variables like 'wait_timeout';
+-- MySQL关闭一个交互式连接前需要等待的时间
+show variables like 'interactive_timeout';
+```
+
+### log
+```sql
+-- 系统变量
+-- 指定错误日志文件名称，用于记录当MySQL启动和停止时，以及服务器在运行中发生任何严重错误时的相关信息
+show variables like 'log_error';
+-- 二进制日志记录选项和变量
+-- 是否开启二进制日志记录（主从复制，备份恢复）
+show variables like 'log_bin';
+-- 二进制日志记录选项和变量
+-- 二进制日志文件的基本名称和路径
+show variables like 'log_bin_basename';
+-- 主节点状态
+mysql > SHOW MASTER STATUS;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000003 | 73       | test         | manual,mysql     |
++------------------+----------+--------------+------------------+
+Binlog_Do_DB：指定将更新记录到二进制日志的数据库，其他所有没有显式指定的数据库更新将忽略，不记录在日志中
+Binlog_Ignore_DB：指定不将更新记录到二进制日志的数据库
+-- 二进制日志记录选项和变量
+-- 控制MySQL服务器将二进制日志同步到磁盘的频率
+-- 0禁用MySQL服务器将二进制日志同步到磁盘的功能。取而代之的是，MySQL服务器依靠操作系统将二进制日志刷新到磁盘上，就像处理任何其他文件一样。此设置可提供最佳性能，但是在电源故障或操作系统崩溃的情况下，服务器可能已提交尚未同步到二进制日志的事务。
+-- 1在提交事务之前将二进制日志刷新到磁盘。这是最安全的设置，但是由于磁盘写入次数增加，可能会对性能产生负面影响。如果发生电源故障或操作系统崩溃，二进制日志中缺少的事务将仅处于准备状态。这允许自动恢复例程回滚事务，从而保证二进制日志中不会丢失任何事务。
+-- N在N次二进制日志提交之后，二进制日志将同步到磁盘 。在电源故障或操作系统崩溃的情况下，服务器可能提交了尚未刷新到二进制日志的事务。由于磁盘写入次数的增加，此设置可能会对性能产生负面影响。较高的值可以提高性能，但会增加数据丢失的风险。
+show variables like 'sync_binlog';
+-- 系统变量
+-- 是否开启记录查询日志
+show variables like 'general_log';
+-- 系统变量
+-- 查询日志文件的名称。默认值为 host_name.log
+show variables like 'general_log_file';
+-- 系统变量
+-- 是否开启记录慢查询日志
+show variables like 'slow_query_log';
+-- 系统变量
+-- 查询日志文件的名称。默认值为 host_name-slow.log
+show variables like 'slow_query_log_file';
+-- 系统变量
+-- 被标记为慢查询语句的阈值
+show variables like 'long_query_time';
+-- 系统变量
+-- 是否将管理语句记录到慢查询日志，包括ALTER TABLE， ANALYZE TABLE， CHECK TABLE， CREATE INDEX， DROP INDEX， OPTIMIZE TABLE和REPAIR TABLE
+show variables like 'log_slow_admin_statements';
+```
+
+### cache
+```sql
+-- https://dev.mysql.com/doc/refman/5.7/en/server-system-variables.html
+-- 索引缓存区的大小（只对myisam表起作用）
+show variables like 'key_buffer_size';
+-- 查询缓存区的大小（从MySQL 5.7.20开始，查询缓存已弃用，并在MySQL 8.0中删除）
+show variables like 'query_cache_size';
+-- 不缓存超出此字节数的查询结果
+show variables like 'query_cache_limit';
+-- 查询缓存分配的块的最小大小（以字节为单位）。默认值为4096（4KB）
+show variables like 'query_cache_min_res_unit';
+-- 查询缓存的类型
+-- 0禁用查询缓存，但这不会取消分配查询缓冲区。为此，应将query_cache_size设置为0
+-- 1缓存所有可缓存的查询结果，除非在SELECT语句中使用了SQL_NO_CACHE
+-- 2仅缓存使用了SQL_CACHE关键字的查询语句
+show variables like 'query_cache_type';
+-- 排序缓冲区大小，每个必须执行排序的会话都会分配此大小的缓冲区
+show variables like 'sort_buffer_size';
+-- 数据包的最大大小
+show variables like 'max_allowed_packet';
+-- 用于普通索引扫描，范围索引扫描和不使用索引从而执行全表扫描的联接的缓冲区的最小大小。通常，获得快速联接的最佳方法是添加索引。join_buffer_size当无法添加索引时，请增加该值的大小以获得更快的完全连接。为每个多表之间的完全连接分配一个连接缓冲区。对于不使用索引的多个表之间的复杂联接，可能需要多个联接缓冲区。
+show variables like 'join_buffer_size';
+-- 服务器应缓存多少线程以供重用
+show variables like 'thread_cache_size';
+```
 
 ### InnoDB
 ```sql
