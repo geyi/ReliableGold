@@ -91,8 +91,8 @@ show profile for query 2;
 ## 技术名词
 - 回表
 - 最左匹配
-- 索引覆盖
-- 索引下推
+- 索引覆盖（covering index）
+- 索引下推（index condition pushdown）
 
 ## MySQL中索引使用的数据结构
 - B+树
@@ -142,10 +142,10 @@ show profile for query 2;
 - union all, in, or都能够使用索引，但是推荐使用in
 - 范围列可以用到索引
 - 强制类型转换会导致全表扫描
-- 更新十分频繁，数据区分度不高的字段上不宜建立索引（页合并与页分裂）
+- 更新十分频繁（页合并与页分裂），数据区分度不高的字段上不宜建立索引
 - 创建索引的列，不允许为null，可能会得到不符合预期的结果（null不等于null）
 - 当需要进行表连接时，关联条件字段的数据类型必须一致
-- 能使用limit的时候尽量使用limit
+- 能使用limit的时候尽量使用limit（关于MySQL对LIMIT查询的优化https://dev.mysql.com/doc/refman/5.7/en/limit-optimization.html）
 - 单表索引个数建议控制在5个以内
 - 组合索引字段数不允许超过5个
 - 索引并不是越多越好
@@ -185,7 +185,7 @@ show status like 'Handler_read%';
 优化此类查询的最简单的办法就是尽可能地使用覆盖索引，而不是查询所有的列。
 
 ### 优化union查询
-除非确实需要MySQL服务器消除重复的行，否则一定要使用union all，因为没有all关键字，MySQL会在查询的时候给临时表加上distinct的关键字，这个操作的代价很高（使用临时表去重）。
+除非确实需要MySQL服务器消除重复的行，否则一定要使用UNION ALL，因为在没有ALL关键字时，则相当于UNION DISTINCT，MySQL会使用临时表去重，这个操作的成本很高。
 
 
 # 分区表
