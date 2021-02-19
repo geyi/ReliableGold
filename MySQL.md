@@ -326,7 +326,7 @@ show variables like 'query_cache_type';
 show variables like 'sort_buffer_size';
 -- 数据包的最大大小
 show variables like 'max_allowed_packet';
--- 用于普通索引扫描，范围索引扫描和不使用索引从而执行全表扫描的联接的缓冲区的最小大小。通常，获得快速联接的最佳方法是添加索引。join_buffer_size当无法添加索引时，请增加该值的大小以获得更快的完全连接。为每个多表之间的完全连接分配一个连接缓冲区。对于不使用索引的多个表之间的复杂联接，可能需要多个联接缓冲区。
+-- 用于普通索引扫描，范围索引扫描和不使用索引从而执行全表扫描的联接的缓冲区的最小大小。通常，获得快速联接的最佳方法是添加索引。join_buffer_size当无法添加索引时，请增加该值的大小以获得更快的完全联接。为每个多表之间的完全联接分配一个联接缓冲区。对于不使用索引的多个表之间的复杂联接，可能需要多个联接缓冲区。
 show variables like 'join_buffer_size';
 -- 服务器应缓存多少线程以供重用
 show variables like 'thread_cache_size';
