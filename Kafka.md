@@ -38,5 +38,20 @@ Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以
 单线程，一条一条按顺序处理消息，并更新offset  
 多线程，流式的多线程，能多线程的多线程（更多的去利用CPU、网卡等硬件资源），但是整个批次的事务环节交给一个线程，做到这个批次要么成功，要么失败。减少DB的压力，和offset的更新压力。
 
+# 概念
+
+## 一致性
+
+强一致性，所有节点必须存活，强一致性破坏了可用性
+
+最终一致性，**过半通过**。最常用的分布式一致性解决方案
+
+- ISR（In-Sync Replicas）连通的&活跃的
+- OSR（Out-Sync Replicas）超过阈值时间（10秒）没有心跳
+- AR（Assigned Replicas）面向分区的副本集合，创建topic的时候给出了分区的副本数，那么controller在创建topic时就确定了broker和分区副本的对应关系，并得出了该分区的broker集合
+- AR = ISR + OSR
+
+## Kafka ACK
+ACK为-1的时候，只要ISR集合内的所有broker确认了消息则回复确认，follower在阈值时间内没有做出同步响应则会被移到OSR集合。在这种模式下多个broker的消费进度是一致的。
 
 # Kafka与磁盘和网卡的技术点
