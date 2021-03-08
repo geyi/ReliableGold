@@ -55,17 +55,17 @@ Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以
 
 ## Kafka ACK
 ACK为0，生产者不等待确认响应
-ACK为1，生产者等待leader的响应
+ACK为1，生产者等待leader的确认响应
 ACK为-1的时候，只要ISR集合内的所有broker确认了消息则回复确认，follower在阈值时间内没有做出同步响应则会被移到OSR集合。在这种模式下多个broker的消费进度是一致的。
 
 
-在Java中，传统的I/O的flush方法是一个空实现，没有物理刷盘，而是依赖内核的dirty刷盘，所以会丢东西。
+在Java中，传统的I/O的flush方法是一个空实现，没有物理刷盘，而是依赖内核的dirty刷盘，所以会丢数据。
 
 在APP层级
 - 调用了OIO的write方法，这个时候数据只到达了内核，性能很快，但是会丢数据。
 - 只有NIO的filechannel，调用write() + force()，才真正写到磁盘，性能极低。
 
-kafka的索引文件保存着**部分**消息的偏移（offset）和位置（position）数据，类似于稀疏索引。当要寻找某一条消息时，kafka先通过seek函数将指针移动到距离目标消息最近的索引上，然后遍历寻找。最后通过sendfile将消息发送出去。
+kafka的索引文件保存着**部分**消息的偏移（offset）和位置（position）数据，类似于稀疏索引。当要寻找某一条消息时，kafka先通过**seek**函数将指针移动到距离目标消息最近的索引上，然后遍历寻找。最后通过sendfile将消息发送出去。
 
 
 # Kafka与磁盘和网卡的技术点
