@@ -171,7 +171,7 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 # TransferQueue
 - 如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
 
-# 常见的Collections、Map、Queue
+# 常见的Collections、Map
 ```
 ArrayList
 LinkedList
