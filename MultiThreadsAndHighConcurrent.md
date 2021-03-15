@@ -171,6 +171,8 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 # TransferQueue
 - 如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
 
+# 常见的Collections、Map、Queue
+```
 ArrayList
 LinkedList
 Vector
@@ -191,11 +193,13 @@ LinkedHashSet
 TreeSet
 CopyOnWriteArraySet
 ConcurrentSkipListSet
+```
 
-Executor：把定义与运行分开
+
+Executor：把定义与运行分开  
 ExecutorService：
 
-Future：代表一个线程任务的运行结果
+Future：代表一个线程任务的运行结果  
 FutureTask：既是一个可运行的线程任务，又是一个保存运行结果的对象
 
 Executors：线程池的工厂
@@ -212,10 +216,9 @@ Executors：线程池的工厂
 并发是指任务提交，并行是指任务执行。
 并行是并发的子集。
 
-ForkJoinPool
-分解汇总的任务
+ForkJoinPool：分解汇总的任务
 
-WorkStealing
+WorkStealing  
 ParallelStream
 
 
