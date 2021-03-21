@@ -314,13 +314,19 @@ vm.dirty_background_bytes = 0
 vm.dirty_background_ratio = 10
 #
 vm.dirty_bytes = 0
+# 阻塞应用程序。达到设定阈值时，此时程序阻塞，内核将脏页写入磁盘
 vm.dirty_ratio = 30
+# 单位百分之一秒，脏页的存活时间为30秒
 vm.dirty_expire_centisecs = 3000
+# 单位百分之一秒，5秒回写一次脏页
 vm.dirty_writeback_centisecs = 500
 vm.dirtytime_expire_seconds = 43200
 ```
 
-在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能
+脏页必须被回写到磁盘才能被淘汰（LRU、LFU）
+
+在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能（写满8KB执行一次系统调用）
+> File > FileOutputStream > BufferedOutputStream
 
 page cache是优化IO性能的，但却带来了数据丢失的问题
 
