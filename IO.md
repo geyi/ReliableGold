@@ -108,6 +108,58 @@ proc是系统内存的映射，这个目录的内容不在硬盘上而是在内�
 - /proc/$$（$$表示当前bash的pid（$BASHPID））
 - /proc/$$/fd（lsof -op $$）
 
+两个程序可以打开同一个文件，他们拥有不同的文件描述符，文件描述里维护了当前程序对这个文件使用情况的元数据信息。
+```
+[root@server133 ~]# exec 8< cat.out 
+[root@server133 ~]# lsof -op $$
+COMMAND  PID USER   FD   TYPE DEVICE OFFSET      NODE NAME
+bash    2280 root  cwd    DIR  253,0         67149953 /root
+bash    2280 root  rtd    DIR  253,0              128 /
+bash    2280 root  txt    REG  253,0         33681892 /usr/bin/bash
+bash    2280 root  mem    REG  253,0         67963361 /usr/lib64/libnss_files-2.17.so
+bash    2280 root  mem    REG  253,0         67613635 /usr/lib/locale/locale-archive
+bash    2280 root  mem    REG  253,0         67596883 /usr/lib64/libc-2.17.so
+bash    2280 root  mem    REG  253,0         67963349 /usr/lib64/libdl-2.17.so
+bash    2280 root  mem    REG  253,0         67182370 /usr/lib64/libtinfo.so.5.9
+bash    2280 root  mem    REG  253,0         67963328 /usr/lib64/ld-2.17.so
+bash    2280 root  mem    REG  253,0        100779978 /usr/lib64/gconv/gconv-modules.cache
+bash    2280 root    0u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    1u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    2u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    8r   REG  253,0    0t0  78746211 /root/cat.out
+bash    2280 root  255u   CHR  136,0    0t0         3 /dev/pts/0
+[root@server133 ~]# stat cat.out 
+  文件："cat.out"
+  大小：4         	块：8          IO 块：4096   普通文件
+设备：fd00h/64768d	Inode：78746211    硬链接：1
+权限：(0644/-rw-r--r--)  Uid：(    0/    root)   Gid：(    0/    root)
+环境：unconfined_u:object_r:admin_home_t:s0
+最近访问：2021-03-21 10:38:33.724993577 +0800
+最近更改：2021-02-17 12:13:53.441005559 +0800
+最近改动：2021-02-17 12:13:53.444005559 +0800
+创建时间：-
+[root@server133 ~]# read a 0<& 8
+[root@server133 ~]# echo $a
+aaa
+[root@server133 ~]# lsof -op $$
+COMMAND  PID USER   FD   TYPE DEVICE OFFSET      NODE NAME
+bash    2280 root  cwd    DIR  253,0         67149953 /root
+bash    2280 root  rtd    DIR  253,0              128 /
+bash    2280 root  txt    REG  253,0         33681892 /usr/bin/bash
+bash    2280 root  mem    REG  253,0         67963361 /usr/lib64/libnss_files-2.17.so
+bash    2280 root  mem    REG  253,0         67613635 /usr/lib/locale/locale-archive
+bash    2280 root  mem    REG  253,0         67596883 /usr/lib64/libc-2.17.so
+bash    2280 root  mem    REG  253,0         67963349 /usr/lib64/libdl-2.17.so
+bash    2280 root  mem    REG  253,0         67182370 /usr/lib64/libtinfo.so.5.9
+bash    2280 root  mem    REG  253,0         67963328 /usr/lib64/ld-2.17.so
+bash    2280 root  mem    REG  253,0        100779978 /usr/lib64/gconv/gconv-modules.cache
+bash    2280 root    0u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    1u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    2u   CHR  136,0    0t0         3 /dev/pts/0
+bash    2280 root    8r   REG  253,0    0t4  78746211 /root/cat.out
+bash    2280 root  255u   CHR  136,0    0t0         3 /dev/pts/0
+```
+
 ## 输入/输出重定向
 任何程序都有
 - 0：标准输入
@@ -151,7 +203,7 @@ ls: 无法访问'/ooxx': No such file or directory
 ### 标准输出和标准错误输出重定向到同一个文件
 使用如下写法将标准输出和标准错误输出重定向到同一个文件时，标准错误输出会被覆盖
 ```
-[root@192 ~]# ls ./ /ooxx 1> ls3.out 2>ls3.out
+[root@192 ~]# ls ./ /ooxx 1> ls3.out 2> ls3.out
 [root@192 ~]# ll
 总用量 6312
 -rw-------. 1 root root      1533 8月  15 23:06 anaconda-ks.cfg
