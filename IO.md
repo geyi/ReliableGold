@@ -325,7 +325,7 @@ vm.dirtytime_expire_seconds = 43200
 
 脏页必须被回写到磁盘才能被淘汰（LRU、LFU）
 
-在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能（写满8KB执行一次系统调用）
+在Java中进行IO操作时使用Buffer可以减少系统调用，提高性能（写满8KB执行一次系统调用，应用的缓存减少系统调用）
 > File > FileOutputStream > BufferedOutputStream
 
 page cache是优化IO性能的，但却带来了数据丢失的问题
