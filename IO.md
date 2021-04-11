@@ -29,7 +29,7 @@ Linux下一切皆文件，由此可以引导出不同的文件类型
 - l（symbolic link）：链接
 - b（block special file）：块设备（硬盘）
 - c（character special file）：字符设备（键盘）
-- s：socket
+- s（socket）：`exec 8<> /dev/tcp/www.baidu.com/80`
 - p（pipeline）：`{ echo $BASHPID; read a; } | { cat; echo $BASHPID; read a; }`
 - [eventpoll]：
 
