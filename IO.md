@@ -30,7 +30,7 @@ Linux下一切皆文件，由此可以引导出不同的文件类型
 - b（block special file）：块设备（硬盘）
 - c（character special file）：字符设备（键盘）
 - s：socket
-- p：pipeline
+- p（pipeline）：`{ echo $BASHPID; read a; } | { cat; echo $BASHPID; read a; }`
 - [eventpoll]：
 
 > 硬链接：多个引用指向同一个物理文件，inode相同。文件硬链接数与引用数相同。  
