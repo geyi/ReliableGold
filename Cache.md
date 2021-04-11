@@ -18,4 +18,24 @@
 > request_rate_limiter.<userId>.token中保存了令牌的数量，当数量为0时表示没有可用令牌，请求将会被拒绝。当key不存在时则表示该用户第一次发起请求。
 
 
-OpenResty（Nginx + Lua）
+# Redis + Lua
+```shell
+# 让redis服务器执行一段lua脚本
+[root@server133 ~]# redis-cli eval "return 1 + 1" 0
+(integer) 2
+[root@server133 ~]# redis-cli eval "local msg='hello ' return msg..ARGV[1]" 1 v1 world
+"hello world"
+[root@server133 ~]# redis-cli eval "local msg='hello ' return msg..KEYS[1]" 1 v1 world
+"hello v1"
+# 让redis服务器执行lua脚本文件
+[root@server133 ~]# vi test.lua
+[root@server133 ~]# redis-cli --eval test.lua 
+(integer) 0
+```
+
+将lua脚本加载到redis：`redis-cli script load "$(cat test.lua)"`
+
+lua脚本会阻塞redis的工作线程，如果lua脚本执行时间过长，那么在脚本执行完之前，redis都无法处理其它脚本。
+
+
+# OpenResty（Nginx + Lua）
