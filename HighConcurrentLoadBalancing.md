@@ -161,9 +161,91 @@ Nginx想要知道请求的URI一定要有一次三次握手的过程，所以Ngi
 所以整体的架构，LVS -> Nginx -> Tomcat
 
 # NAT（Network Address Translation，网络地址转换）
-基于3层，带宽成为瓶颈，消耗算力
+基于3层，带宽成为瓶颈，消耗算力。  
+要求real server的GW指向负载均衡服务器。
 
 端口多路复用（Port address Translation）是指改变外出数据包的源端口并进行端口转换，即端口地址转换。采用端口多路复用方式。内部网络的所有主机均可共享一个合法外部IP地址实现对Internet的访问，从而可以最大限度地节约IP地址资源。同时，又可隐藏网络内部的所有主机，有效避免来自internet的攻击。因此，目前网络中应用最多的就是端口多路复用方式。
 
 # DR
-基于2层，MAC地址欺骗，速度快成本低
+基于2层，MAC地址欺骗，速度快成本低。
+负载均衡服务器和real server要在同一个局域网
+
+隐藏VIP方法：对外隐藏，对内可见
+
+kernel parameter：
+目标MAC地址为全F，交换机触发广播
+
+/proc/sys/net/ipv4/conf/*IF*/
+
+arp_ignore：定义接收到ARP请求时的响应级别  
+0：响应任意网卡上接收到的对本机IP地址的arp请求，而不管目标IP是否在接收的网卡上。  
+1：只响应目的IP地址为接收网卡上的本地地址的arp请求。
+
+arp_announce：定义将自己的IP地址向外通告时的通告级别  
+0：允许使用任意网卡上的IP地址作为arp请求的源IP。  
+1：尽量避免使用不属于该发送网卡子网的本地地址作为arp请求的源IP。  
+2：选择发送网卡上最合适的本地地址作为arp请求的源IP。
+
+## 负载均衡策略
+### 静态
+- rr
+- wrr
+- dh
+- sh
+
+### 动态调度方法
+- lc：最少连接（偷窥数据包）
+- wlc：加权最少连接
+- sed：最短期望延迟
+- nq：never queue
+- LBLC：基于本地的最少连接
+- DH：
+- LBLCR：基于本地的带复制功能的最少连接
+
+## IPVS
+`yum install ipvsadm -y`
+管理集群服务
+```
+添加：-A -t|u|f service-address [-s scheduler]
+-t：TCP协议的集群
+-u：UDP协议的集群
+service-address：IP:PORT
+-f：FWM 防火墙标记
+service-address：Mark Number
+修改：-E
+删除：-D -t|u|f service-address
+ipvsadm -A -t 192.168.1.12:80 -s rr
+```
+
+管理集群服务中的RS
+```
+添加：-A -t|u|f service-address -r server-address [-g|i|m] [-w weight]
+-t|u|f service-address：事先定义好的某集群服务
+-r server-address: 某RS的地址，在NAT模型中，可使用IP:PORT实现端口映射
+[-g|i|m]：LVS类型
+-g：DR
+-i：TUN
+-m：NAT
+[-w weight]：定义服务器权重
+修改：-e
+删除：-d -t|u|f service-address -r server-address
+# ipvsadm -a -t 192.168.1.12:80 -r 192.168.1.100 -g
+# ipvsadm -a -t 192.168.1.12:80 -r 192.168.1.101 -g
+查看
+-L
+-n：数字格式显示主机地址和端口
+--stats：统计数据
+--rate：速率
+--timeout：显示tcp，tcpfin和udp的会话超时时长
+-c：显示当前的ipvs连接状况
+删除所有集群服务
+-C：清空ipvs规则
+保存规则
+-S
+# ipvsadm -S > /path/to/somefile
+从文件中载入规则
+-R
+# ipvsadm -R < /path/to/somefile
+```
+
+# TUN 隧道技术
