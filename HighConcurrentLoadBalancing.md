@@ -248,4 +248,13 @@ ipvsadm -A -t 192.168.1.12:80 -s rr
 # ipvsadm -R < /path/to/somefile
 ```
 
+## DR模式的LVS搭建
+```shell
+node01 192.168.10.128
+node02 192.168.10.129
+node03 192.168.10.130
+
+在Node01上新增一块网卡：ifconfig ens33:0 192.168.10.100/24
+```
+
 # TUN 隧道技术
