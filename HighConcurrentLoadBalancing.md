@@ -249,12 +249,43 @@ ipvsadm -A -t 192.168.1.12:80 -s rr
 ```
 
 ## DR模式的LVS搭建
-```shell
-node01 192.168.10.128
-node02 192.168.10.129
+node01 192.168.10.128  
+node02 192.168.10.129  
 node03 192.168.10.130
 
-在Node01上新增一块网卡：ifconfig ens33:0 192.168.10.100/24
+在Node01上新增一块网卡：`ifconfig ens33:0 192.168.10.100/24`
+
+Node02、Node03  
+1. 修改内核参数（重启后失效）
+   ```shell
+   echo 1 > /proc/sys/net/ipv4/conf/eth0/arp_ignore 
+   echo 1 > /proc/sys/net/ipv4/conf/all/arp_ignore 
+   echo 2 > /proc/sys/net/ipv4/conf/eth0/arp_announce 
+   echo 2 > /proc/sys/net/ipv4/conf/all/arp_announce 
+   ```
+   保证永久有效的方法是修改配置文件/etc/sysctl.conf
+   ```shell
+   net.ipv4.conf.ens33.arp_ignore=1
+   net.ipv4.conf.all.arp_ignore=1
+   net.ipv4.conf.ens33.arp_announce=1
+   net.ipv4.conf.all.arp_announce=1
+   ```
+2. 设置隐藏的VIP：`ifconfig lo:0 192.168.42.100/32`
+3. 安装httpd并启动：  
+   1）`yum -y install httpd`  
+   2）`service httpd start`
+
+LVS服务配置（Node01）
 ```
+yum install ipvsadm 
+ipvsadm -A  -t 192.168.42.100:80  -s rr
+ipvsadm -a  -t 192.168.42.100:80  -r  192.168.42.129 -g -w 1
+ipvsadm -a  -t 192.168.42.100:80  -r  192.168.42.130 -g -w 1
+ipvsadm -ln
+```
+
+## keepalived + LVS
+1. Node01、Node04安装keepalived：`yum install keepalived ipvsadm -y`
+2. 修改配置文件/etc/keepalived/keepalived.conf
 
 # TUN 隧道技术
