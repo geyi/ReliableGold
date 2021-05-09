@@ -130,7 +130,7 @@ netstat -natp | grep -E '(2888|3888)'
 1. 首先发现leader宕机的follower会发起leader选举，假设node03先发现，node03先投自己一票（node03投node03一票），然后会将(7, 3)广播出去。
 2. node01接收到(7, 3)时与自己的(8, 1)比较后，淘汰(7, 3)，并将自己的(8, 1)发送回去（node03投node01一票）。
 3. node02接收到(7, 3)时与自己的(8, 2)比较后，淘汰(7, 3)，并将自己的(8, 2)发送回去（node03投node02一票）。
-4. node01紧接着将自己的投票(8, 1)广播出去（node01投node01一票），同样node02淘汰node01。
+4. node01紧接着将自己的投票(8, 1)广播出去（node01投node01一票），node02淘汰node01。
 5. node02紧接着将自己的投票(8, 2)广播出去（node02投node02一票），node01接收到(8, 2)（node01投node02一票），最终node02被选举为Leader。
 
 
