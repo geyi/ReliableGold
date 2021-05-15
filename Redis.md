@@ -60,7 +60,7 @@ make distclean
 make install PREFIX=/opt/redis6
 vim /etc/profile
 export REDIS_HOME=/opt/redis6
-export PATH=$PAHT:$REDIS_HOME/bin
+export PATH=$PATH:$REDIS_HOME/bin
 source /etc/profile
 cd utils
 ./install-server.sh
