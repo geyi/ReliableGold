@@ -7,17 +7,27 @@
 ## Loading
 当我们使用一个ClassLoader加载一个类时，先会在当前类加载器中寻找是否已经加载过此类，有则直接返回。如果没有，则会委托父加载器去加载。父加载器同样先在自己的加载器中寻找是否已加载过此类，有则直接返回，如果也没有则继续委托给自己的父加载器去加载。直到最顶层的类加载器BoostrapClassLoader，如果仍然没有找到指定的类，BootstrapClassLoad先会尝试加载，如果无法加载，则会委托给子加载器去加载，如果仍然不行则继续向下委托，即，双亲委派。
 
+类加载时会依据给定的二进制字节流，定义Java类，然后创建代表这个类或者接口的java.lang.Class对象。
+1. 如果没有找到Java类或接口的二进制表示，就会抛出NoClassDefFound。
+2. 此外，类加载阶段会对类的格式进行语法检查，如果有错，则会抛出ClassFormatError或UnsupportedClassVersionError。
+3. Java类加载前，HotSpot VM必须先加载它的所有超类和超接口。如果类的继承层次有错，例如Java类是它自己的超类或超接口（类层次递归），HotSpot VM则会抛出ClassCircularityError。
+4. 如果所引用的超接口本身并不是接口，或者直接超类实际上是接口，HotSpot VM则会抛出IncompatibleClassChangeError。
+
 ### 自定义类加载器
 自定义ClassLoader，只需要重写findClass方法。（class文件二进制数据被加载进内存，然后通过defineClass方法定义一个Class类型的对象）
 重写loadClass方法可以打破双亲委派机制。
 
 ## Linking
-- Verification [ˌvɛrəfəˈkeɪʃən] ：验证文件是否符合JVM规范。
-- Preparation [ˌprepəˈreɪʃn] ：静态成员变量（不包括实例变量）赋默认值。默认值的意思是不同数据类型的零值（0，0.0，null，false）。特殊情况，如果变量被final关键字修饰，那么在该阶段变量将会被赋初始值。
-- Resolution：将类、方法、属性等符号引用替换为直接引用。虚拟机将常量池内的符号引用替换为直接引用的过程，也就是得到类、方法或者字段在内存中的指针或者偏移量。
+- Verification [ˌvɛrəfəˈkeɪʃən] ：验证文件是否符合JVM规范。例如，检查类文件的语义、常量池符号以及类型。如果检查有错，就会抛出VerifyError。
+- Preparation [ˌprepəˈreɪʃn] ：静态成员变量（不包括实例变量）赋标椎默认值。标准默认值的意思是不同数据类型的零值（0，0.0，null，false）。特殊情况，如果变量被final关键字修饰，那么在该阶段变量将会被赋初始值。
+- Resolution：解析符号引用。将类、方法、属性等符号引用替换为直接引用。虚拟机将常量池内的符号引用替换为直接引用的过程，也就是得到类、方法或者字段在内存中的指针或者偏移量。
+
+> 标椎默认值，如int的标准默认为0，所以对于public static int i = 123，准备阶段将其初始化为0而不是123，i = 123的赋值操作在类构造器<clinit>()中。这有例外，对于public static final int i = 123，编译时会为i在字段属性表中生成ConstantValue，从而在准备阶段就被初始化成123。
 
 ## Initializing
 调用类初始化方法<clinit>，给静态成员变量赋初始值。
+
+> 出于性能优化的考虑，通常直到类初始化时HotSpot VM才会加载和链接类。这意味着，类A引用类B，加载A不一定导致加载B（除非类B需要验证）。
 
 ## Using
 使用
