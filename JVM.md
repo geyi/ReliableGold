@@ -1,5 +1,5 @@
 # Class File Format
-两个IDEA插件
+IDEA插件
 - BinEd
 - jclasslib Bytecode viewer
 
