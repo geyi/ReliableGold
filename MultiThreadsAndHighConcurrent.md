@@ -49,9 +49,9 @@ Object o = new Object();
 count++并不是原子操作。
 
 # 锁优化
-锁细化：减小同步代码块的范围  
-锁粗化：如果一个方法内有多个同步代码块，不如直接使用synchronized修饰方法  
-锁对象使用final修饰，避免指向锁对象引用被修改
+- 锁细化：减小同步代码块的范围  
+- 锁粗化：如果一个方法内有多个同步代码块，不如直接使用synchronized修饰方法  
+- 锁对象使用final修饰，避免指向锁对象引用被修改
 
 # CAS
 CAS是CPU原语指令级的原子操作
@@ -119,7 +119,7 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 - 数组长度使用2的N次方是因为这样可以利用位运算（提高计算效率）得到元素在数组中的位置。另一方面则是为了提高存储效率，例如容量为8时，任何数与0111做&运算都会落在[0,7]的区间内，即落入给定的8个哈希桶中，存储空间的利用率是100%。反例如容量为7，空间利率只有60%不到。
 - 首次put元素时，会初始化一个长度为16的Node类型的数组。然后使用key的hash值与(数组长度 - 1)进行按位与运算，得出新元素在数组中的位置。如果该位置没有被其它元素占用，则直接将新元素放在该位置，否则会比较新元素与老元素的key的hash值及内容是否相等，相等则用新元素的value值替换老元素的value值。否则，判断老元素是否是TreeNode（红黑树），如果是，则将新元素放到红黑树中。如果不是树形结构，则为链表，此时对链表进行向后遍历，如果链表中存在老元素的key的hash值及内容与新元素相等，同上。否则，将新元素放到链表的末尾。
 # LinkedHashMap
-- 继承了HashMap，自己维护了一个双向链表，可以保证两种顺序，插入顺序和读顺序（读过往后放）
+- 继承了HashMap，自己维护了一个双向链表，可以保证两种顺序，插入顺序（linkNodeLast）和读顺序（afterNodeAccess，读过往后放）
 # TreeMap
 - 底层是红黑树，可以根据key进行排序。比较的两种方式：实现Comparator接口或者实现Comparable接口。
 # HashTable
@@ -176,7 +176,7 @@ VarHandle，除了完成普通操作之外，还可以完成原子性线程安�
 # TransferQueue
 - 如果已经有一个消费者在等待消费，那么transfer方法会立刻返回，否则一直阻塞，直到有一个消费者接收到传递的元素。
 
-# 常见的Collections、Map
+# 常见的Collection、Map
 ```
 ArrayList
 LinkedList
@@ -200,9 +200,9 @@ CopyOnWriteArraySet
 ConcurrentSkipListSet
 ```
 
-
+# 线程池
 Executor：把定义与运行分开  
-ExecutorService：
+ExecutorService：扩展了Executor接口
 
 Future：代表一个线程任务的运行结果  
 FutureTask：既是一个可运行的线程任务，又是一个保存运行结果的对象
