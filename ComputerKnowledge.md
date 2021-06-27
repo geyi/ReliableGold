@@ -14,7 +14,7 @@ DMA传输是将数据从一个地址空间复制到另外一个地址空间。CP
 - Cache
 
 ## 缓存行
-- 缓存行对齐。解决伪共享的方法是缓存行对齐。
+- 缓存行对齐，缓存行对齐可以解决伪共享问题。
 - 缓存一致性协议，MESI（Modified Exclusive Shared Invalid）
 - 缓存行大小，英特尔CPU的缓存行大小为64字节（AMD Ryzen 7 3700X 8-Core 缓存行大小也是64字节）
 - 有些无法被缓存的数据或者跨越多个缓存行的数据（状态无法标识）依然需要使用总线锁
@@ -64,7 +64,7 @@ StoreLoadBarrier
 volatile读操作  
 LoadStoreBarrier
 
-### hanppens-before原则
+### happens-before原则
 - 程序次序规则：同一个线程内，按照代码出现的顺序，前面的代码先行于后面的代码，准确的说是控制流顺序，因为要考虑到分支和循环结构。
 - 管程锁定规则：一个unlock操作先行发生于后面（时间上）对同一个锁的lock的操作。
 - volatile变量规则：对一个volatile变量的写操作先行发生于后面（时间上）对这个变量的读操作。
