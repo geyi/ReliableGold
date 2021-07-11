@@ -26,9 +26,8 @@
 - B+树（树干在内存中），树干包含了一段一段的索引区间和存储索引页的偏移。即，非叶子节点存储记录的PK，用于查询加速，适合内存存储；叶子节点存储实际记录行，记录行相对比较紧密的存储，适合大数据量磁盘存储；
 
 ### 表很大，性能会下降
-如果表有索引，增删改变慢
-
-一个或少量查询依然很快，当并发大的时候查询速度会受硬盘带宽影响。因为数量很大时，数据散落在更多的data page中，导致在高并发下可能要从更多data page中获取数据，这时磁盘带宽就成为性能瓶颈。
+- 如果表有索引，增删改变慢
+- 一个或少量查询依然很快，当并发大的时候查询速度会受硬盘带宽影响。因为数量很大时，数据散落在更多的data page中，导致在高并发下可能要从更多data page中获取数据，这时磁盘带宽就成为性能瓶颈。
 
 ### SAP HANA
 内存中的关系型数据库（内存2T），2亿
@@ -73,7 +72,7 @@ cd utils
 **redis每连接内的命令是顺序处理的**
 
 # KEY
-type属性表示value的类型
+type属性表示value的类型  
 encoding属性表示value的编码方式
 
 redis存储的数据是**二进制安全的**
@@ -114,23 +113,16 @@ SRANDMEMBER
 - 排行榜
 
 # Redis 管道
-
 一次发送多个命令，节省往返时间，降低了通信成本，例：
 `echo -e 'set k1 99\n incr k1\n get k1' | nc localhost 6379`
 
-
 # Pub/Sub
-
 广播
 
-
 # Redis 事务
-
 谁的EXEC先到达，就先执行谁的事务
 
-
 # 布隆过滤器
-
 ## N个不同映射函数和一个二进制位数组
 当向布隆过滤器中添加一个元素时，元素作为N个不同映射函数的入参，每个函数返回一个表示二进制位数组索引位置的值，然后将这个位置标记为1。
 
@@ -200,7 +192,6 @@ bgrewriteaof：异步的重写AOF文件
 - everysec
 
 # Redis 集群
-
 主备：客户端只能访问主，备机用于在主机不可用时代替主机继续提供服务。
 主从：客户端即可以访问主，也可以访问从。
 
@@ -233,22 +224,25 @@ Z：优先级，逻辑再拆分（数据分区）
 # Redis 复制
 Redis默认使用异步复制，其特点是低延迟和高性能
 
-设置从节点追随的主节点：replicaof host port
+设置从节点追随的主节点：`replicaof host port`。设置追随时发生了什么：
+- 主节点发生RDB落盘，并将数据同步给跟随的从节点
+- 从节点删除自身的删除，应用从主节点同步过来RDB文件
 
-故障恢复重新启动从节点：redis-server ./6381.conf --replicaof 127.0.0.1 6379
+故障恢复重新启动从节点：`redis-server ./6381.conf --replicaof 127.0.0.1 6379`。这时不会发生RDB落盘，使用的是增量同步。
 
 redis-server ./6381.conf --replicaof 127.0.0.1 6379 --appendonly yes
-带上--appendonly yes参数启动时，会触发RDB落盘
+带上--appendonly yes参数启动时，会触发RDB落盘。从节点应用同步过来的RDB文件，然后执行AOF从写，因为当前使用的AOF模式（但是AOF文件中没有记录replica id）。
 
 在主上可以看到有哪些从节点追随
 
-从节点切换成主节点：replicaof no one
+从节点切换成主节点：`replicaof no one`
 
 主从复制相关配置参数
+- relicaof <primaryid> <primaryport>：设置追随的主节点
 - replica-serve-stale-data yes：从节点同步数据时，是否继续响应客户端的查询请求
 - replica-read-only yes：从节点是否只读
-- repl-diskless-sync no：是否直接将数据通过网络传输到从节点
-- repl-backlog-size 1mb：增量复制的队列大小，更新操作很多时需要设置大些
+- repl-diskless-sync no：是否直接将数据通过网络传输到从节点（取决于网络带宽的大小和磁盘性能）
+- repl-backlog-size 1mb：增量复制（同步）的队列大小，更新操作很多时需要设置大些
 - min-replicas-to-write 3：最小几个从节点写成功
 
 主从复制的模式需要人工处理故障
