@@ -65,6 +65,15 @@ cd utils
 ./install-server.sh
 ```
 
+```
+Port           : 6379
+Config file    : /etc/redis/6379.conf
+Log file       : /var/log/redis_6379.log
+Data dir       : /var/lib/redis/6379
+Executable     : /usr/local/bin/redis-server
+Cli Executable : /usr/local/bin/redis-cli
+```
+
 在JVM中一个线程的成本大约是1MB
 - 线程多了调度成本高
 - 内存成本
