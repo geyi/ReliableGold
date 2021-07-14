@@ -109,7 +109,12 @@ netstat -natp | grep -E '(2888|3888)'
 - node-3 a=y₂
 这是整个系统对外提供的数据仍然是不一致的。paxos可以认为是多数派读写的进一步升级，paxos中通过2次原本并不严谨的多数派读写，实现了严谨的强一致consensus算法。
 
-但是当两个线程同时执行自增操作时，存在着更新丢失的问题
+### 推导
+通过一个incr操作来推导paxos对一致性问题的解决方法
+
+inc操作在逻辑上很简单：读取一个变量的值i₁，给它加上一个数字得到i₂，再通过多数派把i₂写回到系统中。
+
+很容易看出当两个线程同时执行自增操作时，存在着更新丢失的问题
 
 看似通过写前读取能够解决自增操作的线程安全问题，但是！！！并发写前读取仍然有线程安全问题
 > 写前读取：在一次写操作前，先进行一次读操作，以便确认是否有其它客户端在进行写操作
@@ -124,12 +129,31 @@ paxos就是通过2次多数派读写来实现的强一致。
 - Proposer：客户端
 - Acceptor：存储节点
 - Quorum：多数派
-- Round：一次paxos算法实例，每个round是2次多数派读写：算法描述里分别用phase-1和phase-2标识。同时为了简单和明确，算法中也规定了每个Proposer都必须生成全局单调递增的round number，这样round既能用来区分先后也能用来区分不同的Proposer
+- Round：一次paxos算法实例，每个round是2次多数派读写：算法描述里分别用phase-1和phase-2标识。同时为了简单和明确，算法中也规定了每个Proposer都必须生成全局单调递增的round number，这样round number既能用来区分先后也能用来区分不同的Proposer
 - last_rnd：标识Acceptor记住的最后一次进行写前读取的Proposer是谁，以此来决定谁可以在后面真正把一个值写到存储中。
 - v：最后被写入的值
 - vrnd：跟v是一对，它记录了在哪个Round中v被写入了
 
 首先是paxos的phase-1，它相当于之前提到的写前读取过程。它用来在存储节点(Acceptor)上记录一个标识：我后面要写入，并从Acceptor上读出是否有之前未完成的paxos运行。如果有则尝试恢复它，如果没有则继续做自己想做的事情。
+
+当Acceptor收到phase-1的请求时：
+- 如果请求中rnd比Acceptor中的last_rnd小，则拒绝请求
+- 否则将请求中rnd保存到本地的last_rnd（从此这个Acceptor只接受带有这个last_rnd的phase-2请求）
+- 返回应答，并带上自己之前的last_rnd和之前已接受的v
+
+当Proposer收到Acceptor发回的应答：
+- 如果应答中的last_rnd大于rnd则退出
+- 从所有应答中选择vrnd最大的v（不能改变（可能）已经确定的值）
+- 如果所有应答的v都是空，可以选择自己要写入的v
+- 如果应答不够多数派则退出
+
+phase-2，Proposer将它选定的值写入到Acceptor中，这个值可能是它自己要写入的值，或者是它从某个Acceptor上读到的v（需要尝试进行修复的值）
+
+Proposer：发送phase-2，带上rnd和phase-1决定的v
+
+Acceptor：
+- 拒绝rnd不等于Acceptor的last_rnd的请求
+- 否则将phase-2请求中的v写入本地，记此v为已接受的值
 
 
 # ZK Cluster
