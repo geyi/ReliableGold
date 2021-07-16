@@ -126,7 +126,7 @@ inc操作在逻辑上很简单：读取一个变量的值i₁，给它加上一�
 paxos就是通过2次多数派读写来实现的强一致。
 
 术语描述：
-- Proposer：客户端
+- Proposer：发起paxos的进程
 - Acceptor：存储节点
 - Quorum：多数派
 - Round：一次paxos算法实例，每个round是2次多数派读写：算法描述里分别用phase-1和phase-2标识。同时为了简单和明确，算法中也规定了每个Proposer都必须生成全局单调递增的round number，这样round number既能用来区分先后也能用来区分不同的Proposer
