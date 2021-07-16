@@ -99,6 +99,7 @@ select * from(select a.*, ROWNUM rn from(sql) a where ROWNUM <= (firstIndex + pa
 
 # IDEA
 - 新项目上传到SVN，VCS -> Import Into Version Control -> Share Project(Subversion)
+- 自动导入依赖类的设置：Editor -> Code Style -> Java -> Imports
 
 
 
