@@ -64,22 +64,38 @@ show profile for query 2;
 
 ## 数据结构
 1. 二叉树
-2. AVL树
+2. AVL树（AVL树得名于它的发明者）
 3. 红黑树
 4. B数
 5. B+数
+6. 哈希表
 
 ## 索引的用处
 - 大大减少查询时需要扫描的数据量
 - 避免文件排序和使用临时表
-- 随机I/O变成顺序I/O
+- 随机I/O变成顺序I/O（可以想到的是，使用主键或者使用普通索引并且触发了索引覆盖时的范围查询是顺序I/O，而使用普通索引未触发索引覆盖的查询则是随机I/O）
 - 快速查找匹配WHERE子句的行
-- 从consideration中消除行，如果可以在多个索引之间进行选择，MySQL通常会使用找到最少行的索引
+- 从搜索范围内中消除行，如果可以在多个索引之间进行选择，MySQL通常会使用找到最少行的索引
 - 如果表具有多列索引，则优化器可以使用索引的任何最左前缀来查找行
-- 当有表连接的时候，从其他表检索行数据
+- 在执行连接时从其他表检索行（VARCHAR(10)和CHAR(10)被认为是相同的，但VARCHAR(10)和CHAR(15)不是）
 - 查找特定索引列的min或max值
 - 如果排序或分组时在可用索引的最左前缀上完成的，则对表进行排序和分组
-- 在某些情况下，可以优化查询以检索值而无需查询数据行
+- 在某些情况下，可以优化查询以检索值而无需查询数据行（索引覆盖）
+
+> When a query needs to access most of the rows, reading sequentially is faster than working through an index. Sequential reads minimize disk seeks, even if not all the rows are needed for the query.  
+> 当查询需要访问大部分行时，顺序读取比通过索引读取要快。顺序读取可以最小化磁盘搜索，甚至在不需要查询所有行时。
+
+### 全表扫描
+全表扫描通常发生在以下条件下：
+- 表非常小，执行表扫描比按索引查找要快。这对于行数少于10行且行长较短的表很常见。
+- 有在没有ON或WHERE索引列的可用限制时。
+- 正在将索引列与常量值进行比较，并且MySQL已经计算出（基于索引树）常量覆盖了表的太大部分，并且表扫描会更快。
+- 正在使用基数（Cardinality）较低的键（许多行与键值匹配）的列。在这种情况下，MySQL假定通过使用键可能会执行许多键查找并且表扫描会更快。
+
+对于小表，表扫描通常是合适的，性能影响可以忽略不计。对于大表，请尝试以下技术以避免优化器错误地选择表扫描：
+- 使用`ANALYZE TABLE tbl_name`更新扫描表的键分布。
+- 使用`FORCE INDEX`告诉MySQL该表扫描是非常昂贵的相比使用给定的索引：`SELECT * FROM t1, t2 FORCE INDEX (index_for_column) WHERE t1。col_name=t2。col_name;`
+- 使用带有--max-seeks-for-key=1000选项的mysqld或使用SET max_seeks_for_key=1000告诉优化器：如果扫描全表时，扫描行数已达到1000行仍未找到匹配行，那么就使用索引扫描。
 
 ## 索引分类
 - 主键索引

@@ -88,12 +88,12 @@ redis存储的数据是**二进制安全的**
 
 # VALUE的类型
 
-## String
+## String（int、embstr、raw）
 - 字符串
 - 数值
 - bitmap
 
-## List
+## List（ziplist、linkedlist）
 数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素
 
 - 同向命令（LPUSH LPOP）实现了栈
@@ -101,17 +101,17 @@ redis存储的数据是**二进制安全的**
 - 通过索引操作List（LINDEX LSET）实现了数组
 - 阻塞的单播队列（BLPOP LPUSH）
 
-## Hash
+## Hash（ziplist、hashtable）
 应用场景：
 - 保存用户信息
 - 对hash中的元素进行数值计算
 
-## Set
+## Set（intset、hashtable）
 集合操作（交，并，差）
 
 SRANDMEMBER
 
-## Sorted_Set
+## Sorted_Set（ziplist、skiplist）
 物理内存左小右大，不随命令发生变化
 
 具有集合操作指令，同时带有权重、聚合指令
