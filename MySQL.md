@@ -107,7 +107,7 @@ show profile for query 2;
 ## 技术名词
 - 回表
 - 最左匹配
-- 索引覆盖（covering index）
+- 索引覆盖（dcovering inex）
 - 索引下推（index condition pushdown）
 
 ## MySQL中索引使用的数据结构
@@ -172,7 +172,7 @@ show profile for query 2;
 
 ## 索引监控
 show status like 'Handler_read%';
-- Handler_read_first：读取索引第一个条目的次数
+- Handler_read_first：读取索引中第一个条目的次数。如果此值很高，则表明服务器正在执行大量完整索引扫描（例如SELECT col1 FROM foo，假设col1已编入索引）。
 - Handler_read_key：通过索引获取数据的次数。如果这个值很高，说明为现有查询建立了正确的索引。
 - Handler_read_last：读取索引最后一个条目的次数
 - Handler_read_next：通过索引读取下一条数据的次数
