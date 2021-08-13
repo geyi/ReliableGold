@@ -172,14 +172,19 @@ show profile for query 2;
 
 ## 索引监控
 show status like 'Handler_read%';
-- Handler_read_first：读取索引中第一个条目的次数。如果此值很高，则表明服务器正在执行大量完整索引扫描（例如SELECT col1 FROM foo，假设col1已编入索引）。
 - Handler_read_key：通过索引获取数据的次数。如果这个值很高，说明为现有查询建立了正确的索引。
-- Handler_read_last：读取索引最后一个条目的次数
-- Handler_read_next：通过索引读取下一条数据的次数
-- Handler_read_prev：通过索引读取上一条数据的次数
+- Handler_read_first：读取索引中第一个条目的次数。如果此值很高，则表明服务器正在执行大量完整索引扫描（例如SELECT col1 FROM foo，假设col1已编入索引）。
+- Handler_read_last：读取索引最后一个条目的次数。该值增加基本上可以判定查询中使用了基于索引的order by desc子句。例如：基于主键的正向排序，会增加Handler_read_first和Handler_read_next。而基于主键的反向排序，会增加Handler_read_last和Handler_read_prev。
+- Handler_read_next：通过索引读取下一行数据的次数，常用于基于索引的范围扫描和order by limit子句中。
+- Handler_read_prev：通过索引读取上一行数据的次数，常用于基于索引的范围扫描和order by limit子句中。
 - Handler_read_rnd：从固定位置读取数据的次数。如果您要执行很多需要对结果进行排序的查询，则此值很高。您可能有很多查询需要MySQL扫描整个表，或者您的联接没有正确使用键。
 - Handler_read_rnd_next：从数据节点读取下一条数据的次数。如果要执行大量表扫描，则此值很高，这通常表明没有未表建立正确的索引，或者查询语句未使用现有的索引。
 
+### 总结
+1. Handler_read_key的值越大越好，代表基于索引的查询较多。
+2. Handler_read_first，Handler_read_last，Handler_read_next，Handler_read_prev都会利用索引。但查询是否高效还需要结合其它Handler_read值来判断。
+3. Handler_read_rnd不宜过大。
+4. Handler_read_rnd_next不宜过大，过大的话，代表全表扫描过多，要引起足够的警惕。
 
 # 查询优化
 
@@ -352,9 +357,9 @@ show variables like 'thread_cache_size';
 ```sql
 -- 数据和索引的缓存池大小
 show variables like 'innodb_buffer_pool_size';
--- 0每次写log buffer，每秒写page cache并刷磁盘
--- 1每次写log buffer并写page cache并刷磁盘
--- 2每次写log buffer并写page cache，每秒刷磁盘
+-- 0 每秒写page cache并刷磁盘
+-- 1 每次写page cache并刷磁盘
+-- 2 每次写page cache，每秒刷磁盘
 show variables like 'innodb_flush_log_at_trx_commit';
 -- 并发线程数，0表示不限制
 show variables like 'innodb_thread_concurrency';
@@ -367,6 +372,6 @@ show variables like 'innodb_log_files_in_group';
 show variables like 'read_buffer_size';
 -- 随机读缓冲区大小
 show variables like 'read_rnd_buffer_size';
--- 为每张表分配一个新的文件
+-- 为每张表分配一个新的文件（最佳实践）
 show variables like 'innodb_file_per_table';
 ```
