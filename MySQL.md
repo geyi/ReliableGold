@@ -375,3 +375,5 @@ show variables like 'read_rnd_buffer_size';
 -- 为每张表分配一个新的文件（最佳实践）
 show variables like 'innodb_file_per_table';
 ```
+
+> [MySQL 5.7 Reference Manual](https://docs.oracle.com/cd/E17952_01/mysql-5.7-en/index.html)
