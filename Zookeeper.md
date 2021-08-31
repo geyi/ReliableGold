@@ -174,15 +174,17 @@ Acceptor：
 - node02 (8, 2) Follower
 - node03 (7, 3) Follower
 - node04 (8, 4) Leader 宕机
-1. 首先发现leader宕机的follower会发起leader选举，假设node03先发现，node03先投自己一票（node03投node03一票），然后会将(7, 3)广播出去。
-2. node01接收到(7, 3)时与自己的(8, 1)比较后，淘汰(7, 3)，并将自己的(8, 1)发送回去（node03投node01一票）。
-3. node02接收到(7, 3)时与自己的(8, 2)比较后，淘汰(7, 3)，并将自己的(8, 2)发送回去（node03投node02一票）。
-4. node01紧接着投自己一票（node01投node01一票）并将自己的投票(8, 1)广播出去，node02淘汰node01。
-5. node02紧接着投自己一票（node02投node02一票）并将自己的投票(8, 2)广播出去，node01接收到(8, 2)（node01投node02一票），最终node02被选举为Leader。
-6. 最终所有节点都会投票给node2
+1. 首先发现leader宕机的follower会发起leader选举，假设node03先发现，node03先投自己一票，然后会将(7, 3)广播出去。node01:[()] node02:[()] node03:[(3,3)]
+2. node01接收到(7, 3)时与自己的(8, 1)比较后，淘汰(7, 3)，并将自己的(8, 1)广播出去。node01:[(1,1)] node02:[()] node03:[(3,3)]
+3. node02接收到(7, 3)时与自己的(8, 2)比较后，淘汰(7, 3)，并将自己的(8, 2)广播出去。node01:[(1,1)] node02:[(2,2)] node03:[(3,3)]
+4. node02、node03接收到node01的广播。node01:[(1,1)] node02:[(2,2)] node03:[(1,1)(3,1)]
+5. 因为node03更新了自己的选票，所以node03要把更新后的选票广播出去，这时：node01:[(1,1)(3,1)] node02:[(2,2)] node03:[(1,1)(3,1)]
+6. node01、node03接收到node02的广告。node01:[(1,2)(2,2)] node02:[(2,2)] node03:[(2,2)(3,2)]
+7. 这时node01、node03将更新后的选票广播出去，最后三台服务器都会包含3张投给node02的选票。
 
 其实，只要有节点发起投票，就一定会触发准leader发起自己的投票，并且最终所有节点都会把票投给leader。由此看出Zookeeper的选举是推选制的，所以Zookeeper能在故障时200ms内选出leader（快速恢复）。
 
+> 参考：http://www.jasongj.com/zookeeper/fastleaderelection/
 
 **Redis比Zookeeper更快，但Zookeeper比Redis更可靠。Zookeeper更适合读多写少的场景。**
 
