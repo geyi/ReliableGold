@@ -48,10 +48,14 @@ Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以
 
 最终一致性，**过半通过**。最常用的分布式一致性解决方案
 
+Kafka选出quorum的方式略有不同，Kafka不是通过majority投票，而是动态维护了一组同步副本（ISR）。只有ISR集合的成员才有资格被选举为领导者。在ISR集合内的所有副本都写入之前，不会认为对Kafka分区的写入已提交。每当ISR集合发生变化时，这个ISR集合就会被持久化到Zookeeper。有了这个ISR模型和f + 1个副本，Kafka的主题可以容忍f个副本不可用而不会丢失已提交的消息。
+
 - ISR（In-Sync Replicas）连通的&活跃的
 - OSR（Out-Sync Replicas）超过阈值时间（10秒）没有心跳
 - AR（Assigned Replicas）面向分区的副本集合，创建topic的时候给出了分区的副本数，那么controller在创建topic时就确定了broker和分区副本的对应关系，并得出了该分区的broker集合
 - AR = ISR + OSR
+- HW（High Water）最高水位。表示消费者能够消费的最大偏移
+- LEO（Log End Offset）数据日志文件结束偏移量。只有副本的LEO大于主分区的HW时，该副本才有资格进入ISR集合
 
 ## Kafka ACK
 ACK为0，生产者不等待确认响应
