@@ -436,8 +436,10 @@ cd /proc/sys/fs/epoll
 > 如果内核在回调处理中加入--除了将数据写入与fd关联的buffer中，同时将这个fd移动到另外一个链表中，当应用程序调用epoll_wait时，直接从链表中获取准备好的fd。
 
 ### TCP连接状态
-FIN_WAIT2：发起连接断开的一端，在收到对端的FIN之前，本端连接处于FIN_WAIT2状态。  
-CLOSE_WAIT：在被动关闭连接的情况下，已经接收到FIN，但是还没有发送自己的FIN时，连接处于CLOSE_WAIT状态。  
+FIN_WAIT1：发起连接断开的一端，在发送FIN之后进入FIN_WAIT1状态。  
+CLOSE_WAIT：在被动关闭连接的情况下，已经接收到FIN并回复ACK之后（但是还没有发送自己的FIN），连接处于CLOSE_WAIT状态。  
+FIN_WAIT2：发起连接断开的一端，在收到对端对FIN的ACK之后，本端连接变为FIN_WAIT2状态。  
+LAST_ACK：被动关闭连接的一端，在发送自己的FIN之后进入LAST_ACK状态。  
 TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并发送了ACK之后，连接处于TIME_WAIT状态。
 
 > 为什么要有TIME_WAIT状态
