@@ -437,10 +437,11 @@ cd /proc/sys/fs/epoll
 
 ### TCP连接状态
 FIN_WAIT1：发起连接断开的一端，在发送FIN之后进入FIN_WAIT1状态。  
-CLOSE_WAIT：在被动关闭连接的情况下，已经接收到FIN并回复ACK之后（但是还没有发送自己的FIN），连接处于CLOSE_WAIT状态。  
-FIN_WAIT2：发起连接断开的一端，在收到对端对FIN的ACK之后，本端连接变为FIN_WAIT2状态。  
+CLOSE_WAIT：被动关闭连接的一端，已经接收到FIN并回复ACK之后（但是还没有发送自己的FIN），连接处于CLOSE_WAIT状态。  
+FIN_WAIT2：发起连接断开的一端，在收到对端对FIN的ACK之后，本端连接处于FIN_WAIT2状态。  
 LAST_ACK：被动关闭连接的一端，在发送自己的FIN之后进入LAST_ACK状态。  
-TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并发送了ACK之后，连接处于TIME_WAIT状态。
+TIME_WAIT：发起连接断开的一端，在收到对端的FIN，并回复了ACK之后，连接处于TIME_WAIT状态。  
+CLOSED：被动关闭连接的一端，在收到对端对FIN的ACK之后，进入CLOSED状态。
 
 > 为什么要有TIME_WAIT状态
 > 假设最终的ACK丢失，主机2将重发FIN（假设先由主机1发起的连接断开请求），主机1必须维护TCP状态信息以便可以重发最终的ACK，否则会发送RST，结果主机2认为发生错误。TCP实现必须可靠地终止连接的两个方向，主机1必须进入TIME_WAIT状态，因为主机1可能面临重发最终ACK的情形。
