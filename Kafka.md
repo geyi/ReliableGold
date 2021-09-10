@@ -53,10 +53,17 @@ Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以
 - AR（Assigned Replicas）面向分区的副本集合，创建topic的时候给出了分区的副本数，那么controller在创建topic时就确定了broker和分区副本的对应关系，并得出了该分区的broker集合
 - AR = ISR + OSR
 
-## Kafka ACK
-ACK为0，生产者不等待确认响应
-ACK为1，生产者等待leader的确认响应
-ACK为-1的时候，只要ISR集合内的所有broker确认了消息则回复确认，follower在阈值时间内没有做出同步响应则会被移到OSR集合。在这种模式下多个broker的消费进度是一致的。
+## Kafka ASKS
+### ASKS为0
+生产者不等待确认响应
+
+### ASKS为1
+生产者等待leader的确认响应
+
+### ASKS为-1
+只要ISR集合内的所有broker确认了消息则回复确认，follower在阈值时间内没有做出同步响应则会被移到OSR集合。在这种模式下多个broker的消费进度是一致的。
+
+进一步思考，asks=-1就不会出现丢失消息的情况吗？答案是否。当ISR列表只剩Leader的情况下，asks=-1相当于asks=1，这种情况下如果节点宕机了，必然会出现数据丢失的情况。
 
 
 在Java中，传统的I/O的flush方法是一个空实现，没有物理刷盘，而是依赖内核的dirty刷盘，所以会丢数据。
@@ -69,3 +76,14 @@ kafka的索引文件保存着**部分**消息的偏移（offset）和位置（po
 
 
 # Kafka与磁盘和网卡的技术点
+
+# 案例
+
+## Kafka 的一个节点宕机后为什么不可用？
+Broker节点数是3，Topic副本数为3，Partition数为6，Asks参数为1。
+
+当三个节点中某个节点宕机后，集群首先会怎么做？集群发现有Partition的Leader失效了，这个时候就要从ISR列表中重新选举Leader。如果ISR列表为空是不是就不可用了？并不会，而是从Partition存活的副本中选择一个作为Leader，不过这就有潜在的数据丢失的隐患了。
+
+所以，只要将Topic副本个数设置为和Broker个数一样，Kafka的多副本冗余设计是可以保证高可用的，不会出现一宕机就不可用的情况（不过需要注意的是Kafka有一个保护策略，当一半以上的节点不可用时Kafka就会停止）。那仔细一想，Kafka上是不是有副本个数为1的Topic？
+
+问题出在了__consumer_offset上，__consumer_offset是一个Kafka自动创建的Topic，用来存储消费者消费的offset（偏移量）信息，默认Partition数为50。而就是这个Topic，它的默认副本数为1。如果所有的Partition都存在于同一台机器上，那就是很明显的单点故障了！当将存储__consumer_offset的Partition的Broker给Kill后，会发现所有的消费者都停止消费了（__consumer_offset的Partition会出现只存储在一个Broker上而不是分布在各个Broker上）。
