@@ -41,7 +41,7 @@
 ## 分布式
 
 1. [Zookeeper](Zookeeper.md)
-2. [多数派读写的‘少数派’实现]
+2. [多数派读写的‘少数派’实现](MajorityAndQuorum.md)
 
 # DDD
 
