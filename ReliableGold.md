@@ -41,7 +41,7 @@ ImportBeanDefinitionRegistrar类只能通过其他类@Import的方式来加载�
 1. 设置resourceLoader，当前为null。
 2. 对primarySources参数进行不能为null的断言，primarySources为包含main函数的类。
 3. 创建一个LinkedHashSet对象，其中包含primarySources，然后把对象赋值给SpringApplication的成员变量primarySources。
-4. 判断web application的类型，包含SERVLET、REACTIVE、NONE
+4. 判断web application的类型，包含SERVLET、REACTIVE、NONE（可查看WebApplicationType枚举类了解详情）
 5. 从spring.factories文件中获取org.springframework.context.ApplicationContextInitializer接口的实现类，并实例化保存在一个ArrayList中（共11个），赋值给SpringApplication的成员变量initializers。
 6. 同样从spring.factories文件中获取org.springframework.context.ApplicationListener接口的实现类，并实例化保存在一个ArrayList中（共7个），赋值给SpringApplication的成员变量listeners。
 7. 获取main方法所在的类的Class对象，赋值给mainApplicationClass成员变量。
@@ -50,22 +50,22 @@ ImportBeanDefinitionRegistrar类只能通过其他类@Import的方式来加载�
 1. 设置启动时间
 2. 定义应用上下文变量，当前为null
 3. 定义异常报告集合变量，new ArrayList<>();
-4. 设置java.awt.headless
-5. 创建监听器对象SpringApplicationRunListener，从配置文件中读取到EventPublishingRunListener，并实例化。在实例化的过程中，创建了SimpleApplicationEventMulticaster对象（事件发生器），然后把之前的11个监听器设置到对象中。
-使用事件发生器对监听器进行启动，找出监听了ApplicationStartingEvent事件的监听器，并进行启动。
-6. 装配命令行参数
-7. 准备应用程序运行的环境
+4. 设置java.awt.headless（Headless模式是系统的一种配置模式。在系统可能缺少显示设备、键盘或鼠标这些外设的情况下可以使用该模式。）
+5. 创建监听器对象SpringApplicationRunListener，从配置文件中读取到EventPublishingRunListener，并实例化。在实例化的过程中，创建了SimpleApplicationEventMulticaster对象（事件发生器），然后把之前的7个监听器设置到对象中。
+6. 使用事件发生器对监听器进行启动，找出监听了ApplicationStartingEvent事件的监听器，并进行启动。
+7. 装配命令行参数
+8. 准备应用程序运行的环境
 `ConfigurableEnvironment environment = prepareEnvironment(listeners, applicationArguments);`
-8. 设置系统属性，保证某些bean不会添加到准备的环境中（忽略某些bean）
-9. 打印banner
-10. 创建应用程序上下文（org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext）
-11. 给异常报告集合变量赋值
-12. 准备上下文对象
-13. 刷新上下文环境（跳转到Spring中的refresh方法）
-14. afterRefresh（方便扩展）
-15. 计时结束，并打印启动耗时
-16. listeners.started(context);
-17. listeners.running(context);
+9. 设置系统属性，保证某些bean不会添加到准备的环境中（忽略某些bean）
+10. 打印banner
+11. 创建应用程序上下文（org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext）
+12. 给异常报告集合变量赋值
+13. 准备上下文对象
+14. 刷新上下文环境（跳转到Spring中的refresh方法）
+15. afterRefresh（方便扩展）
+16. 计时结束，并打印启动耗时
+17. listeners.started(context);
+18. listeners.running(context);
 
 ## 重要的方法
 1. getSpringFactoriesInstances(Class<T> type)
