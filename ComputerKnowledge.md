@@ -19,14 +19,14 @@ DMA传输是将数据从一个地址空间复制到另外一个地址空间。CP
 - 缓存行大小，英特尔CPU的缓存行大小为64字节（AMD Ryzen 7 3700X 8-Core 缓存行大小也是64字节）
 - 有些无法被缓存的数据或者跨越多个缓存行的数据（状态无法标识）依然需要使用总线锁
 
-**伪共享**：当多线程各自修改相互独立的变量，并且这些变量需要遵循缓存一致性协议时，如果这些变量共享同一个缓存行，就会无意中影响彼此的性能，这就是伪共享。
+**[伪共享](https://github.com/geyi/basic/tree/master/src/main/java/com/airing/pseudo/sharing)**：当多线程各自修改相互独立的变量，并且这些变量需要遵循缓存一致性协议时，如果这些变量共享同一个缓存行，就会无意中影响彼此的性能，这就是伪共享。
 - JDK7中，很多采用long padding提高效率
 - JDK8，加入了@Contended注解，需要加上：JVM -XX:-RestrictContended
 
 ## 指令重排
 CPU为了提高指令的执行效率。
 
-### 乱序的证明：com.airing.disorder.Disorder
+### 乱序的证明 [Disorder](https://github.com/geyi/basic/blob/master/src/main/java/com/airing/disorder/Disorder.java)
 
 ### Java中创建对象分为三步
 1. new #2 <T>
@@ -77,7 +77,7 @@ LoadStoreBarrier
 ### as if serial
 不管如何重排序，单线程执行结果不会改变。
 
-## 合并写
+## [合并写](https://github.com/geyi/basic/blob/master/src/main/java/com/airing/write/combining/WriteCombining.java)
 Write Combining Buffer
 
 ## NUMA
