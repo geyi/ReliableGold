@@ -110,7 +110,7 @@ Linux内核跑在ring 0级， 用户程序跑在ring 3级，对于系统的关�
 ## 进程调度
 FIFO - First In First Out  
 RR - Round Robin  
-CFS - Completely Fari Scheduler：按优先级分配时间片比例，记录每个进程的执行时间，如果有一个进程执行时间不到它应该分配的比例，则优先执行
+CFS - Completely Fair Scheduler：按优先级分配时间片比例，记录每个进程的执行时间，如果有一个进程执行时间不到它应该分配的比例，则优先执行
 
 ## 中断
 - 缺页中断
