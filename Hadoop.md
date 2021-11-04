@@ -65,7 +65,65 @@ DataNode
 - 与NameNode保持心跳，汇报block列表状态
 
 ### 元数据持久化
+- 任何对文件系统元数据产生修改的操作，NameNode都会使用一种称为EditLog的事务日志记录下来
+- 使用FsImage存储内存所有的元数据状态
+- 使用本地磁盘保存EditLog和FsImage
+- EditLog具有完整性高，数据丢失少，但恢复速度慢，并有体积膨胀的风险
+- FsImage具有恢复速度快，体积与内存数据相当，但不能实时保存，数据丢失多
+- NameNode使用了EditLog + FsImage整合的方案：滚动将增量的EditLog更新到FsImage，以此来保证更近时点的FsImage和更小的EditLog体积
 
 > 保证数据可靠性的方式：
 > 1. 日志文件：记录所有发生的增删改操作。完整性比较好，加载恢复数据慢。
 > 2. 快照：间隔的，内存全量数据基于某一个时间点做的的向磁盘的溢写。恢复速度快，但是容易丢失一部分数据。
+
+### 安全模式
+- HDFS搭建时会格式化，格式化操作会产生一个空的FsImage
+- 当NameNode启动时，它会从硬盘中读取FsImage和EditLog
+- 将所有EditLog中的事务作用在内存中的FsImage上
+- 并将这个新版本的FsImage从内存中保存到本地磁盘上
+- 然后删除旧的EditLog，因为这个旧的EditLog的事务都已经作用的FsImage上了
+- NameNode启动后会进入一个称为安全模式的特殊状态
+- 处于安全模式的NameNode是不会进行数据块的复制的
+- NameNode从所有的DataNode接收心跳信号和块状态报告
+- 每当NameNode检测某个数据块的副本数目达到这个最小值，那么该数据块就会被认为是副本安全（safety relicated）的
+- 在一定百分比（这个参数可配置）的数据块被NameNode检测确认是安全之后（加上一个额外的30秒等待时间），NameNode将退出安全模式状态
+- 接下来它会确认还有哪些数据块的副本没有达到指定数目，并将这些数据块复制到其它DataNode上
+
+### HDFS中的SNN
+- SecondaryNameNode
+- 在非HA模式下，SNN一般是独立的节点，周期的完成NameNode的EditLog向FsImage合并，减小EditLog的大小，减少NameNode的启动时间
+- 根据配置文件设置的时间间隔（fs.checkpoint.period），默认3600秒
+- 根据配置文件设置EditLog大小（fs.checkpoint.size），默认64MB
+
+### Block的**副本**的放置策略
+- 第一个副本：放置在上传文件的DataNode；如果是集群外提交，则随机挑选一台磁盘不太满，CPU不太忙的节点。
+- 第二个副本：放置在与第一个副本不同机架的节点上。
+- 第三个副本：与第二个副本相同机架的节点。
+- 更多副本：随机节点。
+
+### HDFS写流程
+- Client和NameNode连接创建文件元数据
+- NameNode判定元数据是否有效
+- NameNode触发副本放置策略，返回一个有序的DataNode列表
+- Client和DataNode建立Pipeline连接
+- Client将块切分成packet（64KB），并使用chunk（512B）+ checksum（4B）填充
+- Client将packet放入发送队列中，并向第一个DataNode发送
+- 第一个DataNode收到packet后本地保存并发送给第二个DataNode
+- 第二个DataNode收到packet后本地保存并发送给第三个DataNode
+- 这一个过程中，上游节点同时发送下一个packet
+- 生活中类比工厂的流水线；结论：流式其实也是变种的并行
+- HDFS使用这种传输方式，副本数对于client是透明的
+- 当block传输完成，DataNode各自向NameNode汇报，同时client继续传输下一个block
+- 所以，client的传输和block的汇报也是并行的
+
+### HDFS读流程
+- 为了降低整体的带宽消耗和读取延时，HDFS会尽量让读取程序读取离它最近的副本
+- 如果在读取程序的同一个机架上有一个副本，那么就读取该副本
+- 如果一个HDFS集群跨越多个数据中心，那么客户端也将首先读本地数据中心的副本
+- 语义：下载一个文件
+  - Client和NameNode交互文件元数据获取FileBlockLocation
+  - NameNode会按距离排序返回
+  - Client尝试下载block并校验完整性
+- 语义：下载一个文件其实是获取文件所有的block元数据，那么子集获取某些block应该成立
+  - HDFS支持Client给出文件的offset自定义连接哪些block的DataNode，自定义获取数据
+  - 这个是支持计算层的分治，并行计算的核心
