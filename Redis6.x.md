@@ -43,3 +43,7 @@ dict *watched_keys
 expect size + prefix size  
 expect size表示用户期望分配的内存大小  
 prefix size用来存储分配内存的大小
+
+# 10
+Redis的排他性：锁，静态的，是标志
+Redis的过滤性：串行，incr/decr，list，set，他们是动态的
