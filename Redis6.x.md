@@ -4,7 +4,7 @@
 dict *blocking_keys：redis使用一个阻塞键字典（key -> list(client)）来保存对某个key的阻塞操作（BRPOP）。这个阻塞操作并没有造成redis work线程的阻塞，redis仍然可以继续处理其他任务。
 add value
 signalKeyAsReady
-dict *ready_keys：当有其他客户端生产数据时（LPUSH），redis会把key放入reday_keys里。
+dict *ready_keys：当有其他客户端生产数据时（LPUSH），redis会把key放入ready_keys里。
 unblock client
 
 
@@ -47,3 +47,9 @@ prefix size用来存储分配内存的大小
 # 10
 Redis的排他性：锁，静态的，是标志
 Redis的过滤性：串行，incr/decr，list，set，他们是动态的
+
+提高性能的思路：
+- 减少无用的操作
+- 多级缓存
+- 线程池隔离：控制资源的分配、也可以控制有序性
+- 分治
