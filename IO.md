@@ -343,7 +343,7 @@ page cache是优化IO性能的，但却带来了数据丢失的问题
 - nc -l localhost 9090
 - ulimit -SHn 655360
 - 当前系统可打开文件描述符的最大数量：cat /proc/sys/fs/file-max
-- 当前用户可打开文件描述符的最大数量：cat vi /etc/security/limits.conf（ulimit -a）
+- 当前用户可打开文件描述符的最大数量：cat /etc/security/limits.conf（ulimit -a）
 - 当前进程可打开文件描述符的最大数量：cat /proc/sys/fs/file-nr
 
 ##  TCP
