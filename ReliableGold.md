@@ -140,7 +140,9 @@ eureka client
 # Command
 
 ## Windows
-- Windows上计算文件的md5值：certutil -hashfile .\jdk-8u261-windows-x64.exe md5
+- Windows上计算文件的md5值：`certutil -hashfile .\jdk-8u261-windows-x64.exe md5`
+- 查询占用端口的进程id：`netstat -nao | findstr "9001"`
+- 杀死指定的进程id：`taskkill /f /pid 26988`
 
 
 ## Linux
@@ -168,3 +170,8 @@ eureka client
 ## 页面置换算法
 ### LRU：最近最久未使用。最长时间未被使用的缓存页。
 ### LFU：最近最少使用。一定时间内被访问次数最少的缓存页。
+
+
+# Redis
+获取客户端缓存区限制：`CONFIG GET client-output-buffer-limit`
+设置客户端缓存区限制：`CONFIG SET "client-output-buffer-limit" "normal 0 0 0 slave 1073741824 268435456 60 pubsub 33554432 8388608 60"`
