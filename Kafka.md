@@ -6,7 +6,7 @@
 
 Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以被重复利用（数据的重复利用是站在group上的，但是group内要保证如下单一场景的描述）
 
-在单一场景下，即便在追求性能使用多个consumer进行消费，但是一个partition不能由多个consumer消费。即：partition与consumer的对应关系只存在1:1及N:1的关系，不允许1:N的关系（无法保证顺序行）
+在单一场景下（例如：同步至ES），即便在追求性能使用多个consumer进行消费，但是一个partition不能由多个consumer消费。即：partition与consumer的对应关系只存在1:1及N:1的关系，不允许1:N的关系（无法保证顺序行）
 
 
 # kafka配置文件
