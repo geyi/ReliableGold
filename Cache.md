@@ -14,8 +14,7 @@
 4. 应用层网关 Zuul SpringCloudGateway
 5. 应用服务 Tomcat
 
-
-> request_rate_limiter.<userId>.token中保存了令牌的数量，当数量为0时表示没有可用令牌，请求将会被拒绝。当key不存在时则表示该用户第一次发起请求。
+> `request_rate_limiter.<userId>.token`中保存了令牌的数量，当数量为0时表示没有可用令牌，请求将会被拒绝。当key不存在时则表示该用户第一次发起请求。
 
 
 # Redis + Lua

@@ -60,7 +60,7 @@ V2：`-Xloggc:/opt/xxx/logs/xxx-xxx-gc-%t.log -XX:+UseGCLogFileRotation -XX:Numb
 
 调整新生代大小时，需要谨记下面几个准则：
 - 老年代空间大小不应该小于活跃数据大小的1.5倍。
-- 新生代空间至少应该为Java堆大小的10%，通过-Xms和-Xmx可以设定该值。
+- 新生代空间至少应该为Java堆大小的10%，通过-Xmn和-XX:NewRation可以设定该值。
 - 增大Java堆大小时，需要注意不要超过JVM可用的物理内存。（使用交换内存反而造成性能降低）
 
 ### Survivor
