@@ -155,6 +155,9 @@ eureka client
 - kubectl logs -f test-e-commerce-56cfdf7f58-qqt5p
 - kubectl top pod test-advertisement-85864cc58c-8sshf
 - sudo kubectl edit deploy market-elec
+- kubectl apply -f shipper.ingress.yml
+
+> https://www.cnblogs.com/wuxinchun/p/15218227.html
 
 
 
@@ -175,3 +178,4 @@ eureka client
 # Redis
 获取客户端缓存区限制：`CONFIG GET client-output-buffer-limit`
 设置客户端缓存区限制：`CONFIG SET "client-output-buffer-limit" "normal 0 0 0 slave 1073741824 268435456 60 pubsub 33554432 8388608 60"`
+连接redis的另一种方式：`nc localhost 6379`
