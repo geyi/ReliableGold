@@ -30,6 +30,8 @@ ImportBeanDefinitionRegistrar类只能通过其他类@Import的方式来加载�
 
 # JVM
 - -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/opt/kuaidi100/runnable_jar/order-sync/
+- -XX:CMSMaxAbortablePrecleanTime=5000 ，默认值5s，代表该阶段最大的持续时间
+- -XX:CMSScheduleRemarkEdenPenetration=50 ，默认值50%，代表Eden区使用比例超过50%就结束该阶段进入remark
 
 
 
@@ -156,6 +158,7 @@ eureka client
 - kubectl top pod test-advertisement-85864cc58c-8sshf
 - sudo kubectl edit deploy market-elec
 - kubectl apply -f shipper.ingress.yml
+- kubectl logs -f nginx-ingress-controller-cf766b499-7xmks -n ingress-nginx --tail=10000 > /tmp/ingress.shipper.log
 
 > https://www.cnblogs.com/wuxinchun/p/15218227.html
 
