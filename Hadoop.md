@@ -38,7 +38,7 @@ The project includes these modules:
 - 文件与文件的block大小可以不一样
 - 一个文件除最后一个block，其他block大小一致
 - block的大小依据硬件的I/O特性调整
-- block被分散存放在集群的节点中，具有location
+- block被分散存放在集群的节点中，具有location（block的地址）
 - block具有副本（replication），没有主从概念，副本不能出现在同一个节点
 - 副本是满足可靠性和性能的关键
 - 文件上传可以指定block大小和副本数，上传后只能修改副本数
