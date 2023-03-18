@@ -126,5 +126,7 @@ DataNode
   - NameNode会按距离排序返回
   - Client尝试下载block并校验完整性
 - 语义：下载一个文件其实是获取文件所有的block元数据，那么子集获取某些block应该成立
-  - HDFS支持Client给出文件的offset自定义连接哪些block的DataNode，自定义获取数据
+  - HDFS支持Client给出文件的offset自定义连接哪些block的DataNode，自定义获取数据（HDFS拥有读取文件任意block的能力）
   - 这个是支持计算层的分治，并行计算的核心
+
+
