@@ -130,3 +130,21 @@ DataNode
   - 这个是支持计算层的分治，并行计算的核心
 
 
+# Hadoop集群搭建
+ssh除了可以远程登录，还可以远程执行命令  
+学习新技术时，先把官方文档过一遍
+
+## 基础设施
+- 关闭防火墙和selinux
+- 设置IP、主机名、hosts
+- 设置时间同步（ntp）
+- 安装JDK（使用rpm文件安装，命令：`rpm -i filename`）。**有些软件只认/usr/java/default**。
+- 设置环境变量：JAVA_HOME、PATH
+- 设置SSH免密。只要一台机器（B）的~/.ssh/authorized_keys文件中包含一台机器（A）的公钥，那么A就能免密登录B
+```
+  $ ssh-keygen -t rsa -P '' -f ~/.ssh/id_rsa
+  $ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
+  $ chmod 0600 ~/.ssh/authorized_keys
+```
+
+## Hadoop配置
