@@ -86,7 +86,7 @@ DataNode
 - NameNode启动后会进入一个称为安全模式的特殊状态
 - 处于安全模式的NameNode是不会进行数据块的复制的
 - NameNode从所有的DataNode接收心跳信号和块状态报告
-- 每当NameNode检测某个数据块的副本数目达到这个最小值，那么该数据块就会被认为是副本安全（safety relicated）的
+- 每当NameNode检测某个数据块的副本数目达到这个最小值，那么该数据块就会被认为是副本安全（safety replicated）的
 - 在一定百分比（这个参数可配置）的数据块被NameNode检测确认是安全之后（加上一个额外的30秒等待时间），NameNode将退出安全模式状态
 - 接下来它会确认还有哪些数据块的副本没有达到指定数目，并将这些数据块复制到其它DataNode上
 
