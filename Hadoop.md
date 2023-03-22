@@ -262,3 +262,12 @@ Usage: hadoop fs [generic options]
 	[-touchz <path> ...]
 	[-usage [cmd ...]]
 ```
+
+### 完全分布式
+角色规划
+host   | NN | SNN | DN
+--     | -  | -   | -
+centos | √  |     |
+node01 |    | √   | √
+node02 |    |     | √
+node03 |    |     | √
