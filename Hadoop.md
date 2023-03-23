@@ -267,7 +267,7 @@ Usage: hadoop fs [generic options]
 角色规划
 host   | NN | SNN | DN
 --     | -  | -   | -
-centos | √  |     |
-node01 |    | √   | √
-node02 |    |     | √
-node03 |    |     | √
+node01 | ✅ |     |
+node02 |    | ✅  | ✅
+node03 |    |     | ✅
+node04 |    |     | ✅
