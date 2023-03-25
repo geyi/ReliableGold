@@ -166,7 +166,7 @@ export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin:$HADOOP_HOME/sbin
 使配置生效：`source /etc/profile`
 
 **修改Hadoop配置**  
-`cd   $HADOOP_HOME/etc/hadoop`
+`cd $HADOOP_HOME/etc/hadoop`
 
 `vi hadoop-env.sh`，设置JAVA_HOME
 ```sh
@@ -211,7 +211,9 @@ export JAVA_HOME=/opt/jdk1.8.0_261
 ```
 
 `vi slaves`，配置DN这个角色再那里启动  
+```
 centos
+```
 
 **初始化**
 `hdfs namenode -format`
@@ -264,10 +266,72 @@ Usage: hadoop fs [generic options]
 ```
 
 ### 完全分布式
-角色规划
+**角色规划**
 host   | NN | SNN | DN
 --     | -  | -   | -
 node01 | ✅ |     |
 node02 |    | ✅  | ✅
 node03 |    |     | ✅
 node04 |    |     | ✅
+
+**免密登录**  
+在哪台主机节点启动Hadoop集群（执行start-dfs.sh），那么这台主机就要对集群内的其它节点公开自己的公钥。
+
+**修改配置**  
+`cd $HADOOP_HOME/etc/hadoop`
+
+`vi hadoop-env.sh`，设置JAVA_HOME
+```sh
+export JAVA_HOME=/opt/jdk1.8.0_261
+```
+
+`vi core-site.xml`，给出NN角色在哪里启动
+```xml
+<property>
+  <name>fs.defaultFS</name>
+  <value>hdfs://node01:9000</value>
+</property>
+```
+
+`vi hdfs-site.xml`，配置HDFS
+```xml
+<!-- block的默认副本数 -->
+<property>
+  <name>dfs.replication</name>
+  <value>2</value>
+</property>
+<!-- FsImage在本地文件系统中的存储位置。如果这是一个逗号分隔的目录列表，那么FsImage将被 复制到所有目录中，以实现冗余 -->
+<property>
+  <name>dfs.namenode.name.dir</name>
+  <value>/var/bigdata/hadoop/fully/dfs/name</value>
+</property>
+<!-- block在本地文件系统中的存储位置 -->
+<property>
+  <name>dfs.datanode.data.dir</name>
+  <value>/var/bigdata/hadoop/fully/dfs/data</value>
+</property>
+<!-- SNN http服务的地址和端口 -->
+<property>
+  <name>dfs.namenode.secondary.http-address</name>
+  <value>node02:50090</value>
+</property>
+<!-- SNN在本地文件系统上存储要合并的临时映像的位置 -->
+<property>
+  <name>dfs.namenode.checkpoint.dir</name>
+  <value>/var/bigdata/hadoop/fully/dfs/secondary</value>
+</property>
+```
+
+`vi slaves`，配置DN这个角色再那里启动  
+```
+node02
+node03
+node04
+```
+
+**初始化**
+`hdfs namenode -format`
+
+**启动**
+`start-dfs.sh`
+
