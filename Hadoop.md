@@ -335,3 +335,35 @@ node04
 **启动**
 `start-dfs.sh`
 
+
+## 集群架构
+NameNode：单点，数据一致性好掌握
+问题：
+- 单点故障，集群整体不可用
+- 压力过大，内存受限
+
+单点故障：多个NameNode，主备切换  
+压力过大，内存受限：多个NameNode，管理不同的元数据。联邦机制，Federation（元数据分片）
+
+Hadoop 2.x 只支持一主一备的HA
+
+### HDFS-HA解决方案
+NameNode的元数据：
+1. client与NameNode交互操作产生的数据
+2. DN提交的block的元数据
+
+分布式中数据同步算法：
+- 同步
+- 异步
+- 半同步
+- Paxos
+
+**CAP理论**
+
+**HDFS-HA解决方案**
+- 多台NN主备模式，主节点处于Active状态，备节点处于Standby状态。处于Active状态的节点对外提供服务。
+- 增加了**JournalNode**角色，负责同步NN的EditLog。
+- 增加了**ZKFC**角色，与NN同节点，同ZK集群协调NN的主从选举和切换。
+- DN同时向多台NN同步block的元数据。
+
+> 在HA模式中没有SNN
