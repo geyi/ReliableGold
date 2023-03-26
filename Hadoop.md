@@ -367,3 +367,7 @@ NameNode的元数据：
 - DN同时向多台NN同步block的元数据。
 
 > 在HA模式中没有SNN
+
+### HDFS-Federation解决方案
+元数据分治，数据访问具有隔离性，复用DB存储。
+
