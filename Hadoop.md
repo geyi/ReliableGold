@@ -138,7 +138,7 @@ ssh除了可以远程登录，还可以远程执行命令
 - 关闭防火墙和selinux
 - 设置IP、主机名、hosts
 - 设置时间同步（ntp）
-- 安装JDK（使用rpm文件安装，命令：`rpm -i filename`）。**有些软件只认/usr/java/default**。
+- 安装JDK
 - 设置环境变量：JAVA_HOME、PATH
 - 设置SSH免密。只要一台机器（B）的~/.ssh/authorized_keys文件中包含一台机器（A）的公钥，那么A就能免密登录B
 ```
@@ -149,7 +149,7 @@ ssh除了可以远程登录，还可以远程执行命令
 
 ## Hadoop配置
 
-### 伪分布式配置
+### 伪分布式
 **解压压缩包，并移至opt目录**
 ```
 mkdir /opt/bigdata
@@ -269,10 +269,10 @@ Usage: hadoop fs [generic options]
 **角色规划**
 host   | NN | SNN | DN
 --     | -  | -   | -
-node01 | ✅ |     |
-node02 |    | ✅  | ✅
-node03 |    |     | ✅
-node04 |    |     | ✅
+node01 | √  |     |
+node02 |    | √   | √
+node03 |    |     | √
+node04 |    |     | √
 
 **免密登录**  
 在哪台主机节点启动Hadoop集群（执行start-dfs.sh），那么这台主机就要对集群内的其它节点公开自己的公钥。
@@ -336,7 +336,7 @@ node04
 `start-dfs.sh`
 
 
-## 集群架构
+# 集群架构
 NameNode：单点，数据一致性好掌握
 问题：
 - 单点故障，集群整体不可用
@@ -347,7 +347,7 @@ NameNode：单点，数据一致性好掌握
 
 Hadoop 2.x 只支持一主一备的HA
 
-### HDFS-HA解决方案
+## HDFS-HA解决方案
 NameNode的元数据：
 1. client与NameNode交互操作产生的数据
 2. DN提交的block的元数据
@@ -368,6 +368,15 @@ NameNode的元数据：
 
 > 在HA模式中没有SNN
 
-### HDFS-Federation解决方案
+## HDFS-Federation解决方案
 元数据分治，数据访问具有隔离性，复用DB存储。
 
+
+# HDFS-HA搭建
+**角色规划**
+host   | NN | SNN | DN | ZKFC | ZK
+--     | -  | -   | -  | -    | -
+node01 | √  |     |    | √    |
+node02 | √  | √   | √  | √    | √
+node03 |    |     | √  |      | √
+node04 |    |     | √  |      | √
