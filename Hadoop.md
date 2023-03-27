@@ -380,3 +380,92 @@ node01 | √  | √   |    | √    |
 node02 | √  | √   | √  | √    | √
 node03 |    | √   | √  |      | √
 node04 |    |     | √  |      | √
+
+**准备**
+- node01、node02互相设置免密登录
+- 搭建ZK集群
+
+**修改配置**  
+`vi core-site.xml`，给出NN角色在哪里启动
+```xml
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://mycluster</value>
+  </property>
+  <property>
+    <name>ha.zookeeper.quorum</name>
+    <value>node02:2181,node03:2181,node04:2181</value>
+  </property>
+</configuration>
+```
+
+`vi hdfs-site.xml`，配置HDFS
+```xml
+<configuration>
+  <!-- 逻辑到物理节点的映射 -->
+  <property>
+    <name>dfs.nameservices</name>
+    <value>mycluster</value>
+  </property>
+  <property>
+    <name>dfs.ha.namenodes.mycluster</name>
+    <value>nn1,nn2</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.mycluster.nn1</name>
+    <value>node01:8020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.rpc-address.mycluster.nn2</name>
+    <value>node02:8020</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.mycluster.nn1</name>
+    <value>node01:50070</value>
+  </property>
+  <property>
+    <name>dfs.namenode.http-address.mycluster.nn2</name>
+    <value>node02:50070</value>
+  </property>
+  <!-- JN的启动位置及数据存储路劲 -->
+  <property>
+    <name>dfs.namenode.shared.edits.dir</name>
+    <value>qjournal://node01:8485;node02:8485;node03:8485/mycluster</value>
+  </property>
+  <property>
+    <name>dfs.journalnode.edits.dir</name>
+    <value>/var/bigdata/hadoop/ha/dfs/jn</value>
+  </property>
+  <!-- HA角色切换的代理类和实现方法 -->
+  <property>
+    <name>dfs.client.failover.proxy.provider.mycluster</name>
+    <value>org.apache.hadoop.hdfs.server.namenode.ha.ConfiguredFailoverProxyProvider</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.methods</name>
+    <value>sshfence</value>
+  </property>
+  <property>
+    <name>dfs.ha.fencing.ssh.private-key-files</name>
+    <value>/root/.ssh/id_dsa</value>
+  </property>
+  <!-- 开启自动化故障转移 -->
+  <property>
+    <name>dfs.ha.automatic-failover.enabled</name>
+    <value>true</value>
+  </property>
+</configuration>
+```
+
+**在node01 02 03启动JN**：`hadoop-daemon.sh start journalnode`
+
+**选择一台NN执行格式化**：`hdfs namenode -format`
+
+**启动一台NN**：`hadoop-daemon.sh start namenode`
+
+**在另一台NN执行同步命令**：`hdfs namenode -bootstrapStandby`
+
+**格式化ZK**：`hdfs zkfc -formatZK`
+
+**启动HDFS**：`start-dfs.sh`
