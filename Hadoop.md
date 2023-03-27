@@ -336,7 +336,7 @@ node04
 `start-dfs.sh`
 
 
-# 集群架构
+# HDFS架构
 NameNode：单点，数据一致性好掌握
 问题：
 - 单点故障，集群整体不可用
@@ -374,9 +374,9 @@ NameNode的元数据：
 
 # HDFS-HA搭建
 **角色规划**
-host   | NN | SNN | DN | ZKFC | ZK
+host   | NN | JNN | DN | ZKFC | ZK
 --     | -  | -   | -  | -    | -
-node01 | √  |     |    | √    |
+node01 | √  | √   |    | √    |
 node02 | √  | √   | √  | √    | √
-node03 |    |     | √  |      | √
+node03 |    | √   | √  |      | √
 node04 |    |     | √  |      | √
