@@ -175,39 +175,43 @@ export JAVA_HOME=/opt/jdk1.8.0_261
 
 `vi core-site.xml`，给出NN角色在哪里启动
 ```xml
-<property>
-  <name>fs.defaultFS</name>
-  <value>hdfs://centos:9000</value>
-</property>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://centos:9000</value>
+  </property>
+</configuration>
 ```
 
 `vi hdfs-site.xml`，配置HDFS
 ```xml
-<!-- block的默认副本数 -->
-<property>
-  <name>dfs.replication</name>
-  <value>1</value>
-</property>
-<!-- FsImage在本地文件系统中的存储位置。如果这是一个逗号分隔的目录列表，那么FsImage将被 复制到所有目录中，以实现冗余 -->
-<property>
-  <name>dfs.namenode.name.dir</name>
-  <value>/var/bigdata/hadoop/local/dfs/name</value>
-</property>
-<!-- block在本地文件系统中的存储位置 -->
-<property>
-  <name>dfs.datanode.data.dir</name>
-  <value>/var/bigdata/hadoop/local/dfs/data</value>
-</property>
-<!-- SNN http服务的地址和端口 -->
-<property>
-  <name>dfs.namenode.secondary.http-address</name>
-  <value>centos:50090</value>
-</property>
-<!-- SNN在本地文件系统上存储要合并的临时映像的位置 -->
-<property>
-  <name>dfs.namenode.checkpoint.dir</name>
-  <value>/var/bigdata/hadoop/local/dfs/secondary</value>
-</property>
+<configuration>
+  <!-- block的默认副本数 -->
+  <property>
+    <name>dfs.replication</name>
+    <value>1</value>
+  </property>
+  <!-- FsImage在本地文件系统中的存储位置。如果这是一个逗号分隔的目录列表，那么FsImage将被 复制到所有目录中，以实现冗余 -->
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/var/bigdata/hadoop/local/dfs/name</value>
+  </property>
+  <!-- block在本地文件系统中的存储位置 -->
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/var/bigdata/hadoop/local/dfs/data</value>
+  </property>
+  <!-- SNN http服务的地址和端口 -->
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>centos:50090</value>
+  </property>
+  <!-- SNN在本地文件系统上存储要合并的临时映像的位置 -->
+  <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>/var/bigdata/hadoop/local/dfs/secondary</value>
+  </property>
+</configuration>
 ```
 
 `vi slaves`，配置DN这个角色再那里启动  
@@ -287,39 +291,43 @@ export JAVA_HOME=/opt/jdk1.8.0_261
 
 `vi core-site.xml`，给出NN角色在哪里启动
 ```xml
-<property>
-  <name>fs.defaultFS</name>
-  <value>hdfs://node01:9000</value>
-</property>
+<configuration>
+  <property>
+    <name>fs.defaultFS</name>
+    <value>hdfs://node01:9000</value>
+  </property>
+</configuration>
 ```
 
 `vi hdfs-site.xml`，配置HDFS
 ```xml
-<!-- block的默认副本数 -->
-<property>
-  <name>dfs.replication</name>
-  <value>2</value>
-</property>
-<!-- FsImage在本地文件系统中的存储位置。如果这是一个逗号分隔的目录列表，那么FsImage将被 复制到所有目录中，以实现冗余 -->
-<property>
-  <name>dfs.namenode.name.dir</name>
-  <value>/var/bigdata/hadoop/fully/dfs/name</value>
-</property>
-<!-- block在本地文件系统中的存储位置 -->
-<property>
-  <name>dfs.datanode.data.dir</name>
-  <value>/var/bigdata/hadoop/fully/dfs/data</value>
-</property>
-<!-- SNN http服务的地址和端口 -->
-<property>
-  <name>dfs.namenode.secondary.http-address</name>
-  <value>node02:50090</value>
-</property>
-<!-- SNN在本地文件系统上存储要合并的临时映像的位置 -->
-<property>
-  <name>dfs.namenode.checkpoint.dir</name>
-  <value>/var/bigdata/hadoop/fully/dfs/secondary</value>
-</property>
+<configuration>
+  <!-- block的默认副本数 -->
+  <property>
+    <name>dfs.replication</name>
+    <value>2</value>
+  </property>
+  <!-- FsImage在本地文件系统中的存储位置。如果这是一个逗号分隔的目录列表，那么FsImage将被 复制到所有目录中，以实现冗余 -->
+  <property>
+    <name>dfs.namenode.name.dir</name>
+    <value>/var/bigdata/hadoop/fully/dfs/name</value>
+  </property>
+  <!-- block在本地文件系统中的存储位置 -->
+  <property>
+    <name>dfs.datanode.data.dir</name>
+    <value>/var/bigdata/hadoop/fully/dfs/data</value>
+  </property>
+  <!-- SNN http服务的地址和端口 -->
+  <property>
+    <name>dfs.namenode.secondary.http-address</name>
+    <value>node02:50090</value>
+  </property>
+  <!-- SNN在本地文件系统上存储要合并的临时映像的位置 -->
+  <property>
+    <name>dfs.namenode.checkpoint.dir</name>
+    <value>/var/bigdata/hadoop/fully/dfs/secondary</value>
+  </property>
+</configuration>
 ```
 
 `vi slaves`，配置DN这个角色再那里启动  
