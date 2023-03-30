@@ -146,6 +146,7 @@ ssh除了可以远程登录，还可以远程执行命令
   $ cat ~/.ssh/id_rsa.pub >> ~/.ssh/authorized_keys
   $ chmod 0600 ~/.ssh/authorized_keys
 ```
+> 将本机的公钥发送给node02主机：ssh-copy-id -i id_rsa node02
 
 ## Hadoop配置
 
