@@ -478,3 +478,6 @@ node04 |    |     | √  |      | √
 **格式化ZK**：`hdfs zkfc -formatZK`
 
 **启动HDFS**：`start-dfs.sh`
+
+# 使用非root用户完成以上操作
+由于root的权限过大，一般情况都不使用它。只有在一些特殊情况下才采用登录root执行管理任务。
