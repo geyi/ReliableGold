@@ -477,6 +477,8 @@ node04 |    |     | √  |      | √
 
 **格式化ZK**：`hdfs zkfc -formatZK`
 
+> 以上步骤只要在集群搭建后初始化时执行一次
+
 **启动HDFS**：`start-dfs.sh`
 
 # 使用非root用户完成以上操作
