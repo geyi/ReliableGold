@@ -107,3 +107,81 @@ MapReduce On Yarn
    yarn只负责资源管理，不负责具体的任务调度。只要计算框架继承yarn的AppMaster，大家都可以使用一个统一视图的资源层
 
 > JT，TT是MR的常服务。2.x之后没有了这些服务，相对的，MR的client、调度、任务，这些都是临时服务
+
+### 搭建
+**角色规划**
+host   | NN | JNN | DN | ZKFC | ZK | RM | NM
+--     | -  | -   | -  | -    | -  | -  | -
+node01 | √  | √   |    | √    |    |    | 
+node02 | √  | √   | √  | √    | √  |    | √
+node03 |    | √   | √  |      | √  | √  | √
+node04 |    |     | √  |      | √  | √  | √
+
+```shell
+cd $HADOOP_HOME/etc/hadoop
+cp mapred-site.xml.template mapred-site.xml
+```
+`vi mapred-site.xml`，增加如下配置：
+```xml
+<configuration>
+  <property>
+    <name>mapreduce.framework.name</name>
+    <value>yarn</value>
+  </property>
+</configuration>
+```
+
+`vi yarn-site.xml`，增加如下配置：
+```xml
+<configuration>
+  <property>
+    <name>yarn.nodemanager.aux-services</name>
+    <value>mapreduce_shuffle</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.ha.enabled</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.zk-address</name>
+    <value>node02:2181,node03:2181,node04:2181</value>
+  </property>
+
+  <property>
+    <name>yarn.resourcemanager.cluster-id</name>
+    <value>juju</value>
+  </property>
+  
+  <property>
+    <name>yarn.resourcemanager.ha.rm-ids</name>
+    <value>rm1,rm2</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname.rm1</name>
+    <value>node03</value>
+  </property>
+  <property>
+    <name>yarn.resourcemanager.hostname.rm2</name>
+    <value>node04</value>
+  </property>
+</configuration>
+```
+
+分发文件
+```shell
+scp mapred-site.xml yarn-site.xml node02:`pwd`
+scp mapred-site.xml yarn-site.xml node03:`pwd`
+scp mapred-site.xml yarn-site.xml node04:`pwd`
+```
+
+在node01上启动yarn，`start-yarn.sh`
+```
+starting yarn daemons
+starting resourcemanager, logging to /opt/bigdata/hadoop-2.6.5/logs/yarn-root-resourcemanager-node01.out
+node03: starting nodemanager, logging to /opt/bigdata/hadoop-2.6.5/logs/yarn-root-nodemanager-node03.out
+node04: starting nodemanager, logging to /opt/bigdata/hadoop-2.6.5/logs/yarn-root-nodemanager-node04.out
+node02: starting nodemanager, logging to /opt/bigdata/hadoop-2.6.5/logs/yarn-root-nodemanager-node02.out
+```
+
+在node03和node04上启动ResourceManager，`yarn-daemon.sh start resourcemanager`
