@@ -185,3 +185,12 @@ node02: starting nodemanager, logging to /opt/bigdata/hadoop-2.6.5/logs/yarn-roo
 ```
 
 在node03和node04上启动ResourceManager，`yarn-daemon.sh start resourcemanager`
+
+执行官方案例：
+```shell
+cd $HADOOP_HOME
+cd share/hadoop/mapreduce
+hadoop jar hadoop-mapreduce-examples-2.6.5.jar wordcount /data/wc/input /data/wc/output
+hdfs dfs -ls /data/wc/output
+hdfs dfs -cat /data/wc/output/part-r-00000
+```
