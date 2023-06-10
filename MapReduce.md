@@ -194,3 +194,7 @@ hadoop jar hadoop-mapreduce-examples-2.6.5.jar wordcount /data/wc/input /data/wc
 hdfs dfs -ls /data/wc/output
 hdfs dfs -cat /data/wc/output/part-r-00000
 ```
+
+思想1：在Linux中，很多命令的使用格式是 command + 全局选项 + 命令选项。那在程序入参中我们也可以使用这个模式，并开发参数的解析工具，以此提高程序的灵活性。
+思想2：先说普遍存在的作法，然后引出自己的想法。
+思想3：听到一个概念要能条件反射。
