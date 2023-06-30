@@ -159,6 +159,7 @@ eureka client
 - sudo kubectl edit deploy market-elec
 - kubectl apply -f shipper.ingress.yml
 - kubectl logs -f nginx-ingress-controller-cf766b499-7xmks -n ingress-nginx --tail=10000 > /tmp/ingress.shipper.log
+- kubectl delete pod --force --grace-period=0
 
 > https://www.cnblogs.com/wuxinchun/p/15218227.html
 
