@@ -45,6 +45,7 @@
 
 以上参考：https://www.oracle.com/technetwork/tutorials/tutorials-1876574.html
 
+# 原理
 CMS和G1算法都涉及对可达对象的并发标记。并发标记的主要问题是collector在标记对象的过程中mutator可能正在改变对象引用关系图，从而造成漏标和错标。错标不会影响程序的正确性，只会造成所谓的浮动垃圾。但漏标则会导致可达对象被当做垃圾收集掉，从而影响程序的正确性。
 >  CMS在整个收集过程中让所有新创建的对象都是黑色的， 也就是说在CMS GC进行中创建的对象在这轮收集都会保证存活。这样虽然会有floating garbage问题，但实现起来比较简单，收集速度受影响较小。
 
@@ -89,6 +90,45 @@ CMS的Write Barrier非常简单，只是在Card Table记录一下改变的引用
 但是HotSpot VM只使用了old gen部分的card table，也就是说只关心old -> ?的引用。这是因为，一般认为young gen的引用变化率（mutation rate）非常高，其对应的card table部分可能大部分都是dirty的，当把young gen当做root扫描的时候与其扫描card table不如直接扫描整个young gen。
 
 另外CMS在整个收集过程中让所有新创建的对象都是黑色的，也就是说在CMS GC进行中创建的对象在这轮收集都会保证存活。这样虽然会有floating garbage问题，但实现起来比较简单，收集速度受影响较小。
+
+# 关于CMS在remark阶段仍然重新扫描一遍根集合的解释说明
+```java
+void test() {
+    MyObject q = foo(); // this is white  
+    MyObject p = new MyObject(); // this is implicitly black  
+    p.someField = q; // black -> white  
+}
+
+
+MyObject foo() {
+    MyObject q = bar(); // this is white  
+    return q; // mutator keeps white pointer on stack  
+}
+
+
+MyObject bar() {
+    MyObject p = getGreyObject();  // this is grey  
+    MyObject q = p.getWhiteField(); // this is white  
+    return q; // mutator keeps white pointer on stack  
+}
+```
+类似与上面的代码
+
+Mutator可能会从一个灰对象得到一个白对象的引用；新创建的对象（在young gen里的黑对象）也可能会持有这个白对象引用（astore_<n>指令不会引发write barrier。能够引发write barrier的指令只有putfield，putstatic，aastore，因此这个黑对象到白对象的引用关系不会被记录下来）。当灰对象与白对象的引用关系被删除时，由于是incremental update而非SATB，引用关系的删除也没有记录。因此，remark阶段必须重新扫描root，否则就会出现漏标。
+
+参考：https://hllvm-group.iteye.com/group/topic/44529
+
+# 关于CMS在remark阶段需要重新扫描根集合的又一点解释
+CMS 的 write barrier 属于 Increment Update 的方式，简称 INC，表示它会增量同步堆内的对象图。但是 INC barrier 存有一项缺陷：无法发现 Concurrent Mark 期间堆外根集（寄存器、栈）的引用变化。为此在 concurrent mark 之后，需要一个 remark 阶段再 STW 扫一遍根集，这是 CMS GC 的特点，有时 remark 阶段时间并不短。
+
+G1 用的 Snapshot-At-The-Beginning 的 Write Barrier 是另一条思路，并不持续跟踪对象图的变化，而是打下 concurrent mark 那一刻的快照，而将之后所有新分配的对象统统视为活跃不管，做到：
+- Anything live at Initial Marking is considered live.
+- Anything allocated since Initial Marking is considered live.
+
+SATB Barrier 不需要最后的 remark，代价就是因为新分配的对象统统视为活跃，有更多的 float garbage。最后回收到的垃圾对象，一定是开始 mark 那一刻之前产生的垃圾。
+这时要跟踪的不是新引用的赋值，反而是旧引用的被解除，以维持快照时刻的对象关系
+
+参考：https://www.zhihu.com/question/37028283/answer/438344734
 
 # 备注
 mutator: 在JVM（Java虚拟机）的垃圾收集中，"mutator"是指执行应用程序代码的线程。"mutator"是一个术语，用于区分执行应用程序逻辑的线程和执行垃圾收集工作的线程。在垃圾收集器的设计中，有两类主要的参与者：mutator和collector。mutator负责执行应用程序的业务逻辑，包括对象的创建、读取、更新和删除等操作。而collector负责识别和回收不再使用的对象，并将内存空间重新分配给新的对象。
