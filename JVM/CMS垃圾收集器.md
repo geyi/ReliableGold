@@ -88,3 +88,6 @@ CMS的Write Barrier非常简单，只是在Card Table记录一下改变的引用
 但是HotSpot VM只使用了old gen部分的card table，也就是说只关心old -> ?的引用。这是因为，一般认为young gen的引用变化率（mutation rate）非常高，其对应的card table部分可能大部分都是dirty的，当把young gen当做root扫描的时候与其扫描card table不如直接扫描整个young gen。
 
 另外CMS在整个收集过程中让所有新创建的对象都是黑色的，也就是说在CMS GC进行中创建的对象在这轮收集都会保证存活。这样虽然会有floating garbage问题，但实现起来比较简单，收集速度受影响较小。
+
+# 备注
+mutator: 在JVM（Java虚拟机）的垃圾收集中，"mutator"是指执行应用程序代码的线程。"mutator"是一个术语，用于区分执行应用程序逻辑的线程和执行垃圾收集工作的线程。在垃圾收集器的设计中，有两类主要的参与者：mutator和collector。mutator负责执行应用程序的业务逻辑，包括对象的创建、读取、更新和删除等操作。而collector负责识别和回收不再使用的对象，并将内存空间重新分配给新的对象。
