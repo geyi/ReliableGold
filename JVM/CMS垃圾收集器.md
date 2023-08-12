@@ -53,6 +53,7 @@ CMS和G1算法都涉及对可达对象的并发标记。并发标记的主要问
 基于上述分类，一个white对象在并发标记阶段会被漏标的充分必要条件是：
 1. mutator插入了一个从black对象到该white对象的新引用
 2. mutator删除了所有从grey对象到该white对象的直接或者间接引用。
+
 因此，要避免对象的漏标，只需要打破上述2个条件中的任何一个即可。
 
 Incremental update关注的是第一个条件的打破，即引用关系的插入（或者说发生了一个白对象的引用被赋值到一个黑对象的字段里）。Incremental update利用write barrier将所有新插入的引用关系都记录下来（例如说标记并压到marking stack上，或者是记录在类似mod-union table里。也就是把这个白对象变成灰色），最后以这些引用关系为根STW地重新扫描一遍，即避免了漏标问题。
@@ -69,8 +70,8 @@ CMS是一个老年代的垃圾收集器，既然只收集Old Gen，它必须要�
 
 但既然在Initial Mark和Concurrent Mark阶段已经扫过了Young Gen为什么还要在Remark阶段再扫一次？这就是因为CMS使用Incremental Update Write Barrier是一种“Grey Mutator”做法。
 
-如果把mutator也看作一个虚构的对象，那么它应该也有黑灰白的划分。
-Black Mutator：mutator一旦被初始化之后，到并发标记结束之前都不可以接触到白对象的指针，或者要确保接触到的白对象都被Grey-Protected（破坏条件2）。
+如果把mutator也看作一个虚构的对象，那么它应该也有黑灰白的划分。  
+Black Mutator：mutator一旦被初始化之后，到并发标记结束之前都不可以接触到白对象的指针，或者要确保接触到的白对象都被Grey-Protected（破坏条件2）。  
 Grey Mutator：在mutator初始化之后，到并发标记结束之前还可以继续接触白对象，只要在标记结束前重新扫描一次完整的根集合即可。
 
 CMS的Write Barrier非常简单，只是在Card Table记录一下改变的引用的出发端对应的Card。那Mod-Union Table是啥？
