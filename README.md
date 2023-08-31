@@ -17,6 +17,7 @@
 3. [Hotspot VM垃圾收集器](./JVM/Hotspot%20VM垃圾收集器.md)
 4. [CMS垃圾收集器](./JVM/CMS垃圾收集器.md)
 5. [G1垃圾收集器](./JVM/G1垃圾收集器.md)
+6. [类加载机制](./JVM/类加载机制.md)
 
 
 # 数据库
