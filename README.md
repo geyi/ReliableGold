@@ -19,6 +19,7 @@
 5. [G1垃圾收集器](./JVM/G1垃圾收集器.md)
 6. [类加载机制](./JVM/类加载机制.md)
 7. [jstat](./JVM/jstat.md)
+8. [jmap](./JVM/jmap.md)
 
 
 # 数据库
