@@ -30,10 +30,10 @@ where <option> is one of:
     -J<flag>             to pass <flag> directly to the runtime system
 ```
 参数说明：  
--heap：打印jvm heap的情况。  
--histo：打印jvm heap的直方图。其输出信息包括类名，对象数量，对象占用大小。  
+-heap：打印jvm heap的概要，包括分代的大小，比例及使用量。  
+-histo：打印jvm heap的直方图，包括对象数量，占用大小及类型。  
 -histo[:live]：同上，但是只打印存活对象的情况。  
--permstat：打印类加载统计信息。
+-clstats：打印类加载统计信息。
  
 从安全点日志看，从Heap Dump开始，整个JVM都是停顿的，考虑到IO（虽是写到Page Cache，但或许会遇到background flush），几G的Heap可能产生几秒的停顿，在生产环境上执行时谨慎再谨慎。
 
@@ -55,14 +55,14 @@ MAT能看的信息更多，但VisualVM胜在JVM自带，用法如下：命令行
 - NewSize：新生代默认大小。
 - MaxNewSize：新生代最大大小。
 - OldSize：老年代大小。
-- NewRatio：新生代与老年代的大小比率。2表示新生代与老年代比值为1:2，新生代占整个堆内存的1/3，老年代占整个堆内存的2/3。
+- NewRatio：新生代与老年代的大小比率。如：2，表示新生代与老年代比值为1:2，新生代占整个堆内存的1/3，老年代占整个堆内存的2/3。
 - SurvivorRatio：年轻代中Eden区与两个Survivor区的比值。注意Survivor区有两个，如：8，表示Eden区与Survivor区比值为8:2，一个Survivor区占整个年轻代的1/10。
 - MetaspaceSize：元空间大小（JDK8 HotSpot JVM 使用本地内存来存储类元数据信息并称之为元空间（Metaspace））。
 - CompressedClassSpaceSize：类指针压缩空间大小，默认为1G。
 - MaxMetaspaceSize：元空间最大大小。
 - G1HeapRegionSize：G1区块的大小，取值为1M至32M，其取值是要根据最小Heap大小划分出2048个区块。
 
-新生代的内存回收就是采用空间换时间的方式，如果from区使用率一直是100% 说明程序在不断创建大量的实例，使用jstat统计一下jvm在内存回收中发生的频率、耗时以及是否有full gc，使用这个数据来评估一内存配置参数、gc参数是否合理。
+新生代的内存回收就是采用空间换时间的方式，如果from区使用率一直是100% 说明程序在不断创建大量的实例，使用jstat统计一下jvm在内存回收中发生的频率、耗时以及是否有full gc，使用这些数据来评估内存配置参数、gc参数是否合理。
 
 ## jmap -histo <pid>
 展示类对象的数量及内存占用
