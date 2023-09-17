@@ -51,3 +51,12 @@ CMS调优面临的问题：
 1. 压缩老年代空间。单STW压缩式GC耗时较长，应该尽量避免。
 2. 让老年代的空间大到足以避免由堆内存碎片引起的STW压缩。
 3. 减少对象从新生代提升至老年代的比率，即“YGC回收原则”。
+
+# GC日志分析
+GC日志在线分析：`https://gceasy.ycrash.cn/`，以下是部分分析结果的截图
+
+![](../jvm/../image/JVM/GCLogAnalysis1.jpg)
+
+![](../jvm/../image/JVM/GCLogAnalysis2.jpg)
+
+![](../jvm/../image/JVM/GCLogAnalysis3.jpg)
