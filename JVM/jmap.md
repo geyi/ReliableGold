@@ -83,3 +83,7 @@ MAT能看的信息更多，但VisualVM胜在JVM自带，用法如下：命令行
  
 输出堆内存镜像到二进制文件：`jmap -dump:live,format=b,file=dump.bin <pid>`
 
+## jmap -dump
+在应用程序运行中，可以使用此命令导出dump文件。而通过使用`-XX:+HeapDumpOnOutOfMemoryError`和`-XX:HeapDumpPath` JVM参数，可以在发生OutOfMemoryError错误时生成dump文件。这个堆转储文件的扩展名通常为 .hprof。
+
+.hprof 文件包含了 Java 堆内存的详细信息，包括各个对象及其关系、内存分配情况、线程信息等。它提供了对应用程序内存使用情况的深入分析，并且在调试和解决内存相关问题时非常有用。
