@@ -1,3 +1,58 @@
+# jmap -heap 1
+```
+Attaching to process ID 1, please wait...
+Debugger attached successfully.
+Server compiler detected.
+JVM version is 25.171-b11
+
+using parallel threads in the new generation.
+using thread-local object allocation.
+Concurrent Mark-Sweep GC
+
+Heap Configuration:
+   MinHeapFreeRatio         = 40
+   MaxHeapFreeRatio         = 70
+   MaxHeapSize              = 4294967296 (4096.0MB)
+   NewSize                  = 1073741824 (1024.0MB)
+   MaxNewSize               = 1073741824 (1024.0MB)
+   OldSize                  = 3221225472 (3072.0MB)
+   NewRatio                 = 2
+   SurvivorRatio            = 8
+   MetaspaceSize            = 21807104 (20.796875MB)
+   CompressedClassSpaceSize = 1073741824 (1024.0MB)
+   MaxMetaspaceSize         = 17592186044415 MB
+   G1HeapRegionSize         = 0 (0.0MB)
+
+Heap Usage:
+New Generation (Eden + 1 Survivor Space):
+   capacity = 966393856 (921.625MB)
+   used     = 559082632 (533.182746887207MB)
+   free     = 407311224 (388.44225311279297MB)
+   57.85246134677413% used
+Eden Space:
+   capacity = 859045888 (819.25MB)
+   used     = 546122408 (520.8229141235352MB)
+   free     = 312923480 (298.42708587646484MB)
+   63.57313568795058% used
+From Space:
+   capacity = 107347968 (102.375MB)
+   used     = 12960224 (12.359832763671875MB)
+   free     = 94387744 (90.01516723632812MB)
+   12.073096716651404% used
+To Space:
+   capacity = 107347968 (102.375MB)
+   used     = 0 (0.0MB)
+   free     = 107347968 (102.375MB)
+   0.0% used
+concurrent mark-sweep generation:
+   capacity = 3221225472 (3072.0MB)
+   used     = 761690744 (726.404899597168MB)
+   free     = 2459534728 (2345.595100402832MB)
+   23.645992825428646% used
+
+59206 interned Strings occupying 6765192 bytes.
+```
+
 # YGC + FGC
 ```
 2023-05-19T18:40:24.687+0800: 379299.130: [GC (Allocation Failure) 2023-05-19T18:40:24.687+0800: 379299.131: [ParNew
