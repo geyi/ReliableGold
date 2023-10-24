@@ -1,8 +1,8 @@
 # MySQL架构
-![](./image/../../image/MySQL/MySQL架构.png)
+![](../image/MySQL/MySQL架构.png)
 
 # InnoDB架构
-![](./image/../../image/MySQL/InnoDB架构.png)
+![](../image/MySQL/InnoDB架构.png)
 
 1. In-Memory Structure  
 Adaptive Hash Index：自适应哈希索引  
