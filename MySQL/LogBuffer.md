@@ -13,7 +13,7 @@
 2. 如果写入log buffer的数据，write入OS cache之前，数据库崩溃，就会出现数据丢失；
 3. 如果写入OS cache的数据，fsync入磁盘之前，操作系统崩溃，也可能出现数据丢失。
 
-MySql有一个参数innodb_flush_log_at_trx_commit，能控制事务提交时，刷redo log的策略，如下图：
+MySql有一个参数innodb_flush_log_at_trx_commit，能控制事务提交时，刷redo log的策略，如下图：  
 ![innodb_flush_log_at_trx_commit](../image/MySQL/log-buffer2.png)
 
 策略一：最佳性能（innodb_flush_log_at_trx_commit=0）
