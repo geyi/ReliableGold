@@ -59,6 +59,11 @@ MySQL的Performance Schema是一个功能，它提供了MySQL数据库服务器�
 ## 尽量避免null
 - 负向比较（!=）会引发全表扫描。
 - 如果允许空值，不等于（!=）的查询，不会将空值行（row）包含进来，此时的结果集往往是不符合预期的，此时往往要加上一个or条件，把空值（is null）结果包含进来。
+- NULL通过任一操作符与其它值比较都会得到NULL，除了<=>。
+- 任何有返回值的表达式中有NULL参与时，都会得到另外一个NULL值。例如：`null + 10`，`concat('abc', null)`
+- 使用`count(*)`或者`count(null column)`结果不同，`count(null column) <= count(*)`。
+- 虽然`select NULL=NULL`的结果为false，但是在我们使用`distinct`，`group by`，`order by`时，NULL又被认为是相同值。
+- MySQL中支持在含有NULL值的列上使用索引，但是Oracle不支持，这就是我们平时所说的如果列上含有NULL那么将会使索引失效。
 
 ## 数据类型
 
