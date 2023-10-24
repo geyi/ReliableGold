@@ -204,3 +204,9 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 : 15664K->13235K(943744K), 0.0122205 secs] 2467730K->2465587K(4089472K), 0.0125392 secs] [Times: user=0.15 sys=0.00, real=0.01 secs] 
 ```
 当JNI关键区域被释放时，GC被触发。当本机代码使用JNI `GetPrimitiveArrayCritical()`或`GetStringCritical()`函数获取对Java堆中数组或字符串的引用时，就会出现JNI关键区域。该引用一直保持到本机代码调用相应的发布函数为止。从**获取**到**发布**之间的时间被称为JNI关键部分，在此期间，Java VM无法达到允许垃圾收集发生的状态。当任何线程处于JNI关键区域时，GC都会被阻塞。如果在这段时间内请求了GC，那么在所有线程从JNI关键区域退出后，将调用该GC。
+
+## 触发GC的原因
+- Allocation Failure：内存分配失败
+- GCLocker Initiated GC
+- Ergonomics：JVM自己进行自适应调整引发的GC
+- Metadata GC Threshold：MetaSpace被占满
