@@ -39,7 +39,7 @@
 
 因此，MySQL的缓冲池列表使用了变种的LRU算进行管理。当需要将新页添加到缓冲池时，最近最久未使用的页会被淘汰，新页被添加到列表中间。如下图所示这种中点插入策略将列表视为两个子列表。
 
-![Buffer Pool List](./image/../../image/MySQL/innodb-buffer-pool-list.png)
+![Buffer Pool List](../image/MySQL/innodb-buffer-pool-list.png)
 
 ### 缓冲池配置
 - 理想情况下，应该将缓冲池设置为尽可能大的值。缓冲池越大，InnoDB就越像一个内存数据库，从磁盘读取一次数据，然后在后续读取时都是从内存访问数据。
