@@ -31,6 +31,9 @@
 1. [MySQL架构](./MySQL/MySQL架构.md)
 2. [BufferPool](./MySQL/BufferPool.md)
 3. [LogBuffer](./MySQL/LogBuffer.md)
+4. [ChangeBuffer](./MySQL/ChangeBuffer.md)
+5. [AdaptiveHashIndex](./MySQL/AdaptiveHashIndex.md)
+6. [DoubleWriteBuffer](./MySQL/DoubleWriteBuffer.md)
 
 ## Redis
 1. [Redis](Redis.md)
