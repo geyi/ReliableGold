@@ -12,7 +12,7 @@ double write buffer 分为内存和磁盘的两层架构。
 
 如上图，当有页数据刷盘时：
 1. 页数据先memcopy到DWB的内存里；
-2. 从DWB的内存里，先把数据刷到DWB的磁盘上（doublewrite buffer系统表空间）；
+2. 从DWB的内存里，先把数据刷到DWB的磁盘上（doublewrite buffer系统表空间，一个大的顺序块）；
 3. 再一次从DWB的内存里，把数据刷到数据磁盘上。
 
 假设步骤2掉电，此时保证了数据的完整性。  
