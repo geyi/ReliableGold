@@ -60,3 +60,77 @@ GC日志在线分析：`https://gceasy.ycrash.cn/`，以下是部分分析结果
 ![](../jvm/../image/JVM/GCLogAnalysis2.jpg)
 
 ![](../jvm/../image/JVM/GCLogAnalysis3.jpg)
+
+# JVM参数
+## Log
+-verbose:gc：启用GC日志输出。显示简要的GC概要信息。
+
+-XX:+PrintGCDetails：打印详细的GC日志信息，包括堆大小、垃圾回收的原因、回收前后的堆状态等。
+
+-XX:+PrintGCTimeStamps：在GC日志中打印每个GC事件的时间戳。
+
+-XX:+PrintGCDateStamps：在GC日志中打印每个GC事件的日期和时间。
+
+-Xloggc：指定GC日志文件的位置和名称。
+
+-XX:+UseGCLogFileRotation：开启GC日志文件轮转。
+
+-XX:NumberOfGCLogFiles：指定GC日志文件保留的数量。
+
+-XX:GCLogFileSize：设置单个GC日志文件的最大大小。
+
+-XX:+PrintGCApplicationStoppedTime：在GC日志中打印应用程序停顿的时间。
+
+-XX:+HeapDumpOnOutOfMemoryError：在发生OutOfMemoryError时生成堆转储快照。
+
+-XX:+PrintPromotionFailure：打印在对象晋升（从年轻代到老年代）过程中失败的次数和原因。
+
+-XX:+CMSDumpAtPromotionFailure：在对象晋升失败时进行CMS（Concurrent Mark-Sweep）转储。
+
+-XX:+PrintTenuringDistribution：打印年龄分布信息，即年轻代中各个对象的年龄。
+
+-XX:+PrintFlagsFinal：打印JVM选项和系统属性的最终值。
+
+🌰：`-verbose:gc -XX:+PrintGCDateStamps -XX:+PrintGCDetails -XX:+PrintGCCause  -XX:+PrintTenuringDistribution -Xloggc:/opt/kuaidi100/runnable_jar/shipper/logs/gc-%t.log  -XX:+UseGCLogFileRotation -XX:NumberOfGCLogFiles=5 -XX:GCLogFileSize=20M`
+
+## Heap
+-Xms：指定JVM初始堆内存大小。例如，-Xms512m表示将初始堆大小设置为512MB。
+
+-Xmx：指定JVM堆内存的最大值。例如，-Xmx1024m表示将堆内存的最大值设置为1GB。
+
+-Xmn：指定年轻代（Young Generation）的大小。年轻代包含Eden区和Survivor区。例如，-Xmn256m表示将年轻代的大小设置为256MB。
+
+-XX:NewRatio：设置新生代（年轻代）与老年代（年老代）内存大小的比率。默认值为2，表示新生代与老年代的比例为1:2。
+
+-XX:SurvivorRatio：设置Eden区和Survivor区的比率。默认值为8，表示Eden区与每个Survivor区的比例为8:1。
+
+-XX:PermSize：指定永久代（Permanent Generation）的初始大小。仅适用于Java 8之前的版本。
+
+-XX:MaxPermSize：指定永久代的最大大小。仅适用于Java 8之前的版本。
+
+-Xss：设置线程栈的大小。这个值会影响可以创建的线程数量。默认值因平台而异。
+
+-XX:MaxDirectMemorySize：指定直接内存的最大大小。直接内存用于NIO（New Input/Output）操作，它不受Java堆大小的限制。
+
+🌰：`-Xms4G -Xmx4G -Xmn1G -XX:SurvivorRatio=8 -XX:MaxDirectMemorySize=2G`
+
+## GC
+-XX:+UseSerialGC：使用Serial垃圾收集器。
+
+-XX:+UseParallelGC：使用Parallel垃圾收集器。
+
+-XX:+UseParallelOldGC：老年代使用并行的方式进行垃圾收集。
+
+-XX:+UseParNewGC：新生代使用并行的方式进行垃圾收集。
+
+-XX:+UseConcMarkSweepGC：使用CMS垃圾收集器（从JDK9开始不推荐使用CMS收集器）。
+
+-XX:CMSMaxAbortablePrecleanTime=5000：默认值5s，代表该阶段最大的持续时间。
+
+-XX:CMSScheduleRemarkEdenPenetration=50：默认值50%，代表Eden区使用比例超过50%就结束该阶段进入remark。
+
+-XX:+UseG1GC：使用G1垃圾收集器。
+
+-XX:+UseZGC：使用Z垃圾收集器。
+
+🌰：`-XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction=80 -XX:+UseCMSInitiatingOccupancyOnly -XX:+CMSParallelRemarkEnabled`
