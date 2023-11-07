@@ -34,6 +34,8 @@
 4. [ChangeBuffer](./MySQL/ChangeBuffer.md)
 5. [AdaptiveHashIndex](./MySQL/AdaptiveHashIndex.md)
 6. [DoubleWriteBuffer](./MySQL/DoubleWriteBuffer.md)
+7. [MVCC](./MySQL/MVCC.md)
+8. [InnoDB中的锁](./MySQL/InnoDB中的锁.md.md)
 
 ## Redis
 1. [Redis](Redis.md)
