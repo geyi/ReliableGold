@@ -37,6 +37,8 @@
 7. [MVCC](./MySQL/MVCC.md)
 8. [InnoDB中的锁](./MySQL/InnoDB中的锁.md)
 9. [TransactionIsolation](./MySQL/TransactionIsolation.md)
+10. [执行计划](./MySQL/执行计划.md)
+11. [MySQL数据库规范](./MySQL/MySQL数据库规范.md)
 
 ## Redis
 1. [Redis](Redis.md)
