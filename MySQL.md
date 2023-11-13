@@ -31,7 +31,7 @@ MySQL的Performance Schema是一个功能，它提供了MySQL数据库服务器�
 
 - 查询分析：Performance Schema提供了详细的查询执行时间信息，帮助您识别慢查询并进行优化。
 
-- 资源监控：您可以跟踪每个查询的CPU、内存和I/O使用情况，帮助您识别消耗大量资源的查询，从而影响服务器性能。
+- 资源监控：您可以跟踪每个查询的CPU、内存和I/O使用情况，帮助您识别消耗大量资源的查询。
 
 - 锁分析：Performance Schema可以帮助识别锁争用情况，并分析由于锁定而导致的延迟的查询。
 
@@ -54,7 +54,7 @@ MySQL的Performance Schema是一个功能，它提供了MySQL数据库服务器�
 简单数据类型的操作通常需要更少的CPU资源，例如：
 - 整型比字符串的比较成本更低，因为字符集和校对规则使字符比较比整型比较更复杂。
 - 使用MySQL自建类型而不是字符串来存储日期和时间。
-- 使用整型存储IP地址（INET_ATON(ip)）
+- 使用整型存储IP地址（INET_ATON(ip)、INET_NTOA(int)）
 
 ## 尽量避免null
 - 负向比较（!=）会引发全表扫描。
@@ -209,8 +209,8 @@ show status like 'Handler_read%';
 - Handler_read_key：通过索引获取数据的次数。如果这个值很高，说明为现有查询建立了正确的索引。
 - Handler_read_first：读取索引中第一个条目的次数。如果此值很高，则表明服务器正在执行大量完整索引扫描（例如SELECT col1 FROM foo，假设col1已编入索引）。
 - Handler_read_last：读取索引最后一个条目的次数。该值增加基本上可以判定查询中使用了基于索引的order by desc子句。例如：基于主键的正向排序，会增加Handler_read_first和Handler_read_next。而基于主键的反向排序，会增加Handler_read_last和Handler_read_prev。
-- Handler_read_next：通过索引读取下一行数据的次数，常用于基于索引的范围扫描和order by limit子句中。
-- Handler_read_prev：通过索引读取上一行数据的次数，常用于基于索引的范围扫描和order by limit子句中。
+- Handler_read_next：通过索引读取下一行数据的次数，常用于基于索引的范围扫描和order by ...子句中。
+- Handler_read_prev：通过索引读取上一行数据的次数，常用于基于索引的范围扫描和order by ... desc子句中。
 - Handler_read_rnd：从固定位置读取数据的次数。如果您要执行很多需要对结果进行排序的查询，则此值很高。您可能有很多查询需要MySQL扫描整个表，或者您的联接没有正确使用键。
 - Handler_read_rnd_next：从数据节点读取下一条数据的次数。如果要执行大量表扫描，则此值很高，这通常表明没有未表建立正确的索引，或者查询语句未使用现有的索引。
 
