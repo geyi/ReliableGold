@@ -37,13 +37,9 @@
 https://db-engines.com/en
 
 # Redis
-Redis 是一个开源（BSD许可）的，内存中的数据结构存储系统，它可以用作数据库、缓存和消息中间件。
-它支持多种类型的数据结构，如 字符串（strings）， 散列（hashes）， 列表（lists）， 集合（sets）， 有序集合（sorted sets） 与范围查询， bitmaps， hyperloglogs 和 地理空间（geospatial） 索引半径查询。
-Redis 内置了 复制（replication），LUA脚本（Lua scripting）， LRU驱动事件（LRU eviction），事务（transactions） 和不同级别的 磁盘持久化（persistence）， 并通过 Redis哨兵（Sentinel）和自动 分区（Cluster）提供高可用性（high availability）。
+Redis 是一个开源的、内存中的数据结构存储系统，被用作数据库、缓存、消息代理和流处理引擎。Redis 提供了多种数据结构，包括字符串（strings）、哈希（hashes）、列表（lists）、集合（sets）、有范围查询的有序集合（sorted sets）、位图（bitmaps）、HyperLogLogs、地理空间索引（geospatial indexes）和流（streams）。Redis 内置了复制（replication）、Lua 脚本、LRU 淘汰机制（Least Recently Used）、事务（transactions）以及不同级别的磁盘持久化，并通过 Redis Sentinel 实现了高可用性，还通过 Redis Cluster 实现了自动分区。
 
-memcached的value没有类型的概念
-
-redis的server对每种类型的数据都有自己的操作方法（计算向数据移动)
+> memcached的value没有类型的概念，而redis的server对每种类型的数据都有自己的操作方法（计算向数据移动)
 
 # 安装Redis
 ```
@@ -82,7 +78,7 @@ Cli Executable : /usr/local/bin/redis-cli
 
 # KEY
 type属性表示value的类型  
-encoding属性表示value的编码方式
+encoding属性表示value的编码方式（命令：`object encoding`）
 
 redis存储的数据是**二进制安全的**
 
@@ -92,6 +88,8 @@ redis存储的数据是**二进制安全的**
 - 字符串
 - 数值
 - bitmap
+
+> Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度特别短（redis3.2之前是39字节，redis3.2之后是44字节）的时候，Redis使用embstr来存储字符串，而当字符串长度超过39（redis3.2之前）的时候，就需要用raw来存储
 
 ## List（ziplist、linkedlist）
 数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素
@@ -120,6 +118,7 @@ SRANDMEMBER
 
 应用场景：
 - 排行榜
+- 延时队列
 
 # Redis 管道
 一次发送多个命令，节省往返时间，降低了通信成本，例：
