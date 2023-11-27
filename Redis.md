@@ -49,9 +49,10 @@ cd software
 wget http://download.redis.io/releases/redis-6.0.6.tar.gz
 tar zxf redis-6.0.6.tar.gz
 cd redis-6.0.6
-make
-yum -y install gcc
+yum -y install gcc tcl
 make distclean
+make
+make test
 make install PREFIX=/opt/redis6
 vim /etc/profile
 export REDIS_HOME=/opt/redis6
