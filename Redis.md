@@ -50,8 +50,7 @@ wget http://download.redis.io/releases/redis-6.0.6.tar.gz
 tar zxf redis-6.0.6.tar.gz
 cd redis-6.0.6
 yum -y install gcc tcl
-make distclean
-make
+make (make distclean)
 make test
 make install PREFIX=/opt/redis6
 vim /etc/profile
@@ -124,6 +123,10 @@ SRANDMEMBER
 # Redis 管道
 一次发送多个命令，节省往返时间，降低了通信成本，例：
 `echo -e 'set k1 99\n incr k1\n get k1' | nc localhost 6379`
+
+> 集群模式下，对于分散在不同Redis实例的多个不同的key使用管道时，仍然会存在多次网络通信。使用Redisson的`RBatch`时，Redisson会自动合并属于相同Redis实例的key的操作命令，然后通过单次网络调用发送。
+> 
+> Redisson通过轮询的方式每秒从Redis集群同步一次集群节点的状态，因此在命令发送之前，客户端就能通过特定的算法知道要操作的key属于哪个slot（确定了slot就确定了具体的Redis实例）。
 
 # Pub/Sub
 广播
