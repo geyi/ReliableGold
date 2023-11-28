@@ -95,7 +95,50 @@ for (ApplicationListener<?> listener : getApplicationListeners(event, type)) {
 ## Oracle分页
 select * from(select a.*, ROWNUM rn from(sql) a where ROWNUM <= (firstIndex + pageSize)) where rn > firstIndex
 
+## AWR报告
+`@?/rdbms/admin/awrrpt.sql`
+https://www.cnblogs.com/yaoyangding/p/14206123.html
 
+## 设置闪回区大小：
+ALTER SYSTEM SET db_recovery_file_dest_size=200G;
+
+## 查看归档日志应用情况：
+SELECT DEST_ID, SEQUENCE#, APPLIED FROM V$ARCHIVED_LOG;
+
+## 表空间未同步创建，导致同步断开，修复步骤：
+1. alter database create datafile '/oracle/ora112/dbs/UNNAMED00028' as '/oracle/oradata/metadb/elec/tbs_elec14.dbf';
+2. alter system set standby_file_management=AUTO;
+3. alter database recover managed standby database using current loafile disconnect from session;
+
+## 删除归档日志
+```
+rman target /
+list archivelog all;
+delete noprompt force archivelog all completed before 'sysdate-7';
+```
+
+# MongoDB
+- 大于等于：`db.appads.find({"isDelete":0,"endtime":{"$gte":"2020-08-11"}}).pretty()`
+- 某字段存在：`db.appads.find({"privilegeState":{"$exists":true}}).pretty()`
+- 增加字段：`db.appModule.update({},{$set:{label:""}},{multi:1})`，multi：默认是false，只更新找到的第一条记录。如果为true，把按条件查询出来的记录全部更新
+- 排序：`db.pushbind2.find({"third_type":"VIVO"}).sort({createtime:-1})`
+- 更新字段：`db.appads.update({"_id":"0bdd4668-f989-4c37-8bef-eb301fbed57c"},{$set:{"pos":"APP_MODULE_2"}});`
+- 更新所有记录：`db.appModule.updateMany({"code":"MODULE_2"},{$set:{"logo":"https://cdn.kuaidi100.com/images/open/appItems/second-module.png?v=3"}});`
+- 查看集合状态：`db.pushbind2.stats()`
+- 导出集合数据：`./mongoexport -u kuaidi -p kingdee -d admin -c pushbind2 -o ./pushbind2.json --type json`
+- 导入集合数据：`./mongoimport -u kuaidi -p kingdee -d admin -c adsidqslist --file ./adsid.json`
+- 查询指定的列：`db.adsconfig.find({},{_id:1})`
+- 聚合函数：`db.pushBizStat.aggregate([{$group:{_id:"$pushDate", sendTotalCount:{$sum:"$sendCount"}, receiveTotalCount:{$sum:"$receiveCount"}, clickTotalCount:{$sum:"$clickCount"}}}])`
+- 创建root角色的用户：`db.createUser({user:"root", pwd:"root",roles:[ {role:"root", db:"admin" } ]})`
+- 查看正在执行的操作：`db.currentOp()`
+- 杀死正在执行的操作：`db.killOp(opid)`
+- 创建索引：`db.poster.createIndex({"show_time":-1})`
+- 为null或者不存在：`db.test.find({"test":null});`
+- 不为null并且存在：`db.test.find({"test":{"$ne":null, $exists:true}});`
+- 存在：`db.test.find({"test":{$exists:true}});`
+- 不存在：`db.test.find({"test":{$exists:false}});`
+- 删除字段：`db.ad_switch_config.updateMany({"switch": {"$exists": true}}, {"$unset": {"switch":""}}, {}, {multi: true});`
+- 聚合查询：`db.pushBizStat2.aggregate([{$match:{"pushDate":{$gte:"2021-06-18"},"sendCount":{$ne:0},"platform":"WECHAT","msgType":{$nin:[1,16]}}},{$group:{_id:{pushDate:"$pushDate",channel:"$channel",templateCode:"$templateCode"}, sendTotalCount:{$sum:"$sendCount"}, receiveTotalCount:{$sum:"$receiveCount"}, clickTotalCount:{$sum:"$clickCount"}}}])`
 
 
 
@@ -169,7 +212,7 @@ eureka client
 
 
 
-# MacOS
+## MacOS
 - 查看CPU缓存行大小：sysctl -a | grep "cacheline"
 
 
@@ -187,3 +230,23 @@ eureka client
 获取客户端缓存区限制：`CONFIG GET client-output-buffer-limit`
 设置客户端缓存区限制：`CONFIG SET "client-output-buffer-limit" "normal 0 0 0 slave 1073741824 268435456 60 pubsub 33554432 8388608 60"`
 连接redis的另一种方式：`nc localhost 6379`
+
+# Kafka
+`docker run -d --rm -p 9000:9000 -e KAFKA_BROKERCONNECT=192.168.249.101:9090,192.168.249.102:9090 -e JVM_OPTS="-Xms64M -Xmx64M" -e SERVER_SERVLET_CONTEXTPATH="/" obsidiandynamics/kafdrop:latest`
+`docker run -d --rm -p 9001:9000 -e KAFKA_BROKERCONNECT=192.168.248.60:9090,192.168.248.61:9090,192.168.248.62:9090 -e JVM_OPTS="-Xms64M -Xmx64M" -e SERVER_SERVLET_CONTEXTPATH="/" obsidiandynamics/kafdrop:latest`
+
+
+# SVN
+以data-report项目为例来演示后端代码分支管理的改造：
+1. 从svn服务器上检出data-report项目：`svn checkout svn://192.168.249.200/kuaidi100/kuaidi100V5/data-report`。其中包含了三个文件夹，分别是branches、tags、trunk。
+2. 创建patch文件夹：`svn mkdir trunk\patch`
+3. 在tags文件夹下创建以下三个文件夹：tests、releases、base。
+   ```
+   svn mkdir tags\tests
+   svn mkdir tags\releases
+   svn mkdir tags\base
+   ```
+4. 创建基线分支：`svn copy trunk\ branches\1.0.0`
+5. 创建基线tag：`svn copy trunk\ tags\base\base_1_0_0`
+6. 创建测试tag：`svn copy trunk\ tags\tests\test_1_0_1_0`或`svn copy svn://192.168.249.200/kuaidi100/kuaidi100V5/personal/advertisement/trunk tags\tests\test_1_0_1_0`
+7. 创建发布tag：`svn copy tags\tests\test_1_0_1_1 tags\releases\release_1_0_1`
