@@ -151,6 +151,10 @@ eureka client
 
 - 查看进程占用内存大小：ps aux | grep demo-0.0.1-SNAPSHOT.jar | grep -v grep | awk '{print $11 "\t" $6/1024"MB" }'
 
+### vi
+批量添加注释：:起始行号,结束行号s/^/注释符/g
+批量删除注释：:起始行号,结束行号s/^注释符//g
+
 ### Kubernetes
 - kubectl get pods | grep commerce
 - kubectl exec -it test-e-commerce-56cfdf7f58-qqt5p /bin/bash
