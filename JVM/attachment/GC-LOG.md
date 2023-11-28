@@ -112,7 +112,6 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 : 850677K->11438K(943744K), 0.1495685 secs] 1796186K->957217K(4089472K), 0.1502976 secs] [Times: user=1.05 sys=0.00, real=0.15 secs]
 ```
 
-
 # FGC
 ```
 2023-06-30T17:37:42.144+0800: 1886710.641: [GC (CMS Initial Mark) [1 CMS-initial-mark: 2516722K(3145728K)] 2530814K(4089472K), 0.0061590 secs] [Times: user=0.03 sys=0.01, real=0.00 secs]
@@ -134,7 +133,6 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 2023-06-30T17:37:53.456+0800: 1886721.953: [CMS-concurrent-reset: 0.007/0.007 secs] [Times: user=0.01 sys=0.00, real=0.01 secs]
 ```
 
-
 # GC导致接口超时的日志
 ```
 1074370.765: [GC (CMS Final Remark) [YG occupancy: 1161721 K (2831168 K)]
@@ -155,8 +153,6 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 2020-07-06T13:41:28.005+0800: 98027.581: [class unloading, 0.1211467 secs]2020-07-06T13:41:28.127+0800: 98027.702: [scrub symbol table, 0.0214804 secs]
 2020-07-06T13:41:28.148+0800: 98027.724: [scrub string table, 0.0116539 secs][1 CMS-remark: 4457263K(5242880K)] 5600318K(8074048K), 0.6552275 secs] [Times: user=11.70 sys=3.07, real=0.65 secs]
 ```
-
-
 
 # 生产环境中价格服务的一次YGC日志
 ```
@@ -180,7 +176,6 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 : 852294K->16354K(943744K), 0.0159763 secs] 3232469K->2396780K(4089472K), 2.6147856 secs] [Times: user=0.13 sys=0.05, real=2.61 secs]
 ```
 'real' time took more than 'usr' + 'sys' time. 说明应用程序因为缺少计算机资源而等待。
-
 
 # GCLocker Initiated GC
 ```
@@ -210,3 +205,14 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 - GCLocker Initiated GC
 - Ergonomics：JVM自己进行自适应调整引发的GC
 - Metadata GC Threshold：MetaSpace被占满
+- Heap Inspection Initiated GC：堆内存检查操作导致的GC，例如：jmap -histo:live <pid>
+
+# Concurrent Mode Failure
+```log
+2023-11-22T15:57:55.924+0800: 2314114.454: [GC (Allocation Failure) 2023-11-22T15:57:55.925+0800: 2314114.454: [ParNew (promotion failed): 862372K->863754K(943744K), 0.3517073 secs]2023-11-22T15:57:56.276+0800: 2314114.806: [CMS2023-11-22T15:57:56.510+0800: 2314115.040: [CMS-concurrent-abortable-preclean: 0.952/1.401 secs] [Times: user=1.82 sys=0.82, real=1.40 secs] 
+ (concurrent mode failure): 3014621K->3016042K(3145728K), 37.4776874 secs] 3876263K->3016042K(4089472K), [Metaspace: 143833K->143833K(1183744K)], 37.8300914 secs] [Times: user=37.71 sys=0.20, real=37.83 secs] 
+```
+
+CMS收集器无法在老年代填满之前完成对不可达对象的回收，或者如果老年代中的可用空闲块无法满足分配需求，那么应用程序将会暂停，并完成收集操作。无法并发完成集合操作被称为并发模式失败，表明需要调整CMS收集器的参数。通常，并发模式失败会触发Full GC。
+
+如果在确认不是因为程序问题造成的情况下，解决方案是通过增加老年代的大小或在堆占用较低时启动CMS收集来避免并发模式失败。这可以通过将 'CMSInitiatingOccupancyFraction' 设置为较低的值，并将 'UseCMSInitiatingOccupancyOnly' 设置为 true 来实现。但需要谨慎选择CMSInitiatingOccupancyFraction的值，将其设置为较低的值会导致过于频繁的CMS收集。
