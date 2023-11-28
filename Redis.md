@@ -256,6 +256,65 @@ Z：优先级，逻辑再拆分（数据分区）
 使用奇数台
 例如，3台和4台服务器的集群都只能容忍一台服务器宕机。但是4台的成本高于3台，而且出现故障的概率更高。
 
+## 集群搭建
+使用单台虚拟机搭建伪集群，机器IP地址192.168.10.130
+
+1. 创建根目录：mkdir /opt/redis-cluster
+2. 创建子目录
+    ```
+    .
+    ├── 6379
+    │   ├── data
+    │   └── logs
+    ├── 6380
+    │   ├── data
+    │   └── logs
+    ├── 6381
+    │   ├── data
+    │   └── logs
+    ├── 6382
+    │   ├── data
+    │   └── logs
+    ├── 6383
+    │   ├── data
+    │   └── logs
+    └── 6384
+        ├── data
+        └── logs
+    ```
+3. 对默认的配置文件进行如下修改
+    ```
+    daemonize yes
+    appendonly yes
+    cluster-enabled yes
+    ```
+4. 为每个Redis实例创建单独的配置文件（不同实例之间的配置只有端口号和绝对路径的差异）
+    ```
+    include /opt/redis-cluster/redis.conf
+    bind 192.168.10.130
+    port 6379
+    pidfile "/root/redis-cluster/6379/redis_6379.pid"
+    logfile "/root/redis-cluster/6379/logs/redis.log"
+    dir "/root/redis-cluster/6379/data"
+    cluster-config-file "nodes-6379.conf"
+    ```
+5. 使用脚本启动所有实例
+    ```
+    #!/bin/bash
+    redis-server /root/redis-cluster/6379/data/6379.conf
+    redis-server /root/redis-cluster/6380/data/6380.conf
+    redis-server /root/redis-cluster/6381/data/6381.conf
+    redis-server /root/redis-cluster/6382/data/6382.conf
+    redis-server /root/redis-cluster/6383/data/6383.conf
+    redis-server /root/redis-cluster/6384/data/6384.conf
+
+    sleep 5
+
+    p=`netstat -nltp | grep -E '192.168.10.130:(6379|6380|6381|6382|6383|6384)' | wc -l`
+    echo "redis start successful $p instance"
+    ```
+6. 创建集群：`redis-cli --cluster create $HOSTS --cluster-replicas $REPLICAS`
+
 # Redis 复制
 Redis默认使用异步复制，其特点是低延迟和高性能
 
