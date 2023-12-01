@@ -37,7 +37,7 @@
 https://db-engines.com/en
 
 # Redis
-Redis 是一个开源的、内存中的数据结构存储系统，被用作数据库、缓存、消息代理和流处理引擎。Redis 提供了多种数据结构，包括字符串（strings）、哈希（hashes）、列表（lists）、集合（sets）、有范围查询的有序集合（sorted sets）、位图（bitmaps）、HyperLogLogs、地理空间索引（geospatial indexes）和流（streams）。Redis 内置了复制（replication）、Lua 脚本、LRU 淘汰机制（Least Recently Used）、事务（transactions）以及不同级别的磁盘持久化，并通过 Redis Sentinel 实现了高可用性，还通过 Redis Cluster 实现了自动分区。
+Redis 是一个开源的在内存中存储数据的结构化键值数据库，同时也可以被用作缓存、消息代理和流处理引擎。Redis 提供了多种数据结构，包括字符串（strings）、哈希（hashes）、列表（lists）、集合（sets）、有范围查询的有序集合（sorted sets）、位图（bitmaps）、HyperLogLogs、地理空间索引（geospatial indexes）和流（streams）。Redis 内置了复制（replication）、Lua 脚本、LRU 淘汰机制（Least Recently Used）、事务（transactions）以及不同级别的磁盘持久化，并通过 Redis Sentinel 实现了高可用性，还通过 Redis Cluster 实现了自动分区。
 
 > memcached的value没有类型的概念，而redis的server对每种类型的数据都有自己的操作方法（计算向数据移动)
 
