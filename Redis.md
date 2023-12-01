@@ -76,20 +76,34 @@ Cli Executable : /usr/local/bin/redis-cli
 
 **redis每连接内的命令是顺序处理的**
 
-## KEY
-type属性表示value的类型  
+## VALUE
+Redis中的每个对象都由一个redisObject结构表示，该结构中和保存数据有关的三个属性分别是type属性、 encoding属性和ptr属性。
+```c
+typedef struct redisObject {
+    unsigned type:4;
+    unsigned encoding:4;
+    unsigned lru:LRU_BITS; /* LRU time (relative to global lru_clock) or
+                            * LFU data (least significant 8 bits frequency
+                            * and most significant 16 bits access time). */
+    int refcount;
+    // 指向底层数据结构的指针
+    void *ptr;
+} robj;
+```
+
+type属性表示value的类型（命令：`type`）  
 encoding属性表示value的编码方式（命令：`object encoding`）
 
 Redis存储的数据是**二进制安全的**，它不会对存入的数据做任何处理。例如在存储一个“中”字时，用UTF-8编码，占3个字节，用GBK编码，占2个字节。因此为了确保数据的一致性，连接同一个Redis服务的客户端应该使用相同的编码格式进行读写操作。
-
-## VALUE
 
 ### String（int、embstr、raw）
 - 字符串
 - 数值
 - bitmap
 
-> Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度特别短（redis3.2之前是39字节，redis3.2之后是44字节）的时候，Redis使用embstr来存储字符串，而当字符串长度超过39（redis3.2之前）的时候，就需要用raw来存储
+Redis会根据当前值的类型和长度来决定使用哪种编码来实现。
+
+> Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度特别短（redis3.2之前是39字节，redis3.2之后是44字节）的时候，Redis使用embstr来存储字符串，而当字符串长度超过44（redis3.2之后）的时候，就需要用raw来存储
 
 #### bitmap
 bitmap在实际生产过程中的一次应用，每日设备推送开关状态统计：
