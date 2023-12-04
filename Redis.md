@@ -202,6 +202,32 @@ list-compress-depth 0
 - 保存用户信息
 - 对hash中的元素进行数值计算
 
+#### ziplist
+```
+非空 ziplist 示例图
+
+area        |<---- ziplist header ---->|<----------- entries ------------->|<-end->|
+
+size          4 bytes  4 bytes  2 bytes    ?        ?        ?        ?     1 byte
+            +---------+--------+-------+--------+--------+--------+--------+-------+
+component   | zlbytes | zltail | zllen | entry1 | entry2 |  ...   | entryN | zlend |
+            +---------+--------+-------+--------+--------+--------+--------+-------+
+                                       ^                          ^        ^
+address                                |                          |        |
+                                ZIPLIST_ENTRY_HEAD                |   ZIPLIST_ENTRY_END
+                                                                  |
+                                                        ZIPLIST_ENTRY_TAIL
+```
+
+ziplist中的每个元素都包含了两部分前置信息。首先，存储了上一个条目的长度，以便能够从后向前遍历列表。其次，提供了条目的编码方式。它表示条目的类型，是整数还是字符串，并且对于字符串而言，还表示了字符串有效负载的长度。因此一个完整条目存储看起来像这样：
+```
+<prevlen> <encoding> <entry-data>
+```
+有时编码本身就代表着条目的内容，比如对于小整数来说。在这种情况下，<entry-data>部分是不存在的，我们可以只使用编码本身即可：
+```
+<prevlen> <encoding>
+```
+
 ### Set（intset、hashtable）
 集合操作（交，并，差）
 
