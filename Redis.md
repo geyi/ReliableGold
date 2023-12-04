@@ -253,7 +253,7 @@ SRANDMEMBER
 
 > 集群模式下，对于分散在不同Redis实例的多个不同的key使用管道时，仍然会存在多次网络通信。使用Redisson的`RBatch`时，Redisson会自动合并属于相同Redis实例的key的操作命令，然后通过单次网络调用发送。
 > 
-> Redisson通过轮询的方式每秒从Redis集群同步一次集群节点的状态，因此在命令发送之前，客户端就能通过特定的算法知道要操作的key属于哪个slot（确定了slot就确定了具体的Redis实例）。
+> Redisson会定期从Redis集群（每次节点可能不同）同步一次集群节点的状态，因此在命令发送之前，客户端就能通过特定的算法知道要操作的key属于哪个slot（确定了slot就确定了具体的Redis实例）。
 
 ## Pub/Sub
 广播
