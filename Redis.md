@@ -98,14 +98,36 @@ Redis存储的数据是**二进制安全的**，它不会对存入的数据做�
 
 ### String（int、embstr、raw）
 - 字符串
-- 数值
+- 整数
 - bitmap
 
 Redis会根据当前值的类型和长度来决定使用哪种编码来实现。
 
-> Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度特别短（redis3.2之前是39字节，redis3.2之后是44字节）的时候，Redis使用embstr来存储字符串，而当字符串长度超过44（redis3.2之后）的时候，就需要用raw来存储
+Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度小于等于44的时候，Redis使用embstr来存储字符串，而当字符串长度超过44的时候，就需要用raw来存储。
 
-#### bitmap
+embstr编码是专门用于保存短字符串的一种优化编码方式，但不同之处在于embstr只会调用一次内存分配函数来分配一块连续的内存空间用于保存redisObject和SDS。而raw编码则会调用两次内存分配函数分别分配两块空间来保存redisObject和SDS。
+
+Redis并未直接使用C字符串，而是以struct的形式定义了一个SDS（Simple Dynamic String）类型。当Redis需要一个可以被修改的字符串时，就会使用SDS来表示。在Redis数据库里，包含字符串值的键值对都是由SDS实现的。SDS的结构如下：
+```c
+struct sdshdr {
+
+    // buf 中已占用空间的长度
+    int len;
+
+    // buf 中剩余可用空间的长度
+    int free;
+
+    // 字节数组
+    char buf[];
+};
+```
+Redis使用SDS的原因：
+- 获取字符串长度的时间复杂度为常数
+- 杜绝缓冲区溢出
+- 减少修改字符串时带来的内存重分配次数
+- 二进制安全
+
+#### bitmap（raw）
 bitmap在实际生产过程中的一次应用，每日设备推送开关状态统计：
 ```
 二进制从左往右的第一位表示id（自增主键）为1的设备，以此类推
