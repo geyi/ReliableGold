@@ -233,6 +233,9 @@ ziplist中的每个元素都包含了两部分前置信息。首先，存储了�
 
 SRANDMEMBER
 
+#### intset
+整数集合intset是集合键的底层实现之一，当一个集合只包含整数值的元素，并且这个集合的元素数量不多时，redis会使用整数集合作为集合键的底层实现。
+
 ### Sorted_Set（ziplist、skiplist）
 物理内存左小右大，不随命令发生变化
 
