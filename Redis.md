@@ -276,6 +276,8 @@ typedef struct zskiplist {
 ```
 > 定义位于src/server.h文件中
 
+![](image/Redis/zskiplist.png)
+
 **zskiplist**
 - header：指向跳跃表的表头节点，通过这个指针程序定位表头节点的时间复杂度就为O(1)。
 - tail：指向跳跃表的表尾节点，通过这个指针程序定位表尾节点的时间复杂度就为O(1)。
