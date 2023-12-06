@@ -77,7 +77,7 @@ Cli Executable : /usr/local/bin/redis-cli
 **redis每连接内的命令是顺序处理的**
 
 ## VALUE
-Redis中的每个对象都由一个redisObject结构表示，该结构中和保存数据有关的三个属性分别是type属性、 encoding属性和ptr属性。
+Redis中的每个对象都由一个redisObject结构表示，该结构中与保存数据有关的三个属性分别是type、 encoding和ptr。
 ```c
 typedef struct redisObject {
     unsigned type:4;
@@ -95,7 +95,7 @@ typedef struct redisObject {
 type属性表示value的类型（相关命令：`type`）  
 encoding属性表示value的编码方式（相关命令：`object encoding`）
 
-Redis存储的数据是**二进制安全的**，它不会对存入的数据做任何处理。例如在存储一个“中”字时，用UTF-8编码，占3个字节，用GBK编码，占2个字节。因此为了确保数据的一致性，连接同一个Redis服务的客户端应该使用相同的编码格式进行读写操作。
+Redis存储的数据是**二进制安全的**，它不会对存入的数据做任何处理。例如在存储一个“中”字时，使用UTF-8编码，会占3个字节，使用GBK编码，则会占2个字节。因此为了确保数据的一致性，连接同一个Redis服务的客户端应该使用相同的编码方式进行读写操作。
 
 ### String（int、embstr、raw）
 - 字符串
@@ -106,7 +106,7 @@ Redis会根据当前值的类型和长度来决定使用哪种编码方式。
 
 Redis中的字符串分为两种存储方式，分别是embstr和raw，当字符串长度小于等于44的时候，Redis使用embstr来存储字符串，而当字符串长度超过44的时候，就需要用raw来存储。
 
-embstr编码是专门用于保存短字符串的一种优化编码方式，相对于raw，embstr只会调用一次内存分配函数来分配一块连续的内存空间用于保存redisObject和SDS。而raw编码则会调用两次内存分配函数分别分配两块空间来保存redisObject和SDS。
+embstr编码是专门用于保存短字符串的一种优化编码方式，相对于raw，embstr只会调用一次内存分配函数来分配一块连续的内存空间用于保存redisObject和SDS（将字符串直接嵌入在声明的数据结构中）。而raw编码则会调用两次内存分配函数分别分配两块空间来保存redisObject和SDS。
 
 Redis并未直接使用C字符串，而是以struct的形式定义了一个SDS（Simple Dynamic String）类型。当Redis需要一个可以被修改的字符串时，就会使用SDS来表示。在Redis数据库里，包含字符串值的键值对都是由SDS实现的。SDS的结构如下：
 ```c
@@ -153,9 +153,9 @@ C & B （1 1 0 0 0 0 1 0） 结果中1的数量表示2号相比1号推送开关�
 - 一个用户一年的登录状态统计
 
 ### List（quicklist）
-数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素。但是考虑到链表的附加空间相对太高，prev 和 next 指针就要占去 16 个字节 (64bit 系统的指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管理效率。因此Redis3.2版本开始对列表数据结构进行了改造，使用 quicklist 代替了 ziplist 和 linkedlist。
+数据结构是一个双向链表，有一个头指针指向链表的第一个元素和一个尾指针指向链表的最后一个元素。但是考虑到链表的附加空间，prev 和 next 指针就要占去 16 个字节 (64bit 系统的指针是 8 个字节)，另外每个节点的内存都是单独分配，会加剧内存的碎片化，影响内存管理效率。因此Redis3.2版本开始对列表数据结构进行了改造，使用 quicklist 代替了 ziplist 和 linkedlist。
 
-quicklist 实际上是 zipList 和 linkedList 的混合体，它将 linkedList 按段切分，每一段使用 zipList 来紧凑存储，多个 zipList 之间使用双向指针串接起来。
+quicklist 实际上是 ziplist 和 linkedList 的混合体，它将 linkedList 按段切分，每一段使用 ziplist 来紧凑存储，多个 ziplist 之间使用双向指针串接起来。
 
 quicklist 内部默认定义的单个 ziplist 的大小为 8k 字节。超过这个大小，就会重新分配一个 ziplist 了。这个阈值大小可以由参数list-max-ziplist-size控制。
 ```
