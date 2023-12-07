@@ -343,23 +343,26 @@ fork系统调用，创建子线程速度快，需要的内存空间小。
 
 copy on write，创建子进程时并不发生复制，使得创建进程变快了。根据经验，不可能父子进程把所有数据都改一遍。父进程修改数据时，就是父进程触发中断，结果就是父进程里面的地址空间被改变了。
 ```C
-#include<stdio.h>
-#include<sys/types.h>
-#include<sys/stat.h>
-#include<unistd.h>
-int main(){
+#include <stdio.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+int main()
+{
     pid_t pid;
-    int num=0;
-    pid=fork();
-    if(pid==0){
-        num+=10;
-        printf("child %d\n",num);
-        printf("child %d\n",&num);
+    int num = 0;
+    pid = fork();
+    if (pid == 0)
+    {
+        num += 10;
+        printf("child %d\n", num);
+        printf("child %d\n", &num);
     }
-    if(pid>0){
-        num+=20;
-        printf("parent %d\n",num);
-        printf("parent %d\n",&num);
+    if (pid > 0)
+    {
+        num += 20;
+        printf("parent %d\n", num);
+        printf("parent %d\n", &num);
     }
 
     return 0;
