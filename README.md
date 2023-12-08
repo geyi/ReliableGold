@@ -45,6 +45,7 @@
 
 ### Redis系列
 1. [String](./Redis/String.md)
+2. [List](./Redis/List.md)
 
 
 # 中间件
