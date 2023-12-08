@@ -39,7 +39,7 @@ https://db-engines.com/en
 # Redis
 Redis 是一个开源的在内存中存储数据的结构化键值数据库，同时也可以被用作缓存、消息代理和流处理引擎。Redis 提供了多种数据结构，包括字符串（strings）、哈希（hashes）、列表（lists）、集合（sets）、有范围查询的有序集合（sorted sets）、位图（bitmaps）、HyperLogLogs、地理空间索引（geospatial indexes）和流（streams）。Redis 内置了复制（replication）、Lua 脚本、LRU 淘汰机制（Least Recently Used）、事务（transactions）以及不同级别的磁盘持久化，并通过 Redis Sentinel 实现了高可用性，还通过 Redis Cluster 实现了自动分区。
 
-> memcached的value没有类型的概念，而redis的server对每种类型的数据都有自己的操作方法（计算向数据移动)
+> memcached的value没有类型的概念，而redis的server对每种类型的数据都有自己的操作方法（**计算向数据移动**）
 
 ## 安装Redis
 ```
@@ -95,7 +95,7 @@ typedef struct redisObject {
 type属性表示value的类型（相关命令：`type`）  
 encoding属性表示value的编码方式（相关命令：`object encoding`）
 
-Redis存储的数据是**二进制安全的**，它不会对存入的数据做任何处理。例如在存储一个“中”字时，使用UTF-8编码，会占3个字节，使用GBK编码，则会占2个字节。因此为了确保数据的一致性，连接同一个Redis服务的客户端应该使用相同的编码方式进行读写操作。
+Redis存储的数据是**二进制安全的**，它不会对存入的数据做任何处理或假设其为特定的数据类型，它能够接受和存储包含任何字节的数据。例如在存储一个“中”字时，使用UTF-8编码，会占3个字节，使用GBK编码，则会占2个字节。对于图像、音频、视频等文件，Redis同样将其视为二进制位组成的字节流。因此为了确保数据的一致性，连接同一个Redis服务的客户端应该使用相同的编码方式进行读写操作。
 
 ### String（int、embstr、raw）
 - 字符串
