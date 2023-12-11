@@ -48,6 +48,7 @@
 2. [Hash](./Redis/Hash.md)
 3. [List](./Redis/List.md)
 4. [Set](./Redis/Set.md)
+5. [Persistence](./Redis/Persistence.md)
 
 
 # 中间件
