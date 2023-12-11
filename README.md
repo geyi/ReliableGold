@@ -47,6 +47,7 @@
 1. [String](./Redis/String.md)
 2. [Hash](./Redis/Hash.md)
 3. [List](./Redis/List.md)
+4. [Set](./Redis/Set.md)
 
 
 # 中间件
