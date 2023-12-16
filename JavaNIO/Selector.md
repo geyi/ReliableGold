@@ -1,4 +1,4 @@
-Selector是一个可用于多路复用的高级组件。它允许单个线程同时监视多个通道（Channel），并在通道就绪时进行相应的操作。使用Selector可以避免为每个通道分配一个独立的线程来处理I/O事件。相反，我们可以通过一个线程使用一个Selector来监听多个通道的事件，从而实现高效的I/O操作。这种方式被称为非阻塞（non-blocking）I/O模型。
+Selector允许单个线程同时监视多个通道（Channel），并在通道就绪时进行相应的操作。使用Selector可以避免为每个通道分配一个独立的线程来处理I/O事件。相反，我们可以通过一个线程使用一个Selector来监听多个通道的事件，从而实现高效的I/O操作。这种方式被称为非阻塞（non-blocking）I/O模型。
 
 # 为什么使用Selector?
 仅用单个线程来处理多个Channels的好处是，只需要更少的线程来处理通道。事实上，可以只用一个线程处理所有的通道。对于操作系统来说，线程之间上下文切换的开销很大，而且每个线程都要占用系统的一些资源（如内存）。因此，使用的线程越少越好。
@@ -13,7 +13,7 @@ Selector selector = Selector.open();
 为了将Channel和Selector配合使用，必须将channel注册到selector上。通过register()方法来实现，如下：
 ```java
 channel.configureBlocking(false);
-SelectionKey key = channel.register(selector, SelectionKey.OP_ACCEPT);
+SelectionKey selectionKey = channel.register(selector, SelectionKey.OP_ACCEPT);
 ```
 与Selector一起使用时，Channel必须处于非阻塞模式下。这意味着不能将FileChannel与Selector一起使用，因为FileChannel不能切换到非阻塞模式。而套接字通道都可以。
 
@@ -31,7 +31,6 @@ SelectionKey key = channel.register(selector, SelectionKey.OP_ACCEPT);
 - SelectionKey.OP_READ
 - SelectionKey.OP_WRITE
 
-
 如果你对不止一种事件感兴趣，那么可以用“位或”操作符将常量连接起来，如下：
 ```java
 int interestSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;
@@ -43,13 +42,12 @@ int interestSet = SelectionKey.OP_READ | SelectionKey.OP_WRITE;
 * Selector
 * 附加的对象（可选）
 
-
 下面我会描述这些属性。
 
 ## interest集合
 interest集合是你所选择的感兴趣的事件集合。可以通过SelectionKey读写interest集合，像这样：
 ```java
-int interestSet = key.interestOps();
+int interestSet = selectionKey.interestOps();
 boolean isInterestedInAccept  = (interestSet & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT;
 ```
 可以看到，用“位与”操作interest集合和给定的SelectionKey常量，可以确定某个确定的事件是否在interest集合中。

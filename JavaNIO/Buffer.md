@@ -1,4 +1,4 @@
-Buffer用于与Channel进行交互。缓冲区本质上是一块可以写入数据，然后可以从中读取数据的内存。这块内存被包装成NIO Buffer对象，并提供了一组方法，用来方便的访问该块内存。
+Buffer（缓冲区）用于与Channel进行交互。缓冲区本质上是一块可以写入数据，然后从中读取数据的内存。这块内存被包装成Buffer对象，并提供了一组方法，用来方便的访问该块内存。
 
 # Buffer的基本用法
 使用Buffer读写数据一般遵循以下四个步骤：
@@ -11,7 +11,7 @@ Buffer用于与Channel进行交互。缓冲区本质上是一块可以写入数�
 
 一旦读完了所有的数据，就需要清空缓冲区，让它可以再次被写入。有两种方式能清空缓冲区：调用clear()或compact()方法。
 
-clear()方法会清空整个缓冲区。compact()方法只会清除已经读过的数据。任何未读的数据都被移到缓冲区的起始处，新写入的数据将放到缓冲区未读数据的后面。
+clear()方法会清空整个缓冲区。compact()方法只会清除已经读过的数据，任何未读的数据都被移到缓冲区的起始处，新写入的数据将放到缓冲区未读数据的后面。
 
 # Buffer的capacity, position和limit
 为了理解Buffer的工作原理，需要熟悉它的三个属性：
@@ -26,9 +26,9 @@ position和limit的含义取决于Buffer处在读模式还是写模式。不管B
 ![](../image/Java/JavaNIO/Buffer.png)
 
 ## capacity
-Buffer的capacity表示它所能容纳的最大数据量，即缓冲区的大小。一旦创建了Buffer，并且分配了固定的内存空间，capacity就不会再改变。
+Buffer的capacity表示它所能容纳的最大数据量，即缓冲区的大小。
 ## position
-Buffer的position表示当前操作的位置。在写入数据时，position表示下一个要写入的位置；在读取数据时，position表示下一个要读取的位置。初始时，position通常设置为0，随着读写操作的进行，position会自动向前移动。
+Buffer的position表示当前操作的位置。在写入数据时，position表示下一个要写入的位置；在读取数据时，position表示下一个要读取的位置。初始时，position通常设置为0，随着读写操作的进行，position会自动**向前**移动。
 ## limit
 Buffer的limit表示有效数据的范围。在写模式下，limit等于capacity，表示可以写入的最大数据量。而在读模式下，limit表示已经写入数据的末端位置，即可读取的最大数据范围。
 
@@ -43,12 +43,12 @@ Java NIO 有以下Buffer类型
 - CharBuffer
 - MappedByteBuffer
 
-这些Buffer类型代表了不同的数据类型。换句话说，就是可以通过char，short，int，long，float或double类型来操作缓冲区中的字节。
+这些Buffer类型代表了不同的数据类型。换句话说，就是可以通过char，short，int，long，float或double类型来操作缓冲区中的数据。
 
 ## Buffer的分配
-要想获得一个Buffer对象首先要进行分配。 每一个Buffer类都有一个allocate方法。🌰：
+要想获得一个Buffer对象首先要进行分配。 每一种Buffer类都有一个allocate方法。🌰：
 ```java
-// 分配一个48字节capacity的ByteBuffer
+// 分配一个可存储48个字节的ByteBuffer
 ByteBuffer buf = ByteBuffer.allocate(48);
 // 分配一个可存储1024个字符的CharBuffer
 CharBuffer buf = CharBuffer.allocate(1024);
@@ -60,15 +60,15 @@ CharBuffer buf = CharBuffer.allocate(1024);
 - 通过Buffer的put()方法写到Buffer。
 
 ```java
-// 从Channel写到Buffer的例子
+// 从Channel写到Buffer
 int position = channel.read(buf);
-// 通过put方法写Buffer的例子
+// 通过put方法写Buffer
 buf.put(127);
 ```
 put方法有很多版本，允许你以不同的方式把数据写入到Buffer中。例如，写到一个指定的位置，或者把一个字节数组写入到Buffer。更多Buffer实现的细节参考JavaDoc。
 
 ## flip()方法
-flip方法将Buffer从写模式切换到读模式。调用flip()方法会将position设回0，并将limit设置成之前position的值。换句话说，position现在用于标记读的位置，limit表示之前写进了多少个byte、char等（现在能读取多少个byte、char等）。
+flip方法将Buffer从写模式切换到读模式。调用flip()方法会将position设回0，并将limit设置成之前position的值。换句话说，position现在用于标记读的位置，limit表示之前写入了多少数据（现在能读取的最大数据范围）。
 
 ## 从Buffer中读取数据
 从Buffer中读取数据有两种方式：
@@ -76,9 +76,9 @@ flip方法将Buffer从写模式切换到读模式。调用flip()方法会将posi
 2. 使用get()方法从Buffer中读取数据。
 
 ```java
-// 从Buffer读取数据到Channel的例子
+// 从Buffer读取数据到Channel
 int position = channel.write(buf);
-// 使用get()方法从Buffer中读取数据的例子
+// 使用get()方法从Buffer中读取数据
 byte data = buf.get();
 ```
 get方法有很多版本，允许你以不同的方式从Buffer中读取数据。例如，从指定position读取，或者从Buffer中读取数据到字节数组。更多Buffer实现的细节参考JavaDoc。
@@ -89,11 +89,11 @@ Buffer.rewind()将position设回0，所以你可以重读Buffer中的所有数�
 ## clear()与compact()方法
 一旦读完Buffer中的数据，需要让Buffer准备好再次被写入。可以通过clear()或compact()方法来完成。
 
-如果调用的是clear()方法，position将被设回0，limit被设置成capacity的值。换句话说，Buffer被清空了。但Buffer中的数据并未清除，只是这些标记告诉我们可以从哪里开始往Buffer里写数据。
+如果调用的是clear()方法，position将被设回0，limit被设置成capacity的值。换句话说，Buffer被“清空”了。但Buffer中的数据并未清除，只是这些标记告诉我们可以从哪里开始往Buffer里写数据。
 
 如果Buffer中有一些未读的数据，调用clear()方法，数据将“被遗忘”，意味着不再有任何标记会告诉你哪些数据被读过，哪些还没有。
 
-如果Buffer中仍有未读的数据，且后续还需要这些数据，但是此时想要先先写些数据，那么使用compact()方法。compact()方法将所有未读的数据拷贝到Buffer起始处。然后将position设到最后一个未读元素的后面。limit属性依然像clear()方法一样，设置成capacity。现在Buffer准备好写数据了，但是不会覆盖未读的数据。
+如果Buffer中仍有未读的数据，且后续还需要继续读取这些数据，但是此时想要先写些数据，那么使用compact()方法。compact()方法将所有未读的数据拷贝到Buffer起始处。然后将position设到最后一个未读元素的后面。limit属性依然像clear()方法一样，设置成capacity。现在Buffer准备好写数据了，但是不会覆盖未读的数据。
 
 ## mark()与reset()方法
 通过调用Buffer.mark()方法，可以标记Buffer中的一个特定position。之后可以通过调用Buffer.reset()方法恢复到这个position。例如：
