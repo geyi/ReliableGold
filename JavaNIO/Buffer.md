@@ -60,7 +60,7 @@ CharBuffer buf = CharBuffer.allocate(1024);
 - 通过Buffer的put()方法写到Buffer。
 
 ```java
-// 从Channel写到Buffer
+// 从Channel读取数据到Buffer
 int position = channel.read(buf);
 // 通过put方法写Buffer
 buf.put(127);
@@ -76,7 +76,7 @@ flip方法将Buffer从写模式切换到读模式。调用flip()方法会将posi
 2. 使用get()方法从Buffer中读取数据。
 
 ```java
-// 从Buffer读取数据到Channel
+// 从Buffer写入数据到Channel
 int position = channel.write(buf);
 // 使用get()方法从Buffer中读取数据
 byte data = buf.get();
