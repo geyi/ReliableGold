@@ -1,12 +1,12 @@
 Netty源码解析：https://blog.csdn.net/weixin_41385912/article/details/110944462
 
 # Netty服务端启动过程
-bossGroup 用于接收 TCP 连接请求，建立连接后会把连接转接给 workerGroup 来处理连接上的后续请求，比如 **读取请求数据-->解码请求数据-->进行业务处理-->编码响应数据-->发送响应数据** 这一整套流程。
+bossGroup 用于接收 TCP 连接请求，建立连接后会把连接转交给 workerGroup 来处理连接上的后续请求，比如 **读取请求数据-->解码请求数据-->进行业务处理-->编码响应数据-->发送响应数据** 这一整套流程。
 
 EventLoopGroup 是一个线程组，其中的每一个线程都在循环执行着三件事情：
 - select：轮训注册在其中的 Selector 上的 Channel 的 IO 事件
 - processSelectedKeys：在对应的 Channel 上处理 IO 事件
-- runAllTasks：再去以此循环处理任务队列中的其他任务
+- runAllTasks：处理任务队列中的其他任务
 
 ## `EventLoopGroup workerGroup = new NioEventLoopGroup()`的执行源码总结如下：
 1. NioEventLoopGroup 的无参数构造函数会调用 NioEventLoopGroup 的有参数构造函数，最终把参数
@@ -38,7 +38,7 @@ EventLoopGroup 是一个线程组，其中的每一个线程都在循环执行�
 5. bind 完成后会进入 NioEventLoop 中的死循环，不断执行以下三个过程
    - select：轮训注册在其中的 Selector 上的 Channel 的 IO 事件
    - processSelectedKeys：在对应的 Channel 上处理 IO 事件
-   - runAllTasks：再去以此循环处理任务队列中的其他任务
+   - runAllTasks：处理任务队列中的其他任务
 
 服务器端的 NioServerSocketChannel 实例将自己注册到 bossGroup 中 EventLoop 的 Selector 上。（注册的代码在`initAndRegister()`方法的`ChannelFuture regFuture = config().group().register(channel);`）
 
