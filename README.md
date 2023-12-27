@@ -10,6 +10,7 @@
 3. [AQS](./Java/AQS.md)
 4. [ThreadLocal](./Java/ThreadLocal.md)
 5. [Java对象头](./Java/Java对象头.md)
+6. [volatile](./Java/volatile.md)
 
 ## Java NIO
 1. [JavaNIO概述](./JavaNIO/JavaNIO概述.md)
