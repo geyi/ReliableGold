@@ -14,7 +14,7 @@
 
 取值（ElementType）有：
 1. CONSTRUCTOR：用于描述构造器
-2. FIELD：用于描述域
+2. FIELD：用于描述成员变量（包括枚举常量）
 3. LOCAL_VARIABLE：用于描述局部变量
 4. METHOD：用于描述方法
 5. PACKAGE：用于描述包
