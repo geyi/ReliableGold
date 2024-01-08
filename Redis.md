@@ -502,6 +502,34 @@ Z：优先级，逻辑再拆分（数据分区）
     ```
 6. 创建集群：`redis-cli --cluster create $HOSTS --cluster-replicas $REPLICAS`
 
+### Redis Cluster新增节点
+启动新节点：`redis-server /root/redis-cluster/7002/data/7002.conf`
+
+查看7002端口是否在监听状态：`netstat -nltp`
+
+测试登录新节点：`redis-cli -h 192.168.10.130 -p 7002 -a redis@kuaidi100`
+
+查看当前集群的节点：`redis-cli -h 192.168.10.130 -p 6379 -a redis@kuaidi100 cluster nodes`
+
+向集群中加入新节点：`redis-cli -a redis@kuaidi100 --cluster add-node 192.168.10.130:7002 192.168.10.130:6379`
+
+再次查看当前集群的节点：`redis-cli -h 192.168.10.130 -p 6379 -a redis@kuaidi100 cluster nodes`
+
+分配slots给新节点：`redis-cli -a redis@kuaidi100 --cluster reshard 192.168.10.130:7002`
+
+查看slots分配情况：`redis-cli -h 192.168.10.130 -p 6379 -a redis@kuaidi100 cluster nodes`
+
+将分配给7002的slots归还给原节点
+```shell
+redis-cli -a redis@kuaidi100 --cluster reshard 192.168.10.130:6379
+redis-cli -h 192.168.10.130 -p 7000 -a redis@kuaidi100 cluster nodes
+```
+
+删除7002节点：`redis-cli -a redis@kuaidi100 --cluster del-node 192.168.10.130:7002`
+再次查看当前集群的节点：`redis-cli -h 192.168.10.130 -p 7000 -a redis@kuaidi100 cluster nodes`
+
+> redis集群增加和删除节点：https://blog.csdn.net/TQ20160412/article/details/128097237
+
 ## Redis 复制
 Redis默认使用异步复制，其特点是低延迟和高性能
 
