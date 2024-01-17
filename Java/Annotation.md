@@ -28,7 +28,7 @@
 
 取值（RetentionPolicy）有：
 1. SOURCE：在源文件中有效（即源文件保留）
-2. CLASS：在class文件中有效（即class文件保留）
+2. CLASS：在class文件中有效（即class文件保留，默认值）
 3. RUNTIME：在运行时有效（即运行时保留）
 
 Retention meta-annotation类型有唯一的value作为成员，它的取值来着java.lang.annotation.RetentionPolicy的枚举类型值。具体事例如下：
