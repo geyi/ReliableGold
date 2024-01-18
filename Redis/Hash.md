@@ -27,6 +27,23 @@ address                                |                          |        |
                                 ZIPLIST_ENTRY_HEAD                |   ZIPLIST_ENTRY_END
                                                                   |
                                                         ZIPLIST_ENTRY_TAIL
+
+<uint32_t zlbytes> is an unsigned integer to hold the number of bytes that
+the ziplist occupies, including the four bytes of the zlbytes field itself.
+This value needs to be stored to be able to resize the entire structure
+without the need to traverse it first.
+
+<uint32_t zltail> is the offset to the last entry in the list. This allows
+a pop operation on the far side of the list without the need for full
+traversal.
+
+<uint16_t zllen> is the number of entries. When there are more than
+2^16-2 entries, this value is set to 2^16-1 and we need to traverse the
+entire list to know how many items it holds.
+
+<uint8_t zlend> is a special entry representing the end of the ziplist.
+Is encoded as a single byte equal to 255. No other normal entry starts
+with a byte set to the value of 255.
 ```
 
 ziplist中的每个元素都包含了两部分前置信息。首先，存储了上一个条目的长度，以便能够从后向前遍历列表。其次，提供了条目的编码方式。它表示条目的类型，是整数还是字符串，并且对于字符串而言，还表示了字符串有效负载的长度。因此一个完整条目存储看起来像这样：
