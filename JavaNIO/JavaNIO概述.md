@@ -3,7 +3,7 @@ Java NIO 由以下几个核心部分组成：
 - Buffers
 - Selectors
 
-虽然 Java NIO 还有其他一些类和组件（如 Pipe 和 FileLock），但Channel，Buffer和Selector构成了核心的API。
+虽然 Java NIO 还有其他一些类和组件（如 Pipe 和 FileLock），但Channel，Buffer和Selector构成了Java NIO的核心API。
 
 # Channel 和 Buffer
 BIO 以流的方式处理数据，而 NIO 以缓冲区（也被叫做块）的方式处理数据。BIO 基于字符流或者字节流进行操作，而 NIO 基于 Channel 和 Buffer 进行操作，数据总是从通道读取到缓冲区或者从缓冲区写入到通道。如下图所示：

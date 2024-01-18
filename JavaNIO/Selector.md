@@ -100,7 +100,7 @@ select()方法返回的int值表示有多少通道已经就绪。亦即，自上
 Set<SelectionKey> selectedKeys = selector.selectedKeys();
 ```
 
-当向Selector注册Channel时，Channel.register()方法会返回一个SelectionKey 对象。这个对象代表了注册到该Selector的通道。可以通过Selector的selectedKeys()方法访问这些对象。
+当向Selector注册Channel时，Channel.register()方法会返回一个SelectionKey对象。这个对象代表了注册到该Selector的通道。可以通过Selector的selectedKeys()方法访问这些对象。
 
 可以遍历这个已选择的键集合来访问就绪的通道。如下：
 ```java
