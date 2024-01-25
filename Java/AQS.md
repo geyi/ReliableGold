@@ -1,5 +1,5 @@
 # AQS结构
-AbstractQueuedSynchronizer重要的成员变量
+AbstractQueuedSynchronizer（抽象的队列式的同步器）重要的成员变量
 ```java
 /**
   * Head of the wait queue, lazily initialized.  Except for
