@@ -18,6 +18,9 @@ Kafka的broker的partition保存了从producer发送来的数据 -> 数据可以
 # 命令
 启动kafka：`kafka-server-start.sh server-1.properties`  
 创建topic：`kafka-topics.sh --zookeeper localhost:2181/kafka --create --topic test_topic --partitions 2 --replication-factor 1`  
+删除topic：`kafka-topics.sh --zookeeper localhost:2181/kafka --delete --topic topic_x`  
+配置topic：`kafka-topics.sh --zookeeper localhost:2181/kafka --alter --topic topic_x --config max.message.bytes=1048576`  
+查看指定的topic：`kafka-topics.sh --zookeeper localhost:2181/kafka --describe --topic topic_x`  
 查看topic列表：`kafka-topics.sh --zookeeper localhost:2181/kafka --list`  
 查看topic详情：`kafka-topics.sh --zookeeper localhost:2181/kafka --describe`
 
