@@ -18,8 +18,8 @@ EventLoopGroup 是一个线程组，其中的每一个线程都在循环执行�
     rejectedExecutionHandler = RejectedExecutionHandlers.reject()
     chooserFactory = DefaultEventExecutorChooserFactory.INSTANCE
     ```
-    传递给父类 MultithreadEventLoopGroup 的有参数构造函数。
-2. 父类 MultithreadEventLoopGroup 的有参数构造函数创建一个 NioEventLoop 的数组 `children = new EventExecutor[nThreads];`，并构建出 16 个 NioEventLoop 的实例放入其中。
+    传递给父类 MultithreadEventExecutorGroup 的有参数构造函数。
+2. 父类 MultithreadEventExecutorGroup 的有参数构造函数创建一个 NioEventLoop 的数组 `children = new EventExecutor[nThreads];`，并构建出 16 个 NioEventLoop 的实例放入其中。
 3. 构建每一个 NioEventLoop 调用的是 `children[i] = newChild(executor, args);`。
 4. newChild()方法最终调用了 NioEventLoop 的构造函数，初始化其中的选择器、任务队列、执行器等变量。
 
