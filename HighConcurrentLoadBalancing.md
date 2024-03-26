@@ -328,8 +328,8 @@ Node02、Node03
    ```shell
    net.ipv4.conf.ens33.arp_ignore=1
    net.ipv4.conf.all.arp_ignore=1
-   net.ipv4.conf.ens33.arp_announce=1
-   net.ipv4.conf.all.arp_announce=1
+   net.ipv4.conf.ens33.arp_announce=2
+   net.ipv4.conf.all.arp_announce=2
    ```
 2. 设置隐藏的VIP：`ifconfig lo:0 192.168.42.100/32`
 3. 安装httpd并启动：  
