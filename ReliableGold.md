@@ -110,6 +110,11 @@ SELECT DEST_ID, SEQUENCE#, APPLIED FROM V$ARCHIVED_LOG;
 2. alter system set standby_file_management=AUTO;
 3. alter database recover managed standby database using current loafile disconnect from session;
 
+## 查看归档空间大小
+```
+SELECT ROUND(SUM(BLOCKS*BLOCK_SIZE)/1024/1024, 2) AS "Archived Space (MB)" FROM V$ARCHIVED_LOG;
+```
+
 ## 删除归档日志
 ```
 rman target /
