@@ -294,7 +294,7 @@ static final class FairSync extends Sync {
             return true;
         // 前驱节点的waitStatus大于0，说明前驱节点取消了排队获取锁
         // 这里需要知道一点：进入阻塞队列的线程会被挂起，而唤醒操作由前驱节点完成
-        // 所以这个if中的操作是向前遍历将当前节点的pref变量指向一个waitStatus小于等于0的节点
+        // 所以这个if中的操作是向前遍历将当前节点的prev变量指向一个waitStatus小于等于0的节点
         if (ws > 0) {
             /*
               * Predecessor was cancelled. Skip over predecessors and
