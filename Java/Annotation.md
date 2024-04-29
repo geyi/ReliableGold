@@ -8,7 +8,7 @@
 这些元注解类型在`java.lang.annotation`包中可以找到。下面我们看一下每个元注解的作用和相应参数的使用说明。
 
 ## @Target
-@Target说明了annotation所修饰的对象的范围：annotation可被用于packages、types（类、接口、枚举、Annotation类型）、类型成员（方法、构造方法、成员变量、枚举值）、方法参数和本地变量（如循环标量、catch参数）。在Annotation类型的声明中使用了target可以更加明晰其修饰的目标。
+@Target说明了annotation所修饰的对象的范围：annotation可被用于packages、types（类、接口、枚举、Annotation类型）、类型成员（方法、构造方法、成员变量、枚举值）、方法参数和本地变量（如循环变量、catch参数）。在Annotation类型的声明中使用了target可以更加明晰其修饰的目标。
 
 作用：用于描述注解的使用范围（即：被描述的注解可以用在什么地方）
 
@@ -49,7 +49,7 @@ public @interface Column {
 Column注解的RetentionPolicy的属性值是RUNTIME，这样可以通过反射获取到该注解的属性值，从而去做一些运行时的逻辑处理
 
 ## @Documented
-@Documented注解表明这个注解应该被javadoc工具记录。默认情况下javadoc中不会包含注解。但如果声明注解时指定了@Documented，则他会被javadoc之类的工具处理，注解类型的信息也会被包含到生成的文档中。@Documented是一个标记注解，没有成员。
+@Documented注解表明这个注解应该被javadoc工具记录。默认情况下javadoc中不会包含注解，但如果声明注解时指定了@Documented，则他会被javadoc之类的工具处理，注解类型的信息也会被包含到生成的文档中。@Documented是一个标记注解，没有成员。
 
 ## @Inherited
 @Inherited元注解是一个标记注解，它阐述了某个被标记的注解是可以被继承的。如果一个使用了@Inherited修饰的annotation类型被用于一个class，则这个annotation将被用于该class的子类。
