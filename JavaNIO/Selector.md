@@ -15,7 +15,7 @@ Selector selector = Selector.open();
 channel.configureBlocking(false);
 SelectionKey selectionKey = channel.register(selector, SelectionKey.OP_ACCEPT);
 ```
-与Selector一起使用时，Channel必须处于非阻塞模式下。这意味着不能将FileChannel与Selector一起使用，因为FileChannel不能切换到非阻塞模式。而套接字通道都可以。
+与Selector一起使用时，Channel必须处于非阻塞模式下。这意味着不能将FileChannel与Selector一起使用，因为FileChannel不能切换到非阻塞模式。而套接字通道可以。
 
 注意register()方法的第二个参数。这是一个“interest集合”，意思是在通过Selector监听Channel对什么事件感兴趣。可以监听四种不同类型的事件：
 - Connect
@@ -23,7 +23,7 @@ SelectionKey selectionKey = channel.register(selector, SelectionKey.OP_ACCEPT);
 - Read
 - Write
 
-通道触发了一个事件意思是该事件已经就绪。所以，某个channel成功连接到另一个服务器称为“连接就绪”。一个server socket channel准备好接收新进入的连接称为“接收就绪”。一个有数据可读的通道可以说是“读就绪”。等待写数据的通道可以说是“写就绪”。
+通道触发了一个事件则表示是该事件已经就绪。所以，某个channel成功连接到另一个服务器称为“连接就绪”。一个server socket channel准备好接收新进入的连接称为“接收就绪”。一个有数据可读的通道可以说是“读就绪”。等待写数据的通道可以说是“写就绪”。
 
 这四种事件用SelectionKey的四个常量来表示：
 - SelectionKey.OP_CONNECT
