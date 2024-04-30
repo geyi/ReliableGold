@@ -9,7 +9,7 @@ Java NIO的通道类似流，但又有些不同：流的读写通常是单向的
 - SocketChannel
 - ServerSocketChannel
 
-FileChannel从文件中读写数据。DatagramChannel能通过UDP读写网络中的数据。SocketChannel能通过TCP读写网络中的数据。ServerSocketChannel可以监听新进来的TCP连接，像Web服务器那样。对每一个新进来的连接都会创建一个SocketChannel。
+FileChannel从文件中读写数据。DatagramChannel和SocketChannel分别能通过UDP和TCP读写网络中的数据。ServerSocketChannel可以监听新进来的TCP连接，像Web服务器那样，对每一个新进来的连接都会创建一个SocketChannel。
 
 # 基本的Channel示例
 下面是一个使用FileChannel读取数据到Buffer中的示例：
