@@ -108,7 +108,7 @@ Exchanger：两个线程间交换数据。线程间通信。
 
 VarHandle，除了完成普通操作之外，还可以完成原子性线程安全的操作（JDK9）。比反射快！
 
-# ThreadLocal
+# [ThreadLocal](./Java/ThreadLocal.md)
 一个线程一个ThreadLocalMap，里面可以存放多个ThreadLocal
 
 应用场景：
