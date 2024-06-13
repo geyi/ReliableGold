@@ -87,8 +87,8 @@ CyclicBarrier：循环栅栏。直到指定数量的参与者都调用了await�
 >    - CountDownLatch 是基于倒计数的方式，通过调用 countDown() 减少计数器的值，而等待的线程会阻塞在 await() 方法上，直到计数器为零。
 >    - CyclicBarrier 是基于栅栏的方式，所有线程必须在栅栏处等待，当全部线程都到达栅栏时，才能一起继续执行。
 > 3. 可重用性不同
->    - CountDownLatch 是基于倒计数的方式，通过调用 countDown() 减少计数器的值，而等待的线程会阻塞在 await() 方法上，直到计数器为零。
->    - CyclicBarrier 是基于栅栏的方式，所有线程必须在栅栏处等待，当全部线程都到达栅栏时，才能一起继续执行。
+>    - CountDownLatch 只能在初始化时指定计数器的值，一旦计数器减至零后就无法重置或再次使用。
+>    - CyclicBarrier 可以被复用，并且可以在每次屏障解除后自动重置。它接受一个可选的 Runnable 参数，可以在屏障解除后执行额外的操作。
 
 # Phaser
 Phaser [feɪz] ：阶段性栅栏。参加婚礼的例子。
