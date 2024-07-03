@@ -58,7 +58,7 @@ biased_lock | lock | 状态
 
 Java对象头由两个Word组成，包含的基本信息有堆对象的布局、类型、GC状态、同步状态和哈希码。
 - Mark Word包含了锁信息、哈希吗、GC信息。
-- Klass Word包含指向对象的元数据。
+- Klass Word包含指向另一个对象（元对象）的指针。
 
 这里可以查看[OpenJDK](http://openjdk.java.net/groups/hotspot/docs/HotSpotGlossary.html)官网的描述
 
