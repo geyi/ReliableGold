@@ -7,7 +7,7 @@
 6. 意向锁（Intention Locks）
 7. 插入意向锁（Insert Intention Locks）
 
-MySQL的InnoDB的细粒度行锁，是它最吸引人的特性之一。但是查询没有命中索引，将退化为表锁。InnoDB的细粒度锁是实现在索引之上的。
+InnoDB的细粒度行锁是它最吸引人的特性之一。但是当查询没有命中索引时，将退化为表锁。InnoDB的细粒度锁是实现在索引之上的。
 
 InnoDB有两类索引：
 * 聚集索引（Clustered Index）
@@ -54,7 +54,7 @@ t(id PK, name KEY, sex);
 # 间隙锁（Gap Locks）
 间隙锁，它封锁索引记录中的间隔，或者第一条索引记录之前的范围，又或者最后一条索引记录之后的范围。
 
-依然以上面的表为例：`select * from t where id between 8 and 15 for update;`这个SQL会封锁区间，例如阻止id=10的记录插入。为什么会阻止id=10的记录插入？如果能够插入成功，同一个事务执行相同的SQL时，会发现结果集多出了一条记录，即幻读。**间隙锁的主要目的，就是为了防止其它事务在间隔中插入数据**。间隙锁可以共存。一个事务获取的间隙锁不会阻止另一个事务在相同的间隙上获取间隙锁。共享间隙锁和独占间隙锁之间没有区别。它们彼此不冲突，并且执行相同的功能。**如果把隔离级别降到RC，间隙锁则会自动失效。**
+依然以上面的表为例：`select * from t where id between 8 and 15 for update;`这个SQL会封锁区间，例如阻止id=10的记录插入。为什么会阻止id=10的记录插入？如果能够插入成功，同一个事务执行相同的SQL时，会发现结果集多出了一条记录，即幻读。**间隙锁的主要目的，就是为了防止其它事务在间隔中插入数据**。间隙锁可以共存，一个事务获取的间隙锁不会阻止另一个事务在相同的间隙上获取间隙锁。共享间隙锁和独占间隙锁之间没有区别，它们彼此不冲突，并且执行相同的功能（间隙锁的唯一目的是防止其他事务往间隙中插入数据）。**如果把隔离级别降到RC，间隙锁则会自动失效。**
 
 # 临键锁（Next-key Locks）
 临键锁，是记录锁和间隙锁的组合，它的封锁范围，既包含索引记录，又包含索引区间。更具体的，临键锁会封锁索引记录本身，以及索引记录之前的区间。如果一个会话占有了索引记录R的共享或排他锁，其他会话不能立刻在R之前的区间插入新的索引记录。
@@ -98,13 +98,13 @@ innodb_autoinc_lock_mode：该参数控制着向有auto_increment列的表插入
 
 首先insert大致上可以分成三类：
 1. insert-like语句：在表中生产新行的所有语句，包括insert、insert...select、replace、replace...select和load_data。包括simple-insert、bulk-insert、mixed-insert。
-2. simple insert，如：insert into t (name) values ('test')。在最初处理语句时，可以预先确定要插入的行数的语句。 这包括单行和多行的insert，或者是没有嵌套字查询的replace，但不包括insert ... on duplicate key update。
-3. bulk insert，如：load data、insert into ... select ... from ...。预先不知道要插入的行数（以及所需的自动增量值的数量）的语句。这包括 INSERT ... SELECT, REPLACE ... SELECT和LOAD DATA语句，但不包括 plain INSERT。处理每行时，InnoDB一次分配一个新值给自增列。
+2. simple insert，如：insert into t (name) values ('test')。在最初处理语句时，可以预先确定要插入的行数的语句。 这包括单行和多行的insert，或者是没有嵌套子查询的replace，但不包括insert ... on duplicate key update。
+3. bulk insert，如：load data、insert into ... select ... from ...、replace ... select。预先不知道要插入的行数（以及所需的自动增量值的数量）的语句。这包括 INSERT ... SELECT, REPLACE ... SELECT和LOAD DATA语句，但不包括 plain INSERT。处理每行时，InnoDB一次分配一个新值给自增列。
 4. mixed insert，如：insert into t (id, name) values (1,'a'), (NULL,'b'), (5,'c'), (NULL,'d')。为某些行（不是全部）指定了自增列的值。另一种类型的混合模式插入是insert ... on duplicate key update，最坏的情况是每一个insert后都跟了一个update，其中为自增列分配的值可能会或可能不会在更新阶段使用。
 
 innodb_autoinc_lock_mode有三个取值：
 - 0表示traditional，在这一模式下，所有的insert（insert-like）语句都会在语句开始的时候得到一个表级的AUTO-INC锁（在具有auto_increment列的表中），在语句结束的时候才释放这把锁，（注意，这里说的是语句级而不是事务级的，一个事务可能包涵有一个或多个语句）以确保给定的语句序列是以可预测和可重复的顺序分配自动递增值，并且这些递增值是连续的。这也就保证了insert语句在复制到slave的时候还能生成和master那边一样的值（它保证了基于语句复制的安全）。由于在这种模式下auto_inc锁一直要保持到语句的结束，所以这个就影响到了并发的插入。
-- 1（默认值）表示consecutive，在这一模式下，“批量插入”（bulk insert）使用特殊的AUTO-INC表级锁并持有它直到语句结束。这一模式下对simple insert做了优化，由于simple insert一次性插入的行数可以立马得到确定，所以mysql可以通过在互斥锁（一种轻量级锁）的控制下获得所需数量的自增值来避免表级锁；除非自增锁被其他事务持有，否则不会使用表级别的锁。如果一个事务持有了自增锁，一个simple insert正在等待自增锁，那这个simple insert就像是一个bulk insert。这一模式下任何“INSERT-like”语句分配的所有自动递增值都是连续的，并且操作对于基于语句的复制是安全的。
+- 1（默认值）表示consecutive，在这一模式下，“批量插入”（bulk insert）使用特殊的AUTO-INC表级锁并持有它直到语句结束。这一模式下对simple insert做了优化，由于simple insert一次性插入的行数可以立马得到确定，所以mysql可以通过在互斥锁（一种轻量级锁）的控制下获得所需数量的自增值来避免表级锁；除非自增锁被其他事务持有，否则不会使用表级别的锁。如果一个事务持有了自增锁，一个simple insert正在等待自增锁，那这个simple insert就像是一个bulk insert（需要获取一个AUTO-INC表级锁）。这一模式下任何“INSERT-like”语句分配的所有自动递增值都是连续的，并且操作对于基于语句的复制是安全的。
 - 2表示interleaved，由于这个模式下已经没有了auto_inc锁，所以这个模式下的性能是最好的；但是它也有一个问题，就是对于同一个语句来说它所得到的auto_incremant值可能不是连续的。并且在基于语句的复制或者恢复的场景中，它并不安全。
 
 如果使用基于语句的复制，innodb_autoinc_lock_mode应该被设置成0或1。如果你的二进制文件格式是 mixed 或者 row 那么这三个值中的任何一个对于你来说都是复制安全的。
@@ -114,10 +114,10 @@ innodb_autoinc_lock_mode有三个取值：
 # 意向锁
 InnoDB支持多粒度锁（multiple granularity locking），它允许行级锁与表级锁共存，实际应用中，InnoDB使用的是意向锁。
 
-意向锁是指，未来的某个时刻，事务可能要加共享/排它锁了，先提前声明一个意向。
+意向锁是指，未来的某个时刻，事务可能要加共享/排它锁了，先提前声明一个意向。**意图锁的主要目的是表明有人正在锁定表中的一行，或将要锁定表中一行，即能高效快速的检测锁冲突。**
 
 意向锁有这样一些特点：
-1. 首先，意向锁，是一个表级别的锁（table-level locking）;
+1. 首先，意向锁，是一个**表级别**的锁（table-level locking）;
 2. 意向锁分为：
 	* 意向共享锁（intention shared lock, IS），它预示着，事务有意向对表中的某些行加共享锁
 	* 意向排它锁（intention exclusive lock, IX），它预示着，事务有意向对表中的某些行加排它锁
@@ -158,4 +158,4 @@ t(id unique PK, name);
 1. 会使用什么锁？
 2. 事务B会不会被阻塞呢？
 
-回答：虽然事务隔离级别是RR，虽然是同一个索引，虽然是同一个区间，但插入的记录并不冲突，故这里使用的是插入意向锁，并不会阻塞事务B
+回答：虽然事务隔离级别是RR，**但是没有其他事务持有(10, 20]区间的间隙锁**，且插入的记录并不冲突，故这里使用的是插入意向锁，并不会阻塞事务B
