@@ -2,9 +2,9 @@
 ![MySQL架构](../image/MySQL/MySQL架构.png)
 
 - Connection Manager：连接管理器负责处理客户端与MySQL服务器之间的连接，包括连接池和身份验证。
-- SQL Interface：负责处理与客户端应用程序的交互，接收和解析SQL语句，并将其发送到适当的模块进行处理。
-- Parser：解析器负责将SQL语句解析为内部数据结构，以便MySQL能够理解和执行查询。
-- Optimizer：优化器根据查询的复杂性和可用的索引信息，选择最佳的查询执行计划，以提高查询性能。
+- SQL Interface：定义了标准化的接口，使应用程序能够使用SQL查询与关系数据库进行交互。
+- Parser：负责分析SQL查询以了解其结构和语法，并将其分解为组件以供进一步处理。
+- Optimizer：评估给定查询的各种执行计划，并选择最有效的执行计划来提高数据库操作的性能。
 - Execution Engine：执行引擎负责实际执行查询，包括表扫描、索引使用、连接操作等。
 - Management：管理相关的功能和工具，主要包括配置、管理、集群解决方案、备份和恢复。
 - Storage Engines：MySQL支持多个存储引擎，每个存储引擎负责数据的存储和管理。常见的存储引擎包括InnoDB、MyISAM、Memory、Archive等。
