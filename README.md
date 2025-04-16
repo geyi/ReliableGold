@@ -86,7 +86,7 @@
 2. [MapReduce](MapReduce.md)
 
 
-## MachineLearning
+# MachineLearning
 1. [线性回归模型](./MachineLearning/线性回归模型.md)
 2. [代价函数](./MachineLearning/代价函数.md)
 3. [梯度下降](./MachineLearning/梯度下降.md)
