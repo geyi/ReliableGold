@@ -29,7 +29,7 @@
 ## kube-proxy
 在 Kubernetes 中，kube-proxy 是一个核心网络组件，负责实现集群内服务的负载均衡和网络流量路由。它是实现 Kubernetes Service 抽象的关键模块，确保 Pod 之间的通信和外部流量的正确分发。
 
-在iptables/IPVS 模式下，kube-proxy实际不自己处理流量，流量完全由内核处理。kube-proxy只监听service的变化，并更新规则。这样既避免了单点的性能瓶颈，又提高了可靠性（因为流量无需经过 kube-proxy 进程，并且即使 kube-proxy 进程崩溃，已有的网络规则仍能正常工作）。
+在iptables/IPVS 模式下，kube-proxy实际不自己处理流量，流量完全由内核处理。kube-proxy只监听service的变化，并更新规则。这样既避免了单点的性能瓶颈，又提高了可靠性（因为流量无需经过 kube-proxy 进程，并且，即使 kube-proxy 进程崩溃，已有的网络规则仍能正常工作）。
 
 ### **kube-proxy 的核心作用**
 1. **服务抽象**：  
