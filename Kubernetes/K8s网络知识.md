@@ -217,3 +217,6 @@ nginx-ingress-controller-79bcd678b4-24xl2   1/1     Running   0          83d
 nginx-ingress-controller-79bcd678b4-2qf2l   1/1     Running   0          46h
 [kuaidi@k8s-dev-master ~]$ sudo kubectl exec -it nginx-ingress-controller-79bcd678b4-l9k2m -n ingress-nginx -- cat /etc/nginx/nginx.conf
 ```
+
+## 现生产环境网络拓扑图
+![](../image/K8s/网络扩扑图.png)
