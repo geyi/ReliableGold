@@ -204,7 +204,7 @@ Events:                   <none>
 ```
 从以上输出的Endpoints可以看出，ingress-nginx service包含了多个节点的IP地址和端口号，每一个IP和端口对应一个nginx服务。ingress控制器会根据ingress规则自动生成反向代理（如 Nginx）的配置文件。当规则变化时，自动更新配置并重新加载代理（如 nginx -s reload）。当流量到达时会根据规则路由到后端 Service。
 
-将ingress的host映射到Endpoints中的任何一个IP后，就可以通过host访问后端Service。除此之外，还可以通过NodePort访问后端Service，例如：10.240.1.171:31930。注意，使用<NodeIP>:<NodePort>进行访问时需要确保请求的主机头与Ingress资源中定义的主机一致，即，请求头中必须增加`Host: your.domain.com`。
+将ingress的host映射到Endpoints中的任何一个IP后，就可以通过host访问后端Service。除此之外，还可以通过NodePort访问后端Service，例如：10.240.1.171:31930。注意，使用`<NodeIP>:<NodePort>`进行访问时需要确保请求的主机头与Ingress资源中定义的主机一致，即，请求头中必须增加`Host: your.domain.com`。
 
 当通过ingress向pod发起一个请求时，虽然流量需要通过ClusterIP到达pod，但实际是ingress控制器与pod之间建立了TCP长连接。
 
