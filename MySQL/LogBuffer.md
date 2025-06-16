@@ -6,7 +6,7 @@
 
 1. 事务提交，会写入log buffer，这里调用的是MySql自己的函数WriteRedoLog；
 2. 只有当MySql发起系统调用write写文件时，log buffer里的数据，才会写到os cache。注意，MySql系统调用完write之后，就认为文件已经写完，如果不flush，什么时候落盘，是操作系统决定的；
-3. 由操作系统（MySql也可以主动flush）将OS cache里的数据，最终fsync到磁盘上。
+3. 由操作系统（MySql也可以主动flush）将OS cache里的数据最终fsync到磁盘上。
 
 以上步骤出现异常的情况：
 1. 事务提交时，数据写入log buffer，就认为事务提交成功；
