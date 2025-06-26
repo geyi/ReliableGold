@@ -150,7 +150,8 @@ Desired survivor size 53673984 bytes, new threshold 15 (max 15)
 2020-07-06T13:41:27.634+0800: 98027.209: [FinalReference, 45882 refs, 0.3683047 secs]
 2020-07-06T13:41:28.002+0800: 98027.578: [PhantomReference, 0 refs, 1 refs, 0.0032547 secs]
 2020-07-06T13:41:28.005+0800: 98027.581: [JNI Weak Reference, 0.0000793 secs], 0.3819463 secs]
-2020-07-06T13:41:28.005+0800: 98027.581: [class unloading, 0.1211467 secs]2020-07-06T13:41:28.127+0800: 98027.702: [scrub symbol table, 0.0214804 secs]
+2020-07-06T13:41:28.005+0800: 98027.581: [class unloading, 0.1211467 secs]
+2020-07-06T13:41:28.127+0800: 98027.702: [scrub symbol table, 0.0214804 secs]
 2020-07-06T13:41:28.148+0800: 98027.724: [scrub string table, 0.0116539 secs][1 CMS-remark: 4457263K(5242880K)] 5600318K(8074048K), 0.6552275 secs] [Times: user=11.70 sys=3.07, real=0.65 secs]
 ```
 
