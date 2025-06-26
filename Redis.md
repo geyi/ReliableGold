@@ -295,7 +295,7 @@ typedef struct zskiplist {
 - 分值(score)：
     - 各个节点中的1.0、2.0和3.0是节点所保存的分值。在跳跃表中，节点按各自所保存的分值从小到大排列。
 - 成员对象(oj)：
-    - 各个节点中的o1、o2和o3是节点所保存的成员对象。在同一个跳跃表中，各个节点保存的成员对象必须是唯一的，但是多个节点保存的分值却可以是相同的：分值相同的节点将按照成员对象在字典序中的大小来进行排序，成员对象较小的节点会排在前面（靠近表头的方向），而成员对象较大的节点则会排在后面（靠近表尾的方向）。
+    - 各个节点中的o1、o2和o3是节点所保存的成员对象。在同一个跳跃表中，各个节点保存的成员对象必须是唯一的，但是多个节点保存的分值却可以是相同的：分值相同的节点将按照成员对象在字典序中的大小来进行排序，成员对象较小的节点会排在前面（靠近表头的方向），而成员5对象较大的节点则会排在后面（靠近表尾的方向）。
 
 应用场景：
 - 排行榜
@@ -344,27 +344,59 @@ fork系统调用，创建子线程速度快，需要的内存空间小。
 copy on write，创建子进程时并不发生复制，使得创建进程变快了。根据经验，不可能父子进程把所有数据都改一遍。父进程修改数据时，就是父进程触发中断，结果就是父进程里面的地址空间被改变了。
 ```C
 #include <stdio.h>
+#include <unistd.h>
+#include <stdint.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
-int main()
-{
-    pid_t pid;
-    int num = 0;
-    pid = fork();
-    if (pid == 0)
-    {
-        num += 10;
-        printf("child %d\n", num);
-        printf("child %d\n", &num);
-    }
-    if (pid > 0)
-    {
-        num += 20;
-        printf("parent %d\n", num);
-        printf("parent %d\n", &num);
+#include <fcntl.h>
+#include <stdlib.h>
+
+#define SIZE 1024
+
+// 将虚拟地址转换为物理地址
+unsigned long virt_to_phys(void *addr) {
+    int fd = open("/proc/self/pagemap", O_RDONLY);
+    if (fd < 0) return 0;
+
+    unsigned long vaddr = (unsigned long)addr;
+    unsigned long offset = (vaddr / sysconf(_SC_PAGESIZE)) * sizeof(uint64_t);
+    
+    uint64_t entry;
+    lseek(fd, offset, SEEK_SET);
+    read(fd, &entry, sizeof(entry));
+    close(fd);
+
+    if (!(entry & (1ULL << 63))) return 0;  // 检查页面是否在内存中
+    
+    unsigned long frame = entry & ((1ULL << 55) - 1);  // 获取页帧号
+    return (frame * sysconf(_SC_PAGESIZE)) + (vaddr % sysconf(_SC_PAGESIZE));
+}
+
+int main() {
+    int *shared_array = malloc(SIZE * sizeof(int));
+    printf("数组初始虚拟地址: %p\n", shared_array);
+    printf("数组初始物理地址: 0x%lx\n", virt_to_phys(shared_array));
+
+    pid_t pid = fork();
+
+    if (pid == 0) {
+        // 子进程修改数组中间元素
+        printf("子进程修改前: [0]=%p, 物理=0x%lx\n", 
+               &shared_array[512], virt_to_phys(&shared_array[512]));
+        shared_array[512] = 42;
+        printf("子进程修改后: [0]=%p, 物理=0x%lx\n", 
+               &shared_array[512], virt_to_phys(&shared_array[512]));
+    } else {
+        sleep(1);
+        // 父进程修改数组开头元素
+        printf("父进程修改前: [0]=%p, 物理=0x%lx\n", 
+               &shared_array[0], virt_to_phys(&shared_array[0]));
+        shared_array[0] = 100;
+        printf("父进程修改后: [0]=%p, 物理=0x%lx\n", 
+               &shared_array[0], virt_to_phys(&shared_array[0]));
     }
 
+    free(shared_array);
     return 0;
 }
 ```
