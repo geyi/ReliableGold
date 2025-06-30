@@ -571,8 +571,8 @@ Redis默认使用异步复制，其特点是低延迟和高性能
 
 故障恢复重新启动从节点：`redis-server ./6381.conf --replicaof 127.0.0.1 6379`。这时不会发生RDB落盘，使用的是增量同步。
 
-redis-server ./6381.conf --replicaof 127.0.0.1 6379 --appendonly yes
-带上--appendonly yes参数启动时，会触发RDB落盘。从节点应用同步过来的RDB文件，然后执行AOF重写，因为当前使用的AOF模式（但是AOF文件中没有记录replica id）。
+`redis-server ./6381.conf --replicaof 127.0.0.1 6379 --appendonly yes`
+带上`--appendonly yes`参数启动时，会触发RDB落盘。从节点应用同步过来的RDB文件，然后执行AOF重写，因为当前使用的AOF模式（但是AOF文件中没有记录replica id）。
 
 在主上可以看到有哪些从节点追随
 
