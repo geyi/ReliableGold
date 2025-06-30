@@ -438,7 +438,7 @@ bgrewriteaof：异步的重写AOF文件。重写时会用创建当前数据集�
 最终也是一个纯指令的日志文件
 
 4.0之后
-- 将老的数据RDB到AOF文件中，将增量的以指令的的方式append到AOF中。(https://raw.githubusercontent.com/antirez/redis/4.0/00-RELEASENOTES)
+- 将老的数据RDB到AOF文件中，将增量数据以指令的方式append到AOF中。(https://raw.githubusercontent.com/antirez/redis/4.0/00-RELEASENOTES)
 
 记录指令时触发IO的三种策略
 - NO
