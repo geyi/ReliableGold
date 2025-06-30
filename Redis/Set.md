@@ -23,7 +23,7 @@ zset-max-ziplist-entries 128
 zset-max-ziplist-value 64
 ```
 
-Redis的跳跃表由zskiplistNode和zskiplist两个结构定义，其中 zskiplistNode结构用于表示跳跃表节点，而 zskiplist结构则用于保存跳跃表节点的相关信息，如下：
+Redis的跳跃表由zskiplistNode和zskiplist两个结构定义，其中 zskiplistNode结构用于表示跳跃表节点，而 zskiplist结构则用于保存跳跃表的相关信息，如下：
 ```c
 typedef struct zskiplistNode {
     sds ele;
@@ -48,7 +48,7 @@ typedef struct zskiplist {
 **zskiplist**
 - header：指向跳跃表的表头节点，通过这个指针程序定位表头节点的时间复杂度就为O(1)。
 - tail：指向跳跃表的表尾节点，通过这个指针程序定位表尾节点的时间复杂度就为O(1)。
-- level：记录目前跳跃表内，层数最大的那个节点的层数（表头节点的层数不计算在内），通过这个属性可以再O(1)的时间复杂度内获取层高最好的节点的层数。
+- level：记录目前跳跃表内层数最大的那个节点的层数（表头节点的层数不计算在内），通过这个属性可以再O(1)的时间复杂度内获取层高最好的节点的层数。
 - length：记录跳跃表的长度，也即是，跳跃表目前包含节点的数量（表头节点不计算在内)，通过这个属性，程序可以再O(1)的时间复杂度内返回跳跃表的长度。
 
 **zskiplistNode**
