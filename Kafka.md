@@ -57,8 +57,8 @@ Kafka选出quorum的方式略有不同，Kafka不是通过majority投票，而�
 - OSR（Out-Sync Replicas）超过阈值时间（10秒）没有心跳
 - AR（Assigned Replicas）面向分区的副本集合，创建topic的时候给出了分区的副本数，那么controller在创建topic时就确定了broker和分区副本的对应关系，并得出了该分区的broker集合
 - AR = ISR + OSR
-- HW（High Water）最高水位。~~表示消费者能够消费的最大偏移~~。即已备份偏移。对于同一个副本对象而言，其HW值不会大于LEO值。小于等于HW值的所有消息都被认为是“已备份”的（replicated）。
-- LEO（Log End Offset）数据日志文件结束偏移量。记录了该副本日志中下一条消息的偏移值。如果LEO=10，那么表示该副本保存了10条消息，偏移值范围是[0, 9]。只有副本的LEO大于主分区的HW时，该副本才有资格进入ISR集合。
+- HW（High Watermark）最高水位。即已备份偏移。对于同一个副本对象而言，其HW值不会大于LEO值。小于等于HW值的所有消息都被认为是“已备份”的（replicated）。
+- LEO（Log End Offset）数据日志文件结束偏移量。记录了该副本日志中下一条即将被写入的消息的偏移值。如果LEO=10，那么表示该副本保存了10条消息，偏移值范围是[0, 9]。对于任何一个副本（Leader 或 Follower），其本地的 LEO 总是大于或等于该分区当前的 HW。LEO 指向最新写入的位置，HW 指向所有 ISR 都确认的位置，所以 LEO 必然在 HW 之后或相等。
 
 ## Kafka ASKS
 ### ASKS为0
