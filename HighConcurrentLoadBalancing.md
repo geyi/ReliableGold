@@ -63,7 +63,7 @@ X-Ua-Compatible: IE=Edge,chrome=1
         <link rel="dns-prefetch" href="//b1.bdstatic.com"/>
         <title>百度一下，你就知道</title>
 省略......
-[root@192 fd]# exec 8<&-
+[root@192 fd]# exec 8<>-
 ```
 
 第一步建立连接  
