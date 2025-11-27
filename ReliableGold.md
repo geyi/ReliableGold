@@ -214,6 +214,7 @@ eureka client
 - kubectl logs -f nginx-ingress-controller-cf766b499-7xmks -n ingress-nginx --tail=10000 > /tmp/ingress.shipper.log
 - kubectl delete pod --force --grace-period=0
 - kubectl get pods --all-namespaces --field-selector=status.phase=Failed | grep Evicted | grep market-elec-5968d6d645 | awk '{print $2 " -n " $1}' | xargs -r -n 3 kubectl delete pod
+- 查询ingress控制器：kubectl get po -owide -n ingress-nginx
 
 > https://www.cnblogs.com/wuxinchun/p/15218227.html
 
